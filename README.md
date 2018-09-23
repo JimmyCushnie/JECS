@@ -111,3 +111,8 @@ FAQ
 **Your code is bad.**
 
 That's not a question, but you do have a point. Sorry.
+
+Special Thanks
+---
+
+[@ForLoveOfCats](https://github.com/ForLoveOfCats) for teaching me how file paths work on Unix OSs.
