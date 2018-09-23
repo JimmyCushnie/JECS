@@ -32,11 +32,10 @@ namespace PENIS
 
         private static bool PathIsAbsolute(string path)
         {
-            if (path.Length > 1 && path[1] == ':') // because absolute paths will start with C:/ or similar
-            {
+            if(path.Length > 0 && path[0] == '/')
                 return true;
-            }
-
+            if(path.Length > 1 && path[1] == ':')
+                return true;
             return false;
         }
 
