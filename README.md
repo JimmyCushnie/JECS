@@ -1,6 +1,6 @@
 # PENIS for Unity
 
-PENIS for Unity is an implementation of [PENIS](https://github.com/JimmyCushnie/PENIS) tailored to the Unity engine. With it, you can create configuration files for your game that are easy to read and modify.
+PENIS for Unity is an implementation of [PENIS](https://github.com/JimmyCushnie/PENIS) for the Unity engine. With it, you can create configuration files for your game that are easy to read and modify.
 
 Installing
 ---
