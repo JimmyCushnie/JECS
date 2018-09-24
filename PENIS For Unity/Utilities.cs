@@ -26,18 +26,8 @@ namespace PENIS
         /// <summary> detects whether a file path is relative or absolute, and returns the absolute path </summary>
         public static string AbsolutePath(string RelativeOrAbsolutePath)
         {
-            if (PathIsAbsolute(RelativeOrAbsolutePath)) { return RelativeOrAbsolutePath; }
+            if (Path.IsPathRooted(RelativeOrAbsolutePath)) { return RelativeOrAbsolutePath; }
             return Path.Combine(DefaultPath, RelativeOrAbsolutePath);
         }
-
-        private static bool PathIsAbsolute(string path)
-        {
-            if(path.Length > 0 && path[0] == '/')
-                return true;
-            if(path.Length > 1 && path[1] == ':')
-                return true;
-            return false;
-        }
-
     }
 }
