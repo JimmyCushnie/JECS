@@ -146,7 +146,7 @@ namespace PENIS
 
                 return ArrayBoi;
             }
-            if (type is ICollection)
+            if (IsIEnumerableType(type))
             {
                 object CollectionBoi = Activator.CreateInstance(type, node.ChildNodes.Count);
                 Type elementType = GetAnyElementType(type);
