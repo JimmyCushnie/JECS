@@ -101,6 +101,7 @@ PENIS for Unity will serialize and parse the following base types according to t
 * DateTime
 * char
 * enum
+* System.Type (will use the type's name, including namespaces)
 
 It can also serialize/parse lists and arrays.
 
