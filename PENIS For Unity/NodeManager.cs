@@ -18,7 +18,7 @@ namespace PENIS
             if(type == typeof(string))
             {
                 string dataAsString = (string)data;
-                if (dataAsString.Contains(Environment.NewLine))
+                if (dataAsString != null && dataAsString.Contains(Environment.NewLine))
                 {
                     node.Value = "\"\"\"";
 
@@ -170,6 +170,14 @@ namespace PENIS
 
             if (!String.IsNullOrEmpty(node.Value))
             {
+                // custom shortcuts
+                var m = type.GetMethod("Shortcut", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(String) }, null);
+                if(m != null && m.ReturnType == type)
+                {
+                    return m.Invoke(null, new object[] { node.Value });
+                }
+
+                // property shortcuts
                 var p = type.GetProperty(node.Value, BindingFlags.Public | BindingFlags.Static);
                 if (p != null)
                 {
@@ -177,7 +185,7 @@ namespace PENIS
                         return p.GetValue(null);
                 }
 
-                throw new Exception(String.Format("hey! {0} isn't a static, read-only property of {1} which returns type {1}! You can't use it as a shortcut.", node.Value, type.Name));
+                throw new Exception(String.Format("{0} Isn't a static, read-only property of {1} which returns type {1}, nor is it an accepted custom shortcut for that type. You can't use it as a shortcut.", node.Value, type.Name));
             }
 
 
@@ -331,6 +339,8 @@ namespace PENIS
         private static string SerializeString(object value)
         {
             string text = (string)value;
+            if (String.IsNullOrEmpty(text)) { return text; }
+
             if ((text[0] == ' ' || text[text.Length - 1] == ' ') ||
                 (text[0] == '"' && text[text.Length - 1] == '"'))
                 text = '"' + text + '"';
