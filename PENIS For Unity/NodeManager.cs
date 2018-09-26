@@ -167,6 +167,20 @@ namespace PENIS
                 throw new Exception("You can't do that, you bitch!!!!!!!");
             }
 
+
+            if (!String.IsNullOrEmpty(node.Value))
+            {
+                var p = type.GetProperty(node.Value, BindingFlags.Public | BindingFlags.Static);
+                if (p != null)
+                {
+                    if (!p.CanWrite && p.PropertyType == type)
+                        return p.GetValue(null);
+                }
+
+                throw new Exception(String.Format("hey! {0} isn't a static, read-only property of {1} which returns type {1}! You can't use it as a shortcut.", node.Value, type.Name));
+            }
+
+
             object returnThis = Activator.CreateInstance(type);
 
             var fields = type.GetFields();
