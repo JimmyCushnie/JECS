@@ -278,6 +278,7 @@ namespace PENIS
             [typeof(bool)]      = SerializeBool,
             [typeof(DateTime)]  = SerializeDateTime,
             [typeof(char)]      = SerializeChar,
+            [typeof(Type)]      = SerializeType,
         };
 
         private static Dictionary<Type, ParseMethod> BaseParseMethods = new Dictionary<Type, ParseMethod>()
@@ -303,6 +304,7 @@ namespace PENIS
             [typeof(bool)]      = ParseBool,
             [typeof(DateTime)]  = ParseDateTime,
             [typeof(char)]      = ParseChar,
+            [typeof(Type)]      = ParseType,
         };
 
 
@@ -404,6 +406,35 @@ namespace PENIS
         private static object ParseChar(string text)
         {
             return text[0];
+        }
+
+        private static string SerializeType(object value)
+        {
+            Type h = (Type)value;
+            return h.FullName;
+        }
+
+        private static Dictionary<string, Type> TypeCache = new Dictionary<string, Type>();
+        private static object ParseType(string typeName)
+        {
+            Type t;
+            if (TypeCache.TryGetValue(typeName, out t))
+            {
+                return t;
+            }
+
+            foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                t = a.GetType(typeName);
+                if (t != null)
+                {
+                    TypeCache.Add(typeName, t);
+                    return t;
+                }
+            }
+
+            Debug.LogError(typeName + " is not a type!");
+            return null;
         }
 
         #endregion
