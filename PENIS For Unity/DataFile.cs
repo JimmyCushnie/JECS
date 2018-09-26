@@ -109,6 +109,24 @@ namespace PENIS
             NodeManager.SetNodeData(node, value, typeof(T));
         }
 
+        /// <summary> returns all top level keys in the file, in order. </summary>
+        public string[] GetTopLevelKeys()
+        {
+            var keys = new string[TopLevelNodes.Count];
+            int count = 0;
+            foreach(var line in TopLevelLines)
+            {
+                if(line is KeyNode)
+                {
+                    var node = (KeyNode)line;
+                    keys[count] = node.Key;
+                    count++;
+                }
+            }
+
+            return keys;
+        }
+
         /// <summary> whether a top-level key exists in the file </summary>
         public bool KeyExists(string key)
         {
