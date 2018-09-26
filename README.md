@@ -9,6 +9,7 @@ Table Of Contents
 - [Usage](#usage)
 - [Modifying Values in a File](#modifying-values-in-a-file)
 - [Supported Types](#supported-types)
+- [Property Shortcuts](#property-shortcuts)
 - [Other Useful Functions](#other-useful-functions)
 - [FAQ](#faq)
 
@@ -101,10 +102,39 @@ PENIS for Unity will serialize and parse the following base types according to t
 * DateTime
 * char
 * enum
+* System.Type (will use the type's name, including namespaces)
 
 It can also serialize/parse lists and arrays.
 
 If a different type is sent to the `Get` or `Set` methods, P4U will serialize all public, non-static, read-and-write-enabled fields and properties of that type, except for those with the `[PENIS.DontSave]` attribute. For example, the `Vector3` type will have the three floats `x` `y` and `z` serialized.
+
+Property Shortcuts
+---
+
+If your type has a static, read-only propery that returns a value of that type, you can use it as a shortcut when writing configuration files. For example, P4U will parse the following to lists of Vector3 exactly the same:
+
+```
+Vector List One:
+    -
+        x: 0
+        y: 0
+        z: 0
+    -
+        x: 0
+        y: 1
+        z: 0
+    -
+        x: 1
+        y: 1
+        z: 1
+
+Vector List Two:
+    - zero              # see https://docs.unity3d.com/ScriptReference/Vector3-zero.html
+    - up                # see https://docs.unity3d.com/ScriptReference/Vector3-up.html
+    - one               # see https://docs.unity3d.com/ScriptReference/Vector3-one.html
+```
+
+Note that shortcuts will not be serialized, only parsed. They are intended to make it easier to write configuration files.
 
 Other Useful Functions
 ---
