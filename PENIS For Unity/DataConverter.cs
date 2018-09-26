@@ -42,6 +42,8 @@ namespace PENIS
             // parse the input line by line
             foreach(var line in lines)
             {
+                if (line.Contains('\t')) { throw new FormatException("a PENIS file cannot contain tabs. Please use spaces instead."); }
+
                 if (DoingMultiLineString)
                 {
                     if (NestingNodeStack.Peek().ChildNodeType != NodeChildrenType.multiLineString)
