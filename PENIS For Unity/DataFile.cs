@@ -58,7 +58,10 @@ namespace PENIS
         public void SaveAllData()
         {
             string PENIS = DataConverter.PENISFromDataStructure(TopLevelLines);
-            File.WriteAllText(FilePath, PENIS);
+            string ExistingPENIS = File.ReadAllText(FilePath);
+
+            if(PENIS != ExistingPENIS)
+                File.WriteAllText(FilePath, PENIS);
         }
 
 
