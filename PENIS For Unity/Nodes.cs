@@ -38,6 +38,15 @@ namespace PENIS
             ChildNodes.Add(newnode);
             return newnode;
         }
+        public bool ContainsChildNode(string key)
+        {
+            foreach (var node in ChildNodes)
+            {
+                var keynode = node as KeyNode;
+                if (keynode.Key == key) { return true; }
+            }
+            return false;
+        }
 
         public ListNode GetChildAddressedByListNumber(int number)
         {

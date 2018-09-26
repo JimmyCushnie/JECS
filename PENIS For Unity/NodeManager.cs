@@ -189,6 +189,8 @@ namespace PENIS
                 if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) { continue; }
                 if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) { continue; }
 
+                if (!node.ContainsChildNode(f.Name)) { continue; }
+
                 var child = node.GetChildAddressedByName(f.Name);
                 object data = GetNodeData(child, f.FieldType);
                 f.SetValue(returnThis, data);
@@ -199,6 +201,8 @@ namespace PENIS
             {
                 if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) { continue; }
                 if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) { continue; }
+
+                if (!node.ContainsChildNode(p.Name)) { continue; }
 
                 var child = node.GetChildAddressedByName(p.Name);
                 object data = GetNodeData(child, p.PropertyType);
