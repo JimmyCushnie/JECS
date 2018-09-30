@@ -68,16 +68,21 @@ namespace PENIS
         /// <summary> get some data from the file, saving a new value if the data does not exist </summary>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="DefaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
-        public T Get<T>(string key, T DefaultValue)
+        public T Get<T>(string key, T DefaultValue = default(T))
+        {
+            return (T)Get(typeof(T), key, DefaultValue);
+        }
+
+        public object Get(Type type, string key, object DefaultValue)
         {
             if (!KeyExists(key))
             {
-                Set<T>(key, DefaultValue);
+                Set(type, key, DefaultValue);
                 return DefaultValue;
             }
 
             var node = TopLevelNodes[key];
-            return (T)NodeManager.GetNodeData(node, typeof(T));
+            return NodeManager.GetNodeData(node, type);
         }
 
         /// <summary> save data to the file </summary>
@@ -85,6 +90,14 @@ namespace PENIS
         /// <param name="value"> the value to save </param>
         public void Set<T>(string key, T value)
         {
+            Set(typeof(T), key, value);
+        }
+
+        public void Set(Type type, string key, object value)
+        {
+            if (value.GetType() != type)
+                throw new InvalidCastException("value is not of type " + type.Name + "!");
+
             if (!KeyExists(key))
             {
                 if (string.IsNullOrEmpty(key))
@@ -104,9 +117,9 @@ namespace PENIS
                 TopLevelNodes.Add(key, newnode);
                 TopLevelLines.Add(newnode);
             }
-            
+
             var node = TopLevelNodes[key];
-            NodeManager.SetNodeData(node, value, typeof(T));
+            NodeManager.SetNodeData(node, value, type);
         }
 
         /// <summary> returns all top level keys in the file, in order. </summary>
@@ -142,6 +155,71 @@ namespace PENIS
             Node node = TopLevelNodes[key];
             TopLevelNodes.Remove(key);
             TopLevelLines.Remove(node);
+        }
+
+
+        public void SaveAsObject<T>(T savethis)
+        {
+            Type type = typeof(T);
+            SaveAsObject(type, savethis);
+        }
+
+        public void SaveAsObject(Type type, object savethis)
+        {
+            if (savethis.GetType() != type)
+                throw new InvalidOperationException("The type passed to SaveAsObject must match the type of the savethis object");
+
+            var fields = type.GetFields();
+            foreach (var f in fields)
+            {
+                if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) { continue; }
+                if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) { continue; }
+
+                Set(f.FieldType, f.Name, f.GetValue(savethis));
+            }
+
+            var properties = type.GetProperties();
+            foreach (var p in properties)
+            {
+                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) { continue; }
+                if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) { continue; }
+
+                Set(p.PropertyType, p.Name, p.GetValue(savethis));
+            }
+
+            SaveAllData();
+        }
+
+        public T GetAsObject<T>()
+        {
+            return (T)GetAsObject(typeof(T));
+        }
+
+        public object GetAsObject(Type type)
+        {
+            object returnThis = Activator.CreateInstance(type);
+
+            var fields = type.GetFields();
+            foreach (var f in fields)
+            {
+                if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) { continue; }
+                if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) { continue; }
+
+                var value = Get(f.FieldType, f.Name, f.GetValue(returnThis));
+                f.SetValue(returnThis, value);
+            }
+
+            var properties = type.GetProperties();
+            foreach (var p in properties)
+            {
+                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) { continue; }
+                if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) { continue; }
+
+                var value = Get(p.PropertyType, p.Name, p.GetValue(returnThis));
+                p.SetValue(returnThis, value);
+            }
+
+            return returnThis;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace PENIS
                 if (Path.IsPathRooted(_DefaultPath)) { return _DefaultPath; }
 #if UNITY_EDITOR
                 string ProjectFolder = Directory.GetParent(Application.dataPath).FullName;
-                return Path.Combine(ProjectFolder, "GameData");
+                return Path.Combine(ProjectFolder, "Game");
 #endif
                 return Directory.GetParent(Application.dataPath).FullName;
             }
