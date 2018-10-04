@@ -170,13 +170,6 @@ namespace PENIS
 
             if (!String.IsNullOrEmpty(node.Value))
             {
-                // custom shortcuts
-                var m = type.GetMethod("Shortcut", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(String) }, null);
-                if(m != null && m.ReturnType == type)
-                {
-                    return m.Invoke(null, new object[] { node.Value });
-                }
-
                 // property shortcuts
                 var p = type.GetProperty(node.Value, BindingFlags.Public | BindingFlags.Static);
                 if (p != null)
@@ -185,7 +178,52 @@ namespace PENIS
                         return p.GetValue(null);
                 }
 
-                throw new Exception(String.Format("{0} Isn't a static, read-only property of {1} which returns type {1}, nor is it an accepted custom shortcut for that type. You can't use it as a shortcut.", node.Value, type.Name));
+                // method shortcuts
+                if(node.Value.Contains("(") && node.Value.Contains(")"))
+                {
+                    try // I am so ashamed of myself
+                    {
+                        string text = node.Value;
+                        string methodname = text.Substring(0, text.IndexOf('('));
+                        var method = type.GetMethod(methodname, BindingFlags.Public | BindingFlags.Static);
+
+                        if (method != null && method.ReturnType == type)
+                        {
+                            var parameters = method.GetParameters();
+
+                            string s = text.Substring(text.IndexOf('(') + 1, text.Length - text.IndexOf('(') - 2);
+                            var paramNames = s.Split(',');
+
+                            var numberParams = new object[parameters.Length];
+                            for (int i = 0; i < parameters.Length; i++)
+                            {
+                                if (i < paramNames.Length)
+                                {
+                                    if (parameters[i].ParameterType == typeof(int))
+                                        numberParams[i] = int.Parse(paramNames[i].Trim());
+                                    else
+                                        numberParams[i] = float.Parse(paramNames[i].Trim());
+                                }
+                                else // optional parameter support
+                                {
+                                    numberParams[i] = parameters[i].DefaultValue;
+                                }
+                            }
+
+                            return method.Invoke(null, numberParams);
+                        }
+                    }
+                    catch { } // let it continue on because a custom shortcut might use the ( and ) characters
+                }
+
+                // custom shortcuts
+                var m = type.GetMethod("Shortcut", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(String) }, null);
+                if (m != null && m.ReturnType == type)
+                {
+                    return m.Invoke(null, new object[] { node.Value });
+                }
+
+                throw new Exception(String.Format("{0} Isn't a static, read-only property of {1} which returns type {1}, nor is it a properly-formatted static method of return type {1} with only ints and floats as parameters, nor is it an accepted custom shortcut for that type. You can't use it as a shortcut.", node.Value, type.Name));
             }
 
 
