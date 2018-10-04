@@ -73,11 +73,8 @@ namespace PENIS
             return (T)Get(typeof(T), key, DefaultValue);
         }
 
-        public object Get(Type type, string key, object DefaultValue = null)
+        public object Get(Type type, string key, object DefaultValue)
         {
-            if(DefaultValue == null)
-                DefaultValue = Activator.CreateInstance(type);
-
             if (!KeyExists(key))
             {
                 Set(type, key, DefaultValue);
