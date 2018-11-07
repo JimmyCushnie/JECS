@@ -173,7 +173,19 @@ namespace PENIS
             }
             if (IsDictionary(type))
             {
-                throw new NotImplementedException();
+                Type keyType = type.GetGenericArguments()[0];
+                Type valueType = type.GetGenericArguments()[1];
+
+                dynamic genericDic = Activator.CreateInstance(type);
+
+                foreach(var child in node.ChildNodes)
+                {
+                    dynamic key = Convert.ChangeType(ParseBaseType((child as KeyNode).Key, keyType), keyType);
+                    dynamic value = Convert.ChangeType(GetNodeData(child, valueType), valueType);
+                    genericDic.Add(key, value);
+                }
+
+                return genericDic;
             }
             if (IsIEnumerableType(type))
             {
