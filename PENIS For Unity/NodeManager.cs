@@ -32,6 +32,7 @@ namespace PENIS
                         while ((line = sr.ReadLine()) != null) // this is effectively a ForEachLine, but it is platform agnostic (since new lines are encoded differently on different OSs)
                         {
                             string text = new string(' ', indentation) + SerializeString(line);
+                            text = text.Replace("#", "\\#"); // good god this code is a fucking mess
                             Line newline = new Line() { RawText = text };
                             node.ChildLines.Add(newline);
                         }
@@ -106,8 +107,13 @@ namespace PENIS
                 {
                     var lineText = line.RawText;
 
-                    // remove everything after the comment indicator
+                    // remove everything after the comment indicator, unless it's preceded by a \
+
                     int PoundSignIndex = lineText.IndexOf('#');
+
+                    while (PoundSignIndex > 0 && text[PoundSignIndex - 1] == '\\')
+                        PoundSignIndex = text.IndexOf('#', PoundSignIndex + 1);
+
                     if (PoundSignIndex > 0)
                         lineText = lineText.Substring(0, PoundSignIndex - 1);
 
@@ -178,8 +184,14 @@ namespace PENIS
                         return p.GetValue(null);
                 }
 
+                // constructor shortcuts
+                if (node.Value.StartsWith("(") && node.Value.EndsWith(")"))
+                {
+                    var constructors = type.GetConstructors();
+                }
+
                 // method shortcuts
-                if(node.Value.Contains("(") && node.Value.Contains(")"))
+                if (node.Value.Contains("(") && node.Value.Contains(")"))
                 {
                     try // I am so ashamed of myself
                     {
@@ -383,11 +395,11 @@ namespace PENIS
                 (text[0] == '"' && text[text.Length - 1] == '"'))
                 text = '"' + text + '"';
 
-            if (text.Contains('#'))
-            {
-                text = text.Replace("#", "🍆");
-                Debug.LogWarning("PENIS cannot serialize the character '#'. It is being replaced by the character '🍆'. Sorry :(");
-            }
+            //if (text.Contains('#'))
+            //{
+            //    text = text.Replace("#", "🍆");
+            //    Debug.LogWarning("PENIS cannot serialize the character '#'. It is being replaced by the character '🍆'. Sorry :(");
+            //}
 
             return text;
         }

@@ -67,12 +67,13 @@ namespace PENIS
 
         public string GetDataText()
         {
-            //UnityEngine.Debug.Log(RawText + ", " + DataStartIndex + ", " + DataEndIndex + ", ");
-            return RawText.Substring(DataStartIndex, DataEndIndex - DataStartIndex);
+            return RawText.Substring(DataStartIndex, DataEndIndex - DataStartIndex)
+                .Replace("\\#", "#");
         }
         public void SetDataText(string newData)
         {
             RawText = RawText.Substring(0, DataStartIndex) + newData + RawText.Substring(DataEndIndex, RawText.Length - DataEndIndex);
+            RawText = RawText.Replace("#", "\\#");
         }
 
         protected int DataStartIndex
@@ -88,8 +89,12 @@ namespace PENIS
             {
                 var text = RawText;
 
-                // remove everything after the comment indicator
+                // remove everything after the comment indicator, unless it's preceded by a \
                 int PoundSignIndex = text.IndexOf('#');
+
+                while (PoundSignIndex > 0 && text[PoundSignIndex - 1] == '\\')
+                    PoundSignIndex = text.IndexOf('#', PoundSignIndex + 1);
+
                 if (PoundSignIndex > 0)
                     text = text.Substring(0, PoundSignIndex);
 
