@@ -187,8 +187,35 @@ namespace PENIS
                 // constructor shortcuts
                 if (node.Value.StartsWith("(") && node.Value.EndsWith(")"))
                 {
+                    string text = node.Value.Substring(1, node.Value.Length - 2); // remove the ( and )
+                    var paramStrings = text.Split(',');
+
                     var constructors = type.GetConstructors();
 
+                    ConstructorInfo constructor = constructors[0];
+
+                    if (constructors.Length > 1)
+                    {
+                        foreach (var c in constructors)
+                            if (c.GetParameters().Length == paramStrings.Length)
+                                constructor = c;
+                    }
+
+                    var parameters = constructor.GetParameters();
+                    var constructorParams = new object[parameters.Length];
+                    for (int i = 0; i < parameters.Length; i++)
+                    {
+                        if (i < paramStrings.Length)
+                        {
+                            constructorParams[i] = ParseBaseType(paramStrings[i].Trim(), parameters[i].ParameterType);
+                        }
+                        else // optional parameter support
+                        {
+                            constructorParams[i] = parameters[i].DefaultValue;
+                        }
+                    }
+
+                    return constructor.Invoke(constructorParams);
                 }
 
                 // method shortcuts
@@ -205,14 +232,14 @@ namespace PENIS
                             var parameters = method.GetParameters();
 
                             string s = text.Substring(text.IndexOf('(') + 1, text.Length - text.IndexOf('(') - 2);
-                            var paramNames = s.Split(',');
+                            var paramStrings = s.Split(',');
 
                             var methodParams = new object[parameters.Length];
                             for (int i = 0; i < parameters.Length; i++)
                             {
-                                if (i < paramNames.Length)
+                                if (i < paramStrings.Length)
                                 {
-                                    methodParams[i] = ParseBaseType(paramNames[i].Trim(), parameters[i].ParameterType);
+                                    methodParams[i] = ParseBaseType(paramStrings[i].Trim(), parameters[i].ParameterType);
                                 }
                                 else // optional parameter support
                                 {
