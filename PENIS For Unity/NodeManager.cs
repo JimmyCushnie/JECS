@@ -55,6 +55,25 @@ namespace PENIS
                 node.Value = SerializeBaseType(data, type);
                 return;
             }
+            if (IsDictionary(type))
+            {
+                // my first time using dynamics!
+                Type keyType = type.GetGenericArguments()[0];
+                Type valueType = type.GetGenericArguments()[1];
+
+                dynamic genericDic = Convert.ChangeType(data, type);
+                var keys = genericDic.Keys;
+
+                foreach(var key in keys)
+                {
+                    var value = genericDic[key];
+
+                    var child = node.GetChildAddressedByName(key);
+                    SetNodeData(child, value, value.GetType());
+                }
+
+                return;
+            }
             if (IsIEnumerableType(type))
             {
                 var dataEnumerable = (IEnumerable)data;
@@ -151,6 +170,10 @@ namespace PENIS
                 }
 
                 return ArrayBoi;
+            }
+            if (IsDictionary(type))
+            {
+                throw new NotImplementedException();
             }
             if (IsIEnumerableType(type))
             {
@@ -318,6 +341,8 @@ namespace PENIS
                                     .Select(t => t.GenericTypeArguments[0]).FirstOrDefault();
             return enumType ?? type;
         }
+
+        private static bool IsDictionary(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
 
 
 
