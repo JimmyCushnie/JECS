@@ -188,6 +188,7 @@ namespace PENIS
                 if (node.Value.StartsWith("(") && node.Value.EndsWith(")"))
                 {
                     var constructors = type.GetConstructors();
+
                 }
 
                 // method shortcuts
@@ -206,23 +207,20 @@ namespace PENIS
                             string s = text.Substring(text.IndexOf('(') + 1, text.Length - text.IndexOf('(') - 2);
                             var paramNames = s.Split(',');
 
-                            var numberParams = new object[parameters.Length];
+                            var methodParams = new object[parameters.Length];
                             for (int i = 0; i < parameters.Length; i++)
                             {
                                 if (i < paramNames.Length)
                                 {
-                                    if (parameters[i].ParameterType == typeof(int))
-                                        numberParams[i] = int.Parse(paramNames[i].Trim());
-                                    else
-                                        numberParams[i] = float.Parse(paramNames[i].Trim());
+                                    methodParams[i] = ParseBaseType(paramNames[i].Trim(), parameters[i].ParameterType);
                                 }
                                 else // optional parameter support
                                 {
-                                    numberParams[i] = parameters[i].DefaultValue;
+                                    methodParams[i] = parameters[i].DefaultValue;
                                 }
                             }
 
-                            return method.Invoke(null, numberParams);
+                            return method.Invoke(null, methodParams);
                         }
                     }
                     catch { } // let it continue on because a custom shortcut might use the ( and ) characters
