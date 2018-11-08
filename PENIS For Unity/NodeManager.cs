@@ -15,6 +15,9 @@ namespace PENIS
     {
         public static void SetNodeData(Node node, object data, Type type)
         {
+            if (data == null)
+                throw new Exception("you can't serialize null");
+
             if(type == typeof(string))
             {
                 string dataAsString = (string)data;
@@ -68,7 +71,7 @@ namespace PENIS
                 {
                     var value = genericDic[key];
 
-                    var child = node.GetChildAddressedByName(key);
+                    var child = node.GetChildAddressedByName(key.ToString());
                     SetNodeData(child, value, value.GetType());
                 }
 
