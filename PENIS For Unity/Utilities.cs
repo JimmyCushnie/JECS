@@ -31,7 +31,7 @@ namespace SUCC
             }
         }
 
-        public static readonly string FileExtension = ".PENIS";
+        public static readonly string FileExtension = ".succ";
 
         static int _indentationCount = 4;
         public static int IndentationCount
