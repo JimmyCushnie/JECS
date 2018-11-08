@@ -20,10 +20,11 @@ namespace SUCC
 #if UNITY_EDITOR
                 string ProjectFolder = Directory.GetParent(Application.dataPath).FullName;
                 return Path.Combine(ProjectFolder, "Game");
-# elif UNITY_WEBGL
+#elif UNITY_WEBGL
                 return "GameData";
-#endif
+#else
                 return Directory.GetParent(Application.dataPath).FullName;
+#endif
             }
             set
             {
