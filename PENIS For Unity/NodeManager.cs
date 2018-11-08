@@ -236,7 +236,10 @@ namespace SUCC
                     {
                         foreach (var c in constructors)
                             if (c.GetParameters().Length == paramStrings.Length)
+                            {
                                 constructor = c;
+                                break;
+                            }
                     }
 
                     var parameters = constructor.GetParameters();
