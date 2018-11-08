@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-namespace PENIS
+namespace SUCC
 {
     public class DataFile
     {

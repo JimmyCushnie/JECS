@@ -4,7 +4,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace PENIS
+namespace SUCC
 {
     public static class DataConverter
     {

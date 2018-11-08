@@ -7,7 +7,7 @@ using System.Linq;
 using System.IO;
 using UnityEngine;
 
-namespace PENIS
+namespace SUCC
 {
     public class DontSaveAttribute : Attribute { }
 
