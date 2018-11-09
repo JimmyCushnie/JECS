@@ -1,6 +1,6 @@
 # Sensible Unity/C# Configuration
 
-SUCC is a tool for building configuration files files for your game. It has a simple, easy to use API, and the files it creates are easy to read and modify. SUCC is based on [PENIS](https://github.com/JimmyCushnie/PENIS), and it has all the lovely formatting that PENIS does; however, SUCC introduces some fancy tools specific to the C# language which make writing config files even nicer. This makes the SUCC language a superset of PENIS.
+SUCC is a tool for building game configuration files. The API is is simple and easy to use, and the file format it uses is easy to write, read and modify. The SUCC file format is based on [PENIS](https://github.com/JimmyCushnie/PENIS), and it has all the lovely formatting options that PENIS does; however, SUCC introduces some fancy tools specific to the C# language which make writing config files even nicer. This makes the SUCC language a superset of PENIS.
 
 Although SUCC is built for the Unity engine, it should be relatively easy to adapt for any C# project.
 
@@ -35,7 +35,7 @@ If you haven't already, you should skim the [PENIS spec](https://github.com/Jimm
 
 ### Creating a DataFile
 
-To work with SUCC data, you must first create a new `DataFile` object:
+To work with SUCC data, you must first create a `DataFile` object:
 
 ```csharp
 using UnityEngine;
@@ -73,7 +73,7 @@ private void Start()
 
 Note that we've passed *two* parameters in the `Get` method. The second item is the **Default Value**. If there does not exist a top-level key called `number` in the file, it will be created and set to the Default Value.
 
-Note also that `Get` is a generic function. When you pass it a type, that type instructs it on how to interpret the data there.
+Note also that `Get` is a generic function. When you pass it a type, that type tells SUCC how to interpret the data there.
 
 The `Set` function works similarly; you give it a key, a value, and a type by which to serialize that value.
 
@@ -120,18 +120,18 @@ The final base type is `System.Type`. SUCC uses the type's name, including names
 
 ### Collections
 
-SUCC will serialize and parse List<T>s, arrays, and HashSet<T>s according to [PENIS spec](https://github.com/JimmyCushnie/PENIS#list-lines) as long as the collection is of a supported type.
+SUCC will serialize and parse List<T>s and arrays according to [PENIS spec](https://github.com/JimmyCushnie/PENIS#list-lines) as long as the collection is of a supported type.
 
 SUCC can serialize and parse dictionaries according to [PENIS spec](https://github.com/JimmyCushnie/PENIS#key-lines) as long as the keys in the dictionary are of a base type and the values are of a supported type.
 
 ### Other Types
 
-If a type not listed above is sent to the `Get` or `Set` methods, P4U will serialize all public, non-static, read-and-write-enabled fields and properties of that type, except for those with the `[SUCC.DontSave]` attribute. For example, the `Vector3` type will have the three floats `x` `y` and `z` serialized.
+If a type not listed above is sent to the `Get` or `Set` methods, SUCC will serialize all public, non-static, read-and-write-enabled fields and properties of that type, except for those with the `[SUCC.DontSave]` attribute. For example, the `Vector3` type will have the three floats `x` `y` and `z` serialized.
 
 Shortcuts
 ---
 
-Shortcuts are the main thing that separate SUCC language from PENIS. Shortcuts are never saved by SUCC; you use them when writing config files for your game.
+Shortcuts are the main thing that separate SUCC language from PENIS. They are a way of writing data more concisely. Shortcuts are never written by SUCC, only read; you use them when writing config files manually.
 
 ### Property Shortcuts
 
@@ -223,22 +223,22 @@ Item2: Sequence(5)
 Other Useful Functions
 ---
 
-* `DataFile.ReloadAllData()` reload the data of a `DataFile` from disk
+* `DataFile.ReloadAllData()` reloads the file's data from disk
 * `DataFile.KeyExists(string key)` returns true if there exists a top-level key by that name in the file
 * `DataFile.DeleteKey(string key)` removes a top-level key and all its data from a file
 * `DataFile.GetTopLevelKeys()` returns an array of all the top level keys in a file
 * `DataFile.SaveAsObject<T>(T thing)` and `DataFile.GetAsObject<T>()` let you treat a DataFile as an object of type T, with each top level key being a field or property of that object
-* `SUCC.Utilities.DefaultPath { get; set; }` allows you to set your own default path where files are saved and loaded from if you don't like the default one.
+* `SUCC.Utilities.DefaultPath { get; set; }` allows you to set your own default path where files are saved and loaded from
 * `SUCC.Utilities.IndentationCount { get; set; }` allows you to change the default indentation of data line children
 
 Platforms
 ---
 
-Currently, SUCC supports the exact same API on Windows, Linux, Mac OS, and WebGL. Here are the differences on each platform:
+Currently, SUCC supports Windows, Linux, Mac OS, and WebGL. Here are the differences on each platform:
 
 * **Desktop (Windows, Linux, Mac OS)**: The default file path is the same folder that the game executable is in.
 * **Unity Editor**: The default file path is a folder called `Game/` which is in the same parent directory as your `Assets` folder. You'll probably want to add the `Game/` folder to your gitignore.
-* **WebGL**: On web, you don't really have access to a file system. SUCC uses [IndexedDB](https://en.wikipedia.org/wiki/Indexed_Database_API) via [PlayerPrefs](https://docs.unity3d.com/ScriptReference/PlayerPrefs.html) to store its files.
+* **WebGL**: On web, you don't really have access to a file system, so SUCC uses [IndexedDB](https://en.wikipedia.org/wiki/Indexed_Database_API) via [PlayerPrefs](https://docs.unity3d.com/ScriptReference/PlayerPrefs.html) to store its files.
 
 The Future of SUCC
 ---
@@ -246,4 +246,4 @@ The Future of SUCC
 Before 1.0 release, I want to:
 - clean up the code, in particular the parsing logic
 - add more helpful error messages when the parser encounters invalid data
-- add example scenes and code to demonstrate how SUCC is used
+- add example scenes and code to demonstrate how SUCC is used in practice
