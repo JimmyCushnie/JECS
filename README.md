@@ -226,6 +226,8 @@ Other Useful Functions
 * `DataFile.ReloadAllData()` reload the data of a `DataFile` from disk
 * `DataFile.KeyExists(string key)` returns true if there exists a top-level key by that name in the file
 * `DataFile.DeleteKey(string key)` removes a top-level key and all its data from a file
+* `DataFile.GetTopLevelKeys()` returns an array of all the top level keys in a file
+* `DataFile.SaveAsObject<T>(T thing)` and `DataFile.GetAsObject<T>()` let you treat a DataFile as an object of type T, with each top level key being a field or property of that object
 * `SUCC.Utilities.DefaultPath { get; set; }` allows you to set your own default path where files are saved and loaded from if you don't like the default one.
 * `SUCC.Utilities.IndentationCount { get; set; }` allows you to change the default indentation of data line children
 
