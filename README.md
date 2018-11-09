@@ -1,6 +1,6 @@
 # Sensible Unity/C# Configuration
 
-SUCC is a tool for building game configuration files. The API is is simple and easy to use, and the file format it uses is easy for humans to read, write and modify. The SUCC file format is based on [PENIS](https://github.com/JimmyCushnie/PENIS), and it has all the lovely formatting options that PENIS does; however, SUCC introduces some fancy tools specific to the C# language which make writing config files even nicer. This makes the SUCC language a superset of PENIS.
+SUCC is a tool for building game configuration files. The API is is simple and easy to use, and the file format it uses is easy for humans to read, write and modify. The SUCC file format is based on [PENIS](https://github.com/JimmyCushnie/PENIS), and it has all the lovely formatting options that PENIS does; however, SUCC introduces some fancy tools specific to C# which make writing config files even nicer. This makes the SUCC language a superset of PENIS.
 
 Although SUCC is built for the Unity engine, it should be relatively easy to adapt for any C# project.
 
