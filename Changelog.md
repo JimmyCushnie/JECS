@@ -1,6 +1,7 @@
 # SUCC Changelog
 
 v0.3 | 2018-11-08
+---
 
 * renamed library to SUCC, since the language is now substantially different than PENIS
 * file extension is now .succ
@@ -19,6 +20,7 @@ v0.3 | 2018-11-08
 * updated documentation
 
 v0.2 | 2018-09-26 (6cdfba4)
+---
 
 * added property shortcuts
 * added System.Type as a base type which can be serialized/parsed
@@ -28,5 +30,6 @@ v0.2 | 2018-09-26 (6cdfba4)
 * fixed being unable to parse List\<T>
 
 v0.1 | 2018-09-22 (7f763fc)
+---
 
 * Initial release
