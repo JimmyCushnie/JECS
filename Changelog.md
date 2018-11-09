@@ -11,7 +11,7 @@ v0.3 | 2018-11-08
 * improved the default file path and made it specific to different platforms
 * if trying to parse a custom type without all parameters defined, the undefined parameters will now be left at their default value. Previously, an error would be thrown.
 * added DataFile.GetTopLevelKeys()
-* added DataFile.SaveAsObject() and DataFile.GetAsObject()
+* added DataFile.SaveAsObject<T> and DataFile.GetAsObject<T>
 * added non-generic Get and Set methods to DataFile
 * DataFile.Get<T> method no longer requires a default value - if none is provided, it will use (default)T
 * added comment escape characters in compliance with PENIS spec 0.2
