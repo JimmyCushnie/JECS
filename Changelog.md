@@ -1,6 +1,6 @@
 # SUCC Changelog
 
-v0.3 | 2018-11-08
+v0.3 | 2018-11-08 (72b1aa0)
 ---
 
 * renamed library to SUCC, since the language has substantially diverged from PENIS
