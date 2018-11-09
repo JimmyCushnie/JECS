@@ -4,7 +4,7 @@ v0.3 | 2018-11-08
 ---
 
 * renamed library to SUCC, since the language is now substantially different than PENIS
-* file extension is now .succ
+* file extension of saved data is now .succ
 * added constructor shortcuts
 * added method shortcuts
 * added support for WebGL
