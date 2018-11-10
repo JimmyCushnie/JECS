@@ -53,5 +53,12 @@ namespace SUCC
             if (Path.IsPathRooted(RelativeOrAbsolutePath)) { return RelativeOrAbsolutePath; }
             return Path.Combine(DefaultPath, RelativeOrAbsolutePath);
         }
+
+        public static bool SuccFileExists(string relativeOrAbsolutePath)
+        {
+            var path = Path.ChangeExtension(relativeOrAbsolutePath, FileExtension);
+            path = AbsolutePath(relativeOrAbsolutePath);
+            return File.Exists(path);
+        }
     }
 }
