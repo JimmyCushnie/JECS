@@ -556,27 +556,24 @@ namespace SUCC
 
         private static string SerializeType(object value)
         {
-            Type h = (Type)value;
-            return h.FullName;
+            Type t = (Type)value;
+            return t.FullName;
         }
 
         private static Dictionary<string, Type> TypeCache = new Dictionary<string, Type>();
         private static object ParseType(string typeName)
         {
-            Type t;
-            if (TypeCache.TryGetValue(typeName, out t))
-            {
-                return t;
-            }
+            Type type;
+            if (TypeCache.TryGetValue(typeName, out type))
+                return type;
 
             foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
             {
-                t = a.GetType(typeName);
-                if (t != null)
-                {
-                    TypeCache.Add(typeName, t);
-                    return t;
-                }
+                type = a.GetType(typeName);
+                TypeCache.Add(typeName, type);
+
+                if (type != null)
+                    return type;
             }
 
             Debug.LogError(typeName + " is not a type!");
