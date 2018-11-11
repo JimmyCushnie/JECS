@@ -57,7 +57,7 @@ namespace SUCC
         public static bool SuccFileExists(string relativeOrAbsolutePath)
         {
             var path = Path.ChangeExtension(relativeOrAbsolutePath, FileExtension);
-            path = AbsolutePath(relativeOrAbsolutePath);
+            path = AbsolutePath(path);
             return File.Exists(path);
         }
     }
