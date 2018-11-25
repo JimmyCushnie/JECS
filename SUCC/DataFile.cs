@@ -73,10 +73,13 @@ namespace SUCC
 #endif
         }
 
+        /// <summary> gets the data as it appears in file </summary>
+        public string GetRawText() => DataConverter.PENISFromDataStructure(TopLevelLines);
+
         /// <summary> Serializes the data in this object to the file on disk. </summary>
         public void SaveAllData()
         {
-            string PENIS = DataConverter.PENISFromDataStructure(TopLevelLines);
+            string PENIS = GetRawText();
 
 #if UNITY_WEBGL
             string ExistingPENIS = PlayerPrefs.GetString(FilePath);
