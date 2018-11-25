@@ -80,6 +80,20 @@ namespace SUCC
         /// <summary> gets the data as it appears in file </summary>
         public string GetRawText() => DataConverter.PENISFromDataStructure(TopLevelLines);
 
+        /// <summary> gets the data as it appears in file, as an array of strings (one for each line) </summary>
+        public string[] GetRawLines()
+        {
+            var lines = new List<string>();
+            using (StringReader sr = new StringReader(GetRawText()))
+            {
+                string line;
+                while ((line = sr.ReadLine()) != null) // this is effectively a ForEachLine, but it is platform agnostic (since new lines are encoded differently on different OSs)
+                    lines.Add(line);
+            }
+
+            return lines.ToArray();
+        }
+
         /// <summary> Serializes the data in this object to the file on disk. </summary>
         public void SaveAllData()
         {
