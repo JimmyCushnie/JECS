@@ -11,13 +11,17 @@ namespace SUCC
         /// <summary> The absolute path of the file this object corresponds to. </summary>
         public readonly string FilePath;
 
+        /// <summary> Whether the file will automatically save changes to disk with each Get() or Set(). If false, you must call SaveAllData() manually. </summary>
+        public bool AutoSave { get; set; }
+
         /// <summary> creates a new TextFile object, which corresponds to a text file in storage and can be used for easy reference. </summary>
         /// <param name="path"> the path of the file. Can be either absolute or relative to the default path. </param>
-        public DataFile(string path, string DefaultFile = null)
+        public DataFile(string path, string DefaultFile = null, bool autoSave = false)
         {
             path = Utilities.AbsolutePath(path);
             path = Path.ChangeExtension(path, Utilities.FileExtension);
             this.FilePath = path;
+            this.AutoSave = autoSave;
 
 #if UNITY_WEBGL
             if (PlayerPrefs.GetString(path, "") == "" && DefaultFile != null)
@@ -153,6 +157,9 @@ namespace SUCC
 
             var node = TopLevelNodes[key];
             NodeManager.SetNodeData(node, value, type);
+
+            if (AutoSave)
+                SaveAllData();
         }
 
         /// <summary> returns all top level keys in the file, in order. </summary>
