@@ -99,7 +99,7 @@ namespace SUCC
         {
             string PENIS = GetRawText();
 
-#if UNITY_WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
             string ExistingPENIS = PlayerPrefs.GetString(FilePath);
 
             if (PENIS != ExistingPENIS)
