@@ -1,0 +1,11 @@
+{
+  "name": "com.jimmycushnie.succ",
+  "displayName": "SUCC",
+  "version": "0.3.70",
+  "unity": "2018.1",
+  "description": "Sensible Unity/C# Configuration",
+  "keywords": [ "config", "file", "data" ],
+  "category": "penis lmao",
+  "dependencies": {
+  }
+}
