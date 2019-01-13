@@ -57,8 +57,8 @@ namespace SUCC
             this.ReloadAllData();
         }
 
-        public List<Line> TopLevelLines { get; private set; }
-        public Dictionary<string, KeyNode> TopLevelNodes { get; private set; }
+        internal List<Line> TopLevelLines { get; private set; }
+        internal Dictionary<string, KeyNode> TopLevelNodes { get; private set; }
 
 
         /// <summary> Reloads the data stored on disk into this object. </summary>

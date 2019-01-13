@@ -52,11 +52,9 @@ namespace SUCC.Types
 
 
 
-        private static void SetArrayNode(Node node, object arrayData, Type arrayType)
+        private static void SetArrayNode(Node node, dynamic array, Type arrayType)
         {
             Type elementType = arrayType.GetElementType();
-            dynamic array = Convert.ChangeType(arrayData, arrayType);
-
             for (int i = 0; i < array.Length; i++)
                 NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), array[i], elementType);
         }
@@ -77,11 +75,9 @@ namespace SUCC.Types
         }
 
 
-        private static void SetListNode(Node node, object listData, Type listType)
+        private static void SetListNode(Node node, dynamic list, Type listType)
         {
             Type elementType = listType.GetGenericArguments()[0];
-            dynamic list = Convert.ChangeType(listData, listType);
-
             for (int i = 0; i < list.Count; i++)
                 NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), list[i], elementType);
         }
@@ -91,10 +87,10 @@ namespace SUCC.Types
             Type elementType = listType.GetGenericArguments()[0];
             dynamic list = Activator.CreateInstance(listType, node.ChildNodes.Count);
 
-            for(int i = 0; i < node.ChildNodes.Count; i++)
+            for (int i = 0; i < node.ChildNodes.Count; i++)
             {
                 ListNode child = node.GetChildAddressedByListNumber(i);
-                dynamic item = Convert.ChangeType(NodeManager.GetNodeData(child, elementType), elementType);
+                dynamic item = NodeManager.GetNodeData(child, elementType);
                 list.Add(item);
             }
 
@@ -102,13 +98,12 @@ namespace SUCC.Types
         }
 
 
-        private static void SetHashSetNode(Node node, object hashSetData, Type hashSetType)
+        private static void SetHashSetNode(Node node, dynamic hashset, Type hashSetType)
         {
             Type elementType = hashSetType.GetGenericArguments()[0];
-            dynamic hashset = Convert.ChangeType(hashSetData, hashSetType);
 
             int i = 0;
-            foreach(var item in hashset)
+            foreach (var item in hashset)
             {
                 NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), item, elementType);
                 i++;
@@ -120,10 +115,10 @@ namespace SUCC.Types
             Type elementType = hashSetType.GetGenericArguments()[0];
             dynamic hashset = Activator.CreateInstance(hashSetType); // todo: use the capacity constructor once unity can use .Net 4.7.2 - i.e. CreateInstance(hashSetType, node.ChildNodes.Count)
 
-            for(int i = 0; i < node.ChildNodes.Count; i++)
+            for (int i = 0; i < node.ChildNodes.Count; i++)
             {
                 ListNode child = node.GetChildAddressedByListNumber(i);
-                dynamic item = Convert.ChangeType(NodeManager.GetNodeData(child, elementType), elementType);
+                dynamic item = NodeManager.GetNodeData(child, elementType);
                 hashset.Add(item);
             }
 
@@ -131,13 +126,11 @@ namespace SUCC.Types
         }
 
 
-        private static void SetDictionaryNode(Node node, object dictionaryData, Type dictionaryType)
+        private static void SetDictionaryNode(Node node, dynamic dictionary, Type dictionaryType)
         {
             Type keyType = dictionaryType.GetGenericArguments()[0];
             Type valueType = dictionaryType.GetGenericArguments()[1];
-            bool keyIsBase = BaseTypes.IsBaseType(dictionaryType);
-
-            dynamic dictionary = Convert.ChangeType(dictionaryData, dictionaryType);
+            bool keyIsBase = BaseTypes.IsBaseType(keyType);
 
             if (keyIsBase)
             {
@@ -151,8 +144,10 @@ namespace SUCC.Types
             }
             else
             {
-                var array = dictionary.ToArray();
-                NodeManager.SetNodeData(node, dictionary.ToArray(), array.GetType());
+                // treat it as a KeyValuePair<keyType, valueType>[]
+                Debug.Log(keyType);
+                var array = Enumerable.ToArray(dictionary);
+                NodeManager.SetNodeData(node, array, array.GetType());
             }
         }
 
@@ -169,15 +164,15 @@ namespace SUCC.Types
                 foreach (var child in node.ChildNodes)
                 {
                     string childKey = (child as KeyNode).Key;
-                    dynamic key = Convert.ChangeType(BaseTypes.ParseBaseType(childKey, keyType), keyType);
-                    dynamic value = Convert.ChangeType(NodeManager.GetNodeData(child, valueType), valueType);
+                    dynamic key = BaseTypes.ParseBaseType(childKey, keyType);
+                    dynamic value = NodeManager.GetNodeData(child, valueType);
                     dictionary.Add(key, value);
                 }
             }
             else
             {
                 // treat it as a KeyValuePair<keyType, valueType>[]
-                dynamic array = NodeManager.GetNodeData(node, dictionary.ToArray().GetType());
+                dynamic array = NodeManager.GetNodeData(node, Enumerable.ToArray(dictionary).GetType());
                 foreach (var kvp in array)
                     dictionary.Add(kvp.Key, kvp.Value);
             }
