@@ -66,19 +66,19 @@ namespace SUCC
         {
 #if UNITY_WEBGL
             string file = PlayerPrefs.GetString(FilePath);
-            var data = DataConverter.DataStructureFromPENIS(file);
+            var data = DataConverter.DataStructureFromSUCC(file);
             TopLevelLines = data.Item1;
             TopLevelNodes = data.Item2;
 #else
             string[] lines = File.ReadAllLines(FilePath);
-            var data = DataConverter.DataStructureFromPENIS(lines);
+            var data = DataConverter.DataStructureFromSUCC(lines);
             TopLevelLines = data.Item1;
             TopLevelNodes = data.Item2;
 #endif
         }
 
         /// <summary> gets the data as it appears in file </summary>
-        public string GetRawText() => DataConverter.PENISFromDataStructure(TopLevelLines);
+        public string GetRawText() => DataConverter.SUCCFromDataStructure(TopLevelLines);
 
         /// <summary> gets the data as it appears in file, as an array of strings (one for each line) </summary>
         public string[] GetRawLines()
@@ -97,18 +97,18 @@ namespace SUCC
         /// <summary> Serializes the data in this object to the file on disk. </summary>
         public void SaveAllData()
         {
-            string PENIS = GetRawText();
+            string SUCC = GetRawText();
 
 #if UNITY_WEBGL
-            string ExistingPENIS = PlayerPrefs.GetString(FilePath);
+            string ExistingSUCC = PlayerPrefs.GetString(FilePath);
 
-            if (PENIS != ExistingPENIS)
-                PlayerPrefs.SetString(FilePath, PENIS);
+            if (SUCC != ExistingSUCC)
+                PlayerPrefs.SetString(FilePath, SUCC);
 #else
-            string ExistingPENIS = File.ReadAllText(FilePath);
+            string ExistingSUCC = File.ReadAllText(FilePath);
 
-            if(PENIS != ExistingPENIS)
-                File.WriteAllText(FilePath, PENIS);
+            if(SUCC != ExistingSUCC)
+                File.WriteAllText(FilePath, SUCC);
 #endif
         }
 
@@ -147,22 +147,22 @@ namespace SUCC
                 throw new Exception("you can't serialize null");
 
             if (value.GetType() != type)
-                throw new InvalidCastException("value is not of type " + type.Name + "!");
+                throw new InvalidCastException($"{value} is not of type {type}!");
 
             if (!KeyExists(key))
             {
                 if (string.IsNullOrEmpty(key))
-                    throw new FormatException("PENIS keys must contain at least one character");
+                    throw new FormatException("SUCC keys must contain at least one character");
                 if (key[0] == '-')
-                    throw new FormatException("PENIS keys may not begin with the character '-'");
+                    throw new FormatException("SUCC keys may not begin with the character '-'");
                 if (key.Contains(":"))
-                    throw new FormatException("PENIS keys may not contain the character ':'");
+                    throw new FormatException("SUCC keys may not contain the character ':'");
                 if (key.Contains("#"))
-                    throw new FormatException("PENIS keys may not contain the character '#'");
+                    throw new FormatException("SUCC keys may not contain the character '#'");
                 if (key.Contains("\n"))
-                    throw new FormatException("PENIS keys cannot contain a newline");
+                    throw new FormatException("SUCC keys cannot contain a newline");
                 if (key[0] == ' ' || key[key.Length - 1] == ' ')
-                    throw new FormatException("PENIS keys may not start of end with a space");
+                    throw new FormatException("SUCC keys may not start of end with a space");
 
                 var newnode = new KeyNode() { RawText = key + ':' };
                 TopLevelNodes.Add(key, newnode);

@@ -11,7 +11,7 @@ namespace SUCC
         /// <summary>
         /// Parses a string of SUCC into a data structure
         /// </summary>
-        public static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromPENIS(string input)
+        public static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string input)
         {
             var lines = new List<string>();
             // parse the input line by line
@@ -24,7 +24,7 @@ namespace SUCC
                 }
             }
 
-            return DataStructureFromPENIS(lines.ToArray());
+            return DataStructureFromSUCC(lines.ToArray());
         }
 
 
@@ -32,7 +32,7 @@ namespace SUCC
         /// <summary>
         /// Parses lines of SUCC into a data structure
         /// </summary>
-        public static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromPENIS(string[] lines) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
+        public static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string[] lines) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
         {
             var TopLevelLines = new List<Line>();
             var TopLevelNodes = new Dictionary<string, KeyNode>();
@@ -42,7 +42,7 @@ namespace SUCC
             // parse the input line by line
             foreach(var line in lines)
             {
-                if (line.Contains('\t')) { throw new FormatException("a PENIS file cannot contain tabs. Please use spaces instead."); }
+                if (line.Contains('\t')) { throw new FormatException("a SUCC file cannot contain tabs. Please use spaces instead."); }
 
                 if (DoingMultiLineString)
                 {
@@ -160,7 +160,7 @@ namespace SUCC
             return (TopLevelLines, TopLevelNodes);
         }
 
-        public static string PENISFromDataStructure(List<Line> Lines)
+        public static string SUCCFromDataStructure(List<Line> Lines)
         {
             return FUCKSHITASS(Lines).TrimEnd(Environment.NewLine.ToCharArray()); // remove all newlines at the end of the string
         }
