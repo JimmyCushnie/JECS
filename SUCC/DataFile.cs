@@ -23,7 +23,7 @@ namespace SUCC
             this.FilePath = path;
             this.AutoSave = autoSave;
 
-#if UNITY_WEBGL && !UNITY_EDITOR
+#if UNITY_WEBGL
             if (PlayerPrefs.GetString(path, "") == "" && DefaultFile != null)
             {
                 var defaultFile = Resources.Load<TextAsset>(DefaultFile);
@@ -64,7 +64,7 @@ namespace SUCC
         /// <summary> Reloads the data stored on disk into this object. </summary>
         public void ReloadAllData()
         {
-#if UNITY_WEBGL && !UNITY_EDITOR
+#if UNITY_WEBGL
             string file = PlayerPrefs.GetString(FilePath);
             var data = DataConverter.DataStructureFromPENIS(file);
             TopLevelLines = data.Item1;
@@ -99,7 +99,7 @@ namespace SUCC
         {
             string PENIS = GetRawText();
 
-#if UNITY_WEBGL && !UNITY_EDITOR
+#if UNITY_WEBGL
             string ExistingPENIS = PlayerPrefs.GetString(FilePath);
 
             if (PENIS != ExistingPENIS)

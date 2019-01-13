@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace SUCC
 {
-    public enum NodeChildrenType { none, list, key, multiLineString }
+    internal enum NodeChildrenType { none, list, key, multiLineString }
 
-    public class Line
+    internal class Line
     {
         public string RawText { get; set; }
         public int IndentationLevel { get { return DataConverter.LineIndentationLevel(RawText); } }
     }
 
-    public abstract class Node : Line
+    internal abstract class Node : Line
     {
         public abstract string Value { get; set; }
         public NodeChildrenType ChildNodeType = NodeChildrenType.none;
@@ -106,7 +106,7 @@ namespace SUCC
         }
     }
 
-    public class KeyNode : Node
+    internal class KeyNode : Node
     {
         public string Key
         {
@@ -162,7 +162,7 @@ namespace SUCC
         }
     }
 
-    public class ListNode : Node
+    internal class ListNode : Node
     {
         public override string Value
         {

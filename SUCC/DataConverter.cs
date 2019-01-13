@@ -6,12 +6,12 @@ using System.Collections.Generic;
 
 namespace SUCC
 {
-    public static class DataConverter
+    internal static class DataConverter
     {
         /// <summary>
-        /// Parses a string of PENIS into a data structure
+        /// Parses a string of SUCC into a data structure
         /// </summary>
-        public static Tuple<List<Line>, Dictionary<string, KeyNode>> DataStructureFromPENIS(string input)
+        public static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromPENIS(string input)
         {
             var lines = new List<string>();
             // parse the input line by line
@@ -30,9 +30,9 @@ namespace SUCC
 
 
         /// <summary>
-        /// Parses lines of PENIS into a data structure
+        /// Parses lines of SUCC into a data structure
         /// </summary>
-        public static Tuple<List<Line>, Dictionary<string, KeyNode>> DataStructureFromPENIS(string[] lines) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
+        public static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromPENIS(string[] lines) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
         {
             var TopLevelLines = new List<Line>();
             var TopLevelNodes = new Dictionary<string, KeyNode>();
@@ -157,7 +157,7 @@ namespace SUCC
                 }
             }
 
-            return new Tuple<List<Line>, Dictionary<string, KeyNode>>(TopLevelLines, TopLevelNodes);
+            return (TopLevelLines, TopLevelNodes);
         }
 
         public static string PENISFromDataStructure(List<Line> Lines)
