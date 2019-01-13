@@ -144,6 +144,75 @@ namespace SUCC
             return text;
         }
 
+        // support for multi-line strings
+        internal static void SerializeSpecialStringCase(string value, Node node)
+        {
+            if (value != null && value.Contains(Environment.NewLine))
+            {
+                node.Value = "\"\"\"";
+
+                node.ChildLines.Clear();
+                node.ChildNodes.Clear();
+
+                int indentation = node.IndentationLevel + Utilities.IndentationCount;
+                using (StringReader sr = new StringReader(value))
+                {
+                    string line;
+                    while ((line = sr.ReadLine()) != null) // this is effectively a ForEachLine, but it is platform agnostic (since new lines are encoded differently on different OSs)
+                    {
+                        string text = new string(' ', indentation) + SerializeString(line);
+                        text = text.Replace("#", "\\#"); // good god this code is a fucking mess
+                        Line newline = new Line() { RawText = text };
+                        node.ChildLines.Add(newline);
+                    }
+                }
+
+                string endtext = new string(' ', indentation) + "\"\"\"";
+                Line endline = new Line() { RawText = endtext };
+                node.ChildLines.Add(endline);
+                return;
+            }
+            else
+            {
+                node.ChildLines.Clear();
+                node.ChildNodes.Clear();
+                node.Value = SerializeString(value);
+            }
+        }
+        internal static string ParseSpecialStringCase(Node node)
+        {
+            string text = string.Empty;
+
+            foreach (var line in node.ChildLines)
+            {
+                var lineText = line.RawText;
+
+                // remove everything after the comment indicator, unless it's preceded by a \
+
+                int PoundSignIndex = lineText.IndexOf('#');
+
+                while (PoundSignIndex > 0 && text[PoundSignIndex - 1] == '\\')
+                    PoundSignIndex = text.IndexOf('#', PoundSignIndex + 1);
+
+                if (PoundSignIndex > 0)
+                    lineText = lineText.Substring(0, PoundSignIndex - 1);
+
+                lineText = lineText.Trim();
+
+                if (lineText == "\"\"\"")
+                {
+                    break;
+                }
+
+                lineText = (string)ParseString(lineText); // to remove quotations
+
+                text += lineText;
+                text += Environment.NewLine;
+            }
+
+            return text.TrimEnd(Environment.NewLine.ToCharArray()); // remove all newlines at the end of the string
+        }
+
         private static readonly object[] DoublePrecision = new object[] { "0.#####################################################################################################################################################################################################################################################################################################################################" };
         private static string SerializeFloat(object value) // this method makes sure that maximum precision is used without going to scientific notation
         {
