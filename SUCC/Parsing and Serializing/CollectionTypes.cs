@@ -67,7 +67,7 @@ namespace SUCC.Types
             for (int i = 0; i < node.ChildNodes.Count; i++)
             {
                 ListNode child = node.GetChildAddressedByListNumber(i);
-                object element = NodeManager.GetNodeData(node, elementType);
+                object element = NodeManager.GetNodeData(child, elementType);
                 array.SetValue(element, i);
             }
 
@@ -145,7 +145,6 @@ namespace SUCC.Types
             else
             {
                 // treat it as a KeyValuePair<keyType, valueType>[]
-                Debug.Log(keyType);
                 var array = Enumerable.ToArray(dictionary);
                 NodeManager.SetNodeData(node, array, array.GetType());
             }

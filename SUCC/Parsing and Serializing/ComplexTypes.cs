@@ -16,8 +16,8 @@ namespace SUCC.Types
             var fields = type.GetFields();
             foreach (var f in fields)
             {
-                if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) { continue; }
-                if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) { continue; }
+                if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) continue;
+                if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
 
                 var child = node.GetChildAddressedByName(f.Name);
                 NodeManager.SetNodeData(child, f.GetValue(item), f.FieldType);
@@ -26,11 +26,12 @@ namespace SUCC.Types
             var properties = type.GetProperties();
             foreach (var p in properties)
             {
-                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) { continue; }
-                if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) { continue; }
+                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
+                if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
 
                 var child = node.GetChildAddressedByName(p.Name);
                 NodeManager.SetNodeData(child, p.GetValue(item), p.PropertyType);
+
             }
         }
 
@@ -41,10 +42,10 @@ namespace SUCC.Types
             var fields = type.GetFields();
             foreach (var f in fields)
             {
-                if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) { continue; }
-                if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) { continue; }
+                if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) continue;
+                if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
 
-                if (!node.ContainsChildNode(f.Name)) { continue; }
+                if (!node.ContainsChildNode(f.Name)) continue;
 
                 var child = node.GetChildAddressedByName(f.Name);
                 object data = NodeManager.GetNodeData(child, f.FieldType);
@@ -54,10 +55,10 @@ namespace SUCC.Types
             var properties = type.GetProperties();
             foreach (var p in properties)
             {
-                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) { continue; }
-                if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) { continue; }
+                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
+                if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
 
-                if (!node.ContainsChildNode(p.Name)) { continue; }
+                if (!node.ContainsChildNode(p.Name)) continue;
 
                 var child = node.GetChildAddressedByName(p.Name);
                 object data = NodeManager.GetNodeData(child, p.PropertyType);

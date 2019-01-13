@@ -10,8 +10,6 @@ using SUCC.Types;
 
 namespace SUCC
 {
-    public class DontSaveAttribute : Attribute { }
-
     internal static class NodeManager
     {
         internal static void SetNodeData(Node node, object data, Type type)
