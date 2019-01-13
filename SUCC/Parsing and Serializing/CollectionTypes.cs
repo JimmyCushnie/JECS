@@ -144,8 +144,8 @@ namespace SUCC.Types
             }
             else
             {
-                // treat it as a KeyValuePair<keyType, valueType>[]
-                var array = Enumerable.ToArray(dictionary);
+                // treat it as a WritableKeyValuePair<keyType, valueType>[]
+                var array = GetWritableKeyValuePairArray(dictionary);
                 NodeManager.SetNodeData(node, array, array.GetType());
             }
         }
@@ -170,13 +170,37 @@ namespace SUCC.Types
             }
             else
             {
-                // treat it as a KeyValuePair<keyType, valueType>[]
-                dynamic array = NodeManager.GetNodeData(node, Enumerable.ToArray(dictionary).GetType());
+                // treat it as a WritableKeyValuePair<keyType, valueType>[]
+                var type = GetWritableKeyValuePairArray(dictionary).GetType();
+                dynamic array = NodeManager.GetNodeData(node, type);
                 foreach (var kvp in array)
                     dictionary.Add(kvp.Key, kvp.Value);
             }
 
             return dictionary;
+        }
+
+        private static WritableKeyValuePair<TKey, TValue>[] GetWritableKeyValuePairArray<TKey, TValue>(Dictionary<TKey, TValue> boi)
+        {
+            var unwritable = Enumerable.ToArray(boi);
+            var writable = new WritableKeyValuePair<TKey, TValue>[unwritable.Length];
+
+            for(int i = 0; i < unwritable.Length; i++)
+                writable[i] = new WritableKeyValuePair<TKey, TValue>(unwritable[i].Key, unwritable[i].Value);
+
+            return writable;
+        }
+
+        private struct WritableKeyValuePair<TKey, TValue>
+        {
+            public WritableKeyValuePair(TKey key, TValue value)
+            {
+                Key = key;
+                Value = value;
+            }
+
+            public TKey Key { get; set; }
+            public TValue Value { get; set; }
         }
     }
 }
