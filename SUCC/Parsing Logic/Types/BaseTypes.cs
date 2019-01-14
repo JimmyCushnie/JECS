@@ -51,6 +51,9 @@ namespace SUCC
             throw new Exception($"Cannot serialize base type {type} - are you sure it is a base type?");
         }
 
+        internal static T ParseBaseType<T>(string text)
+            => (T)ParseBaseType(text, typeof(T));
+
         internal static object ParseBaseType(string text, Type type)
         {
             try

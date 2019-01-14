@@ -30,22 +30,29 @@ namespace SUCC
             ComplexTypes.SetComplexNode(node, data, type);
         }
 
-
+        internal static T GetNodeData<T>(Node node) => (T)GetNodeData(node, typeof(T));
         internal static object GetNodeData(Node node, Type type)
         {
-            if (type == typeof(string) && node.Value == "\"\"\"" && node.ChildLines.Count > 0)
-                return BaseTypes.ParseSpecialStringCase(node);
+            try
+            {
+                if (type == typeof(string) && node.Value == "\"\"\"" && node.ChildLines.Count > 0)
+                    return BaseTypes.ParseSpecialStringCase(node);
 
-            if (BaseTypes.IsBaseType(type))
-                return BaseTypes.ParseBaseType(node.Value, type);
+                if (BaseTypes.IsBaseType(type))
+                    return BaseTypes.ParseBaseType(node.Value, type);
 
-            var collection = CollectionTypes.TryGetCollection(node, type);
-            if (collection != null) return collection;
+                var collection = CollectionTypes.TryGetCollection(node, type);
+                if (collection != null) return collection;
 
-            if (!String.IsNullOrEmpty(node.Value))
-                return ComplexTypeShortcuts.GetFromShortcut(node.Value, type);
+                if (!String.IsNullOrEmpty(node.Value))
+                    return ComplexTypeShortcuts.GetFromShortcut(node.Value, type);
 
-            return ComplexTypes.RetrieveComplexType(node, type);
+                return ComplexTypes.RetrieveComplexType(node, type);
+            }
+            catch(Exception e)
+            {
+                throw new Exception($"Error getting data of type {type} from node: {e.Message}");
+            }
         }
     }
 }
