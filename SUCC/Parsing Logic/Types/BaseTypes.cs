@@ -53,12 +53,16 @@ namespace SUCC
 
         internal static object ParseBaseType(string text, Type type)
         {
-            ParseMethod method;
-            if (BaseParseMethods.TryGetValue(type, out method))
-                return method(text);
+            try
+            {
+                ParseMethod method;
+                if (BaseParseMethods.TryGetValue(type, out method))
+                    return method(text);
 
-            if (type.IsEnum)
-                return ParseEnum(text, type);
+                if (type.IsEnum)
+                    return ParseEnum(text, type);
+            }
+            catch { throw new Exception($"Error parsing text {text} as type {type}"); }
 
             throw new Exception($"Cannot parse base type {type} - are you sure it is a base type?");
         }
