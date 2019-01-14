@@ -94,7 +94,7 @@ namespace SUCC
                 if (key.Contains("\n"))
                     throw new FormatException("SUCC keys cannot contain a newline");
                 if (key[0] == ' ' || key[key.Length - 1] == ' ')
-                    throw new FormatException("SUCC keys may not start of end with a space");
+                    throw new FormatException("SUCC keys may not start or end with a space");
 
                 var newnode = new KeyNode() { RawText = key + ':' };
                 TopLevelNodes.Add(key, newnode);
