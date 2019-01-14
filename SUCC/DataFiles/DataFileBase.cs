@@ -125,7 +125,6 @@ namespace SUCC
         /// Interpret this file as an object of type T, using that type's fields and properties as top-level keys.
         /// </summary>
         public T GetAsObject<T>() => (T)GetAsObject(typeof(T));
-
         private object GetAsObject(Type type)
         {
             object returnThis = Activator.CreateInstance(type);
