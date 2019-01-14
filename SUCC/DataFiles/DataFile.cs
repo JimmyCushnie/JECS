@@ -125,14 +125,13 @@ namespace SUCC
         /// Save this file as an object of type T, using that type's fields and properties as top-level keys.
         /// </summary>
         public void SaveAsObject<T>(T savethis) => SaveAsObject(typeof(T), savethis);
-
         private void SaveAsObject(Type type, object savethis)
         {
             var fields = type.GetFields();
             foreach (var f in fields)
             {
-                if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) { continue; }
-                if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) { continue; }
+                if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) continue;
+                if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
 
                 Set(f.FieldType, f.Name, f.GetValue(savethis));
             }
@@ -140,8 +139,8 @@ namespace SUCC
             var properties = type.GetProperties();
             foreach (var p in properties)
             {
-                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) { continue; }
-                if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) { continue; }
+                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
+                if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
 
                 Set(p.PropertyType, p.Name, p.GetValue(savethis));
             }
@@ -153,9 +152,18 @@ namespace SUCC
         /// Save this file as a dictionary, using the dictionary's keys as top-level keys in the file.
         /// </summary>
         /// <remarks> TKey must be a Base Type </remarks>
-        public void SaveAsDictionary<TKey, TValue>(IDictionary<TKey, TValue> savethis)
+        public void SaveAsDictionary<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
         {
-            throw new NotImplementedException();
+            if (!BaseTypes.IsBaseType(typeof(TKey)))
+                throw new Exception("When using GetAsDictionary, TKey must be a base type");
+
+            foreach(var key in dictionary.Keys)
+            {
+                var keyText = BaseTypes.SerializeBaseType(key);
+                Set(keyText, dictionary[key]);
+            }
+
+            SaveAllData();
         }
     }
 }

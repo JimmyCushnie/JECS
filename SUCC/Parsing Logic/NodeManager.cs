@@ -12,6 +12,7 @@ namespace SUCC
 {
     internal static class NodeManager
     {
+        internal static void SetNodeData<T>(Node node, T data) => SetNodeData(node, data, typeof(T));
         internal static void SetNodeData(Node node, object data, Type type)
         {
             if (data == null)

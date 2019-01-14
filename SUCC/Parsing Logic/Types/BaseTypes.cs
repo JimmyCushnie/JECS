@@ -39,6 +39,7 @@ namespace SUCC
             BaseParseMethods.Add(type, parseMethod);
         }
 
+        internal static string SerializeBaseType<T>(T thing) => SerializeBaseType(thing, typeof(T));
         internal static string SerializeBaseType(object thing, Type type)
         {
             SerializeMethod method;
@@ -51,9 +52,7 @@ namespace SUCC
             throw new Exception($"Cannot serialize base type {type} - are you sure it is a base type?");
         }
 
-        internal static T ParseBaseType<T>(string text)
-            => (T)ParseBaseType(text, typeof(T));
-
+        internal static T ParseBaseType<T>(string text) => (T)ParseBaseType(text, typeof(T));
         internal static object ParseBaseType(string text, Type type)
         {
             try

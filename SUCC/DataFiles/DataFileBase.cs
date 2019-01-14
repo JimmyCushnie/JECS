@@ -159,7 +159,20 @@ namespace SUCC
         /// <remarks> TKey must be a Base Type </remarks>
         public Dictionary<TKey, TValue> GetAsDictionary<TKey, TValue>()
         {
-            throw new NotImplementedException();
+            if (!BaseTypes.IsBaseType(typeof(TKey)))
+                throw new Exception("When using GetAsDictionary, TKey must be a base type");
+
+            var keys = GetTopLevelKeys();
+            var dictionary = new Dictionary<TKey, TValue>(capacity: keys.Length);
+
+            foreach (var keyText in keys)
+            {
+                TKey key = BaseTypes.ParseBaseType<TKey>(keyText);
+                TValue value = NodeManager.GetNodeData<TValue>(TopLevelNodes[keyText]);
+                dictionary.Add(key, value);
+            }
+
+            return dictionary;
         }
     }
 }
