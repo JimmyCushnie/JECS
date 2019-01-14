@@ -70,19 +70,19 @@ namespace SUCC
 
             // integer types
             [typeof(int)] = SerializeInt,
-            [typeof(decimal)] = SerializeInt,
+            [typeof(decimal)] = SerializeInt, // decimals aren't actually ints, but they use the same serialize method as them
             [typeof(long)] = SerializeInt,
             [typeof(short)] = SerializeInt,
             [typeof(uint)] = SerializeInt,
             [typeof(ulong)] = SerializeInt,
             [typeof(ushort)] = SerializeInt,
+            [typeof(byte)] = SerializeInt,
+            [typeof(sbyte)] = SerializeInt,
 
             // floating point types
             [typeof(float)] = SerializeFloat,
             [typeof(double)] = SerializeFloat,
 
-            [typeof(byte)] = SerializeInt,
-            [typeof(sbyte)] = SerializeInt,
 
             [typeof(bool)] = SerializeBool,
             [typeof(DateTime)] = SerializeDateTime,
