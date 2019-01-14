@@ -17,11 +17,9 @@ namespace SUCC
             if (data == null)
                 throw new Exception("you can't serialize null");
 
-            if (type == typeof(string))
-            {
-                string dataAsString = (string)data;
+            string dataAsString = data as string;
+            if (type == typeof(string) && dataAsString.Contains(Environment.NewLine))
                 BaseTypes.SerializeSpecialStringCase(dataAsString, node);
-            }
 
             else if (BaseTypes.IsBaseType(type))
                 node.Value = BaseTypes.SerializeBaseType(data, type);
