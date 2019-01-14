@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace SUCC
 {
-    public class DataFile
+    public class DataFile : DataFileBase
     {
         /// <summary> The absolute path of the file this object corresponds to. </summary>
         public readonly string FilePath;
