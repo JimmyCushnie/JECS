@@ -3,31 +3,37 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System;
 
 namespace SUCC
 {
     public static class Utilities
     {
-        private static string _DefaultPath = null;
-
         /// <summary>
         /// For the built game, this refers to the same folder that the executable is in. In the editor, it refers to [project folder]/Game. You can change it if you like.
         /// </summary>
+        private static string _DefaultPath = GetDefaultDefaultPath();
         public static string DefaultPath
         {
-            set => _DefaultPath = value;
-            get
+            get => _DefaultPath;
+            set
             {
-                if (_DefaultPath != null) return _DefaultPath;
-#if UNITY_EDITOR
-                string ProjectFolder = Directory.GetParent(Application.dataPath).FullName;
-                return Path.Combine(ProjectFolder, "Game");
-#elif UNITY_WEBGL
-                return "GameData";
-#else
-                return Directory.GetParent(Application.dataPath).FullName;
-#endif
+                if (@Path.IsPathRooted(value))
+                    throw new Exception($"When setting a custom default path, you must set an absolute path. The path {value} is not absolute.");
+                _DefaultPath = value;
             }
+        }
+
+        private static string GetDefaultDefaultPath()
+        {
+#if UNITY_EDITOR
+            string ProjectFolder = Directory.GetParent(Application.dataPath).FullName;
+            return Path.Combine(ProjectFolder, "Game");
+#elif UNITY_WEBGL
+            return "GameData";
+#else
+            return Directory.GetParent(Application.dataPath).FullName;
+#endif
         }
 
         public static readonly string FileExtension = ".succ";
