@@ -9,8 +9,15 @@ namespace SUCC
     public class DataFile : DataFileBase
     {
         /// <summary> Whether the file will automatically save changes to disk with each Get() or Set(). If false, you must call SaveAllData() manually. </summary>
+        /// <remarks> Be careful with this. You do not want to accidentally be writing to a user's disk at 1000MB/s for 3 hours. </remarks>
         public bool AutoSave { get; set; }
 
+        /// <summary>
+        /// Creates a new DataFile object corresponding to a SUCC file in system storage.
+        /// </summary>
+        /// <param name="path"> the path of the file. Can be either absolute or relative to the default path. </param>
+        /// <param name="defaultFile"> optionally, if there isn't a file at the path, one can be created from a file in the Resources folder. </param>
+        /// <param name="autoSave"> if true, the file will automatically save changes to disk with each Get() or Set(). Otherwise, you must call SaveAllData() manually. </param>
         public DataFile(string path, string defaultFile = null, bool autoSave = false) : base(path, defaultFile)
         {
             AutoSave = autoSave;
@@ -114,18 +121,13 @@ namespace SUCC
             TopLevelLines.Remove(node);
         }
 
+        /// <summary>
+        /// Save this file as an object of type T, using that type's fields and properties as top-level keys.
+        /// </summary>
+        public void SaveAsObject<T>(T savethis) => SaveAsObject(typeof(T), savethis);
 
-        public void SaveAsObject<T>(T savethis)
+        private void SaveAsObject(Type type, object savethis)
         {
-            Type type = typeof(T);
-            SaveAsObject(type, savethis);
-        }
-
-        public void SaveAsObject(Type type, object savethis)
-        {
-            if (savethis.GetType() != type)
-                throw new InvalidOperationException("The type passed to SaveAsObject must match the type of the savethis object");
-
             var fields = type.GetFields();
             foreach (var f in fields)
             {
@@ -147,7 +149,11 @@ namespace SUCC
             SaveAllData();
         }
 
-        public void SaveAsDictionary<TKey, TValue>()
+        /// <summary>
+        /// Save this file as a dictionary, using the dictionary's keys as top-level keys in the file.
+        /// </summary>
+        /// <remarks> TKey must be a Base Type </remarks>
+        public void SaveAsDictionary<TKey, TValue>(IDictionary<TKey, TValue> savethis)
         {
             throw new NotImplementedException();
         }

@@ -11,11 +11,6 @@ namespace SUCC
         /// <summary> The absolute path of the file this object corresponds to. </summary>
         public readonly string FilePath;
 
-        /// <summary>
-        /// Creates a new DataFile object corresponding to a SUCC file in system storage.
-        /// </summary>
-        /// <param name="path"> The path of the file. Can be either absolute or relative to the default path. </param>
-        /// <param name="defaultFile"> Optionally, if there isn't a file at the path, one can be created from a file in the Resources folder. </param>
         public DataFileBase(string path, string defaultFile = null)
         {
             path = Utilities.AbsolutePath(path);
@@ -121,11 +116,14 @@ namespace SUCC
             return TopLevelNodes.ContainsKey(key);
         }
 
-        // this is virual so that derived classes can give it different xml documentation
+        // Get<T> is virual so that derived classes can give it different xml documentation
         public virtual T Get<T>(string key, T defaultValue) => (T)Get(typeof(T), key, defaultValue);
         public abstract object Get(Type type, string key, object defaultValue);
 
 
+        /// <summary>
+        /// Interpret this file as an object of type T, using that type's fields and properties as top-level keys.
+        /// </summary>
         public T GetAsObject<T>() => (T)GetAsObject(typeof(T));
 
         private object GetAsObject(Type type)
@@ -155,6 +153,10 @@ namespace SUCC
             return returnThis;
         }
 
+        /// <summary>
+        /// Interpret this file as a dictionary. Top-level keys in the file are interpreted as keys in the dictionary.
+        /// </summary>
+        /// <remarks> TKey must be a Base Type </remarks>
         public Dictionary<TKey, TValue> GetAsDictionary<TKey, TValue>()
         {
             throw new NotImplementedException();
