@@ -4,6 +4,8 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
+using static SUCC.Utilities;
+
 namespace SUCC
 {
     internal static class DataConverter
@@ -11,7 +13,7 @@ namespace SUCC
         /// <summary>
         /// Parses a string of SUCC into a data structure
         /// </summary>
-        public static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string input)
+        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string input)
         {
             var lines = new List<string>();
             // parse the input line by line
@@ -27,12 +29,10 @@ namespace SUCC
             return DataStructureFromSUCC(lines.ToArray());
         }
 
-
-
         /// <summary>
         /// Parses lines of SUCC into a data structure
         /// </summary>
-        public static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string[] lines) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
+        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string[] lines) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
         {
             var TopLevelLines = new List<Line>();
             var TopLevelNodes = new Dictionary<string, KeyNode>();
@@ -42,7 +42,7 @@ namespace SUCC
             // parse the input line by line
             foreach(var line in lines)
             {
-                if (line.Contains('\t')) { throw new FormatException("a SUCC file cannot contain tabs. Please use spaces instead."); }
+                if (line.Contains('\t')) throw new FormatException("a SUCC file cannot contain tabs. Please use spaces instead.");
 
                 if (DoingMultiLineString)
                 {
@@ -58,7 +58,7 @@ namespace SUCC
                     if (PoundSignIndex > 0)
                         text = text.Substring(0, PoundSignIndex - 1);
 
-                    if(text.Trim() == "\"\"\"")
+                    if (text.Trim() == "\"\"\"")
                     {
                         DoingMultiLineString = false;
                         NestingNodeStack.Pop();
@@ -160,39 +160,34 @@ namespace SUCC
             return (TopLevelLines, TopLevelNodes);
         }
 
-        public static string SUCCFromDataStructure(List<Line> Lines)
+        public static string SUCCFromDataStructure(List<Line> lines)
         {
-            return FUCKSHITASS(Lines).TrimEnd(Environment.NewLine.ToCharArray()); // remove all newlines at the end of the string
-        }
-        private static string FUCKSHITASS(List<Line> Lines)
-        {
-            string output = string.Empty;
-            for(int i = 0; i < Lines.Count; i++)
+            return RecursivelySerializeLines(lines).TrimEnd(Environment.NewLine.ToCharArray()); // remove all newlines at the end of the string
+
+            string RecursivelySerializeLines(List<Line> Lines)
             {
-                output += Lines[i].RawText;
-                output += Environment.NewLine;
-
-                if (Lines[i] is Node)
+                string output = string.Empty;
+                for (int i = 0; i < Lines.Count; i++)
                 {
-                    Node heck = (Node)Lines[i];
-                    output += FUCKSHITASS(heck.ChildLines);
-                }   
+                    output += Lines[i].RawText;
+                    output += Environment.NewLine;
+
+                    if (Lines[i] is Node)
+                    {
+                        Node heck = (Node)Lines[i];
+                        output += RecursivelySerializeLines(heck.ChildLines);
+                    }
+                }
+
+                return output;
             }
-
-            return output;
         }
-
-
 
 
         private static bool LineHasData(string line)
         {
             line = line.Trim();
             return line.Length != 0 && line[0] != '#';
-        }
-        public static int LineIndentationLevel(string line)
-        {
-            return line.TakeWhile(c => c == ' ').Count(); // the number of spaces in line that precede the first non-space character
         }
 
         private enum DataLineType { none, key, list }
@@ -204,10 +199,10 @@ namespace SUCC
                 line = line.Substring(0, PoundSignIndex - 1);
 
             line = line.Trim();
-            if (line.Length == 0) { return DataLineType.none; }
-            if (line[0] == '#') { return DataLineType.none; }
-            if (line[0] == '-') { return DataLineType.list; }
-            if (line.Contains(':')) { return DataLineType.key; }
+            if (line.Length == 0) return DataLineType.none;
+            if (line[0] == '#') return DataLineType.none;
+            if (line[0] == '-') return DataLineType.list;
+            if (line.Contains(':')) return DataLineType.key;
 
             return DataLineType.none;
         }

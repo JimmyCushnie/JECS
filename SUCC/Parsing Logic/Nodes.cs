@@ -8,7 +8,7 @@ namespace SUCC
     internal class Line
     {
         public string RawText { get; set; }
-        public int IndentationLevel { get { return DataConverter.LineIndentationLevel(RawText); } }
+        public int IndentationLevel => Utilities.LineIndentationLevel(RawText);
     }
 
     internal abstract class Node : Line
@@ -24,12 +24,12 @@ namespace SUCC
             foreach (var node in ChildNodes)
             {
                 var keynode = node as KeyNode;
-                if (keynode.Key == name) { return keynode; }
+                if (keynode.Key == name) return keynode;
             }
 
             int indentation = 0;
-            if (ChildNodes.Count > 0) { indentation = ChildNodes[0].IndentationLevel; }
-            if (indentation <= IndentationLevel) { indentation = IndentationLevel + Utilities.IndentationCount; }
+            if (ChildNodes.Count > 0) indentation = ChildNodes[0].IndentationLevel;
+            if (indentation <= IndentationLevel) indentation = IndentationLevel + Utilities.IndentationCount;
 
             var newnode = new KeyNode();
             newnode.RawText = new string(' ', indentation) + name + ':';
@@ -43,7 +43,7 @@ namespace SUCC
             foreach (var node in ChildNodes)
             {
                 var keynode = node as KeyNode;
-                if (keynode.Key == key) { return true; }
+                if (keynode.Key == key) return true;
             }
             return false;
         }
@@ -51,8 +51,8 @@ namespace SUCC
         public ListNode GetChildAddressedByListNumber(int number)
         {
             int indentation = 0;
-            if (ChildNodes.Count > 0) { indentation = ChildNodes[0].IndentationLevel; }
-            if (indentation <= IndentationLevel) { indentation = IndentationLevel + Utilities.IndentationCount; }
+            if (ChildNodes.Count > 0) indentation = ChildNodes[0].IndentationLevel;
+            if (indentation <= IndentationLevel) indentation = IndentationLevel + Utilities.IndentationCount;
 
             for (int i = ChildNodes.Count; i <= number; i++)
             {
@@ -76,13 +76,8 @@ namespace SUCC
             RawText = RawText.Replace("#", "\\#");
         }
 
-        protected int DataStartIndex
-        {
-            get
-            {
-                return IndentationLevel;
-            }
-        }
+        protected int DataStartIndex => IndentationLevel;
+
         protected int DataEndIndex
         {
             get
@@ -148,7 +143,7 @@ namespace SUCC
                     throw new FormatException("Key node comprised of the following text: " + RawText + " did not contain the character ':'");
 
                 string aftercolon = text.Substring(ColonIndex + 1);
-                int spaces = DataConverter.LineIndentationLevel(aftercolon);
+                int spaces = Utilities.LineIndentationLevel(aftercolon);
 
                 if(spaces == 0)
                 {
