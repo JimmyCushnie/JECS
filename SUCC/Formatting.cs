@@ -7,6 +7,6 @@ namespace SUCC
 {
     public static class Formatting
     {
-        
+        // todo
     }
 }

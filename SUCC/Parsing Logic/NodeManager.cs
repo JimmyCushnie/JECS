@@ -45,7 +45,7 @@ namespace SUCC
             if (collection != null) return collection;
 
             if (!String.IsNullOrEmpty(node.Value))
-                ComplexTypeShortcuts.GetFromShortcut(node.Value, type);
+                return ComplexTypeShortcuts.GetFromShortcut(node.Value, type);
 
             return ComplexTypes.RetrieveComplexType(node, type);
         }
