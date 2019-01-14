@@ -8,6 +8,15 @@ namespace SUCC
 {
     public class ReadOnlyDataFile : DataFileBase
     {
-        // todo
+        public ReadOnlyDataFile(string path, string defaultFile = null) : base(path, defaultFile) { }
+
+        public override T Get<T>(string key, T defaultValue = default) => base.Get(key, defaultValue);
+        public override object Get(Type type, string key, object defaultValue)
+        {
+            if (!KeyExists(key)) return defaultValue;
+
+            var node = TopLevelNodes[key];
+            return NodeManager.GetNodeData(node, type);
+        }
     }
 }

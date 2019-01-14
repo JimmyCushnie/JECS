@@ -8,90 +8,12 @@ namespace SUCC
 {
     public class DataFile : DataFileBase
     {
-        /// <summary> The absolute path of the file this object corresponds to. </summary>
-        public readonly string FilePath;
-
         /// <summary> Whether the file will automatically save changes to disk with each Get() or Set(). If false, you must call SaveAllData() manually. </summary>
         public bool AutoSave { get; set; }
 
-        /// <summary> creates a new TextFile object, which corresponds to a text file in storage and can be used for easy reference. </summary>
-        /// <param name="path"> the path of the file. Can be either absolute or relative to the default path. </param>
-        public DataFile(string path, string DefaultFile = null, bool autoSave = false)
+        public DataFile(string path, string defaultFile = null, bool autoSave = false) : base(path, defaultFile)
         {
-            path = Utilities.AbsolutePath(path);
-            path = Path.ChangeExtension(path, Utilities.FileExtension);
-            this.FilePath = path;
-            this.AutoSave = autoSave;
-
-#if UNITY_WEBGL
-            if (PlayerPrefs.GetString(path, "") == "" && DefaultFile != null)
-            {
-                var defaultFile = Resources.Load<TextAsset>(DefaultFile);
-                if (defaultFile == null)
-                    throw new Exception("The default file you specified doesn't exist in Resources :(");
-
-                PlayerPrefs.SetString(path, defaultFile.text);
-                Resources.UnloadAsset(defaultFile);
-            }
-#else
-            Directory.CreateDirectory(Path.GetDirectoryName(path));
-
-            if (!File.Exists(path))
-            {
-                if (DefaultFile != null)
-                {
-                    var defaultFile = Resources.Load<TextAsset>(DefaultFile);
-                    if (defaultFile == null)
-                        throw new Exception("The default file you specified doesn't exist in Resources :(");
-
-                    File.WriteAllBytes(path, defaultFile.bytes);
-                    Resources.UnloadAsset(defaultFile);
-                }
-                else
-                {
-                    File.Create(path).Close();
-                }
-            }
-#endif
-
-            this.ReloadAllData();
-        }
-
-        internal List<Line> TopLevelLines { get; private set; }
-        internal Dictionary<string, KeyNode> TopLevelNodes { get; private set; }
-
-
-        /// <summary> Reloads the data stored on disk into this object. </summary>
-        public void ReloadAllData()
-        {
-#if UNITY_WEBGL
-            string file = PlayerPrefs.GetString(FilePath);
-            var data = DataConverter.DataStructureFromSUCC(file);
-            TopLevelLines = data.Item1;
-            TopLevelNodes = data.Item2;
-#else
-            string[] lines = File.ReadAllLines(FilePath);
-            var data = DataConverter.DataStructureFromSUCC(lines);
-            TopLevelLines = data.Item1;
-            TopLevelNodes = data.Item2;
-#endif
-        }
-
-        /// <summary> gets the data as it appears in file </summary>
-        public string GetRawText() => DataConverter.SUCCFromDataStructure(TopLevelLines);
-
-        /// <summary> gets the data as it appears in file, as an array of strings (one for each line) </summary>
-        public string[] GetRawLines()
-        {
-            var lines = new List<string>();
-            using (StringReader sr = new StringReader(GetRawText()))
-            {
-                string line;
-                while ((line = sr.ReadLine()) != null) // this is effectively a ForEachLine, but it is platform agnostic (since new lines are encoded differently on different OSs)
-                    lines.Add(line);
-            }
-
-            return lines.ToArray();
+            AutoSave = autoSave;
         }
 
         /// <summary> Serializes the data in this object to the file on disk. </summary>
@@ -99,29 +21,32 @@ namespace SUCC
         {
             string SUCC = GetRawText();
 
-#if UNITY_WEBGL
-            string ExistingSUCC = PlayerPrefs.GetString(FilePath);
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+            {
+                string ExistingSUCC = PlayerPrefs.GetString(FilePath);
 
-            if (SUCC != ExistingSUCC)
-                PlayerPrefs.SetString(FilePath, SUCC);
-#else
-            string ExistingSUCC = File.ReadAllText(FilePath);
+                if (SUCC != ExistingSUCC)
+                    PlayerPrefs.SetString(FilePath, SUCC);
+            }
+            else
+            {
+                string ExistingSUCC = File.ReadAllText(FilePath);
 
-            if(SUCC != ExistingSUCC)
-                File.WriteAllText(FilePath, SUCC);
-#endif
+                if (SUCC != ExistingSUCC)
+                    File.WriteAllText(FilePath, SUCC);
+            }
         }
 
 
-        /// <summary> get some data from the file, saving a new value if the data does not exist </summary>
+        /// <summary> Get some data from the file, saving a new value if the data does not exist </summary>
+        /// <param name="key"> what the data is labeled as within the file </param>
+        /// <param name="defaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
+        public override T Get<T>(string key, T defaultValue = default) => base.Get(key, defaultValue);
+
+        /// <summary> Non-generic version of Get. You probably want to use the other one. </summary>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="DefaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
-        public T Get<T>(string key, T DefaultValue = default(T))
-        {
-            return (T)Get(typeof(T), key, DefaultValue);
-        }
-
-        public object Get(Type type, string key, object DefaultValue)
+        public override object Get(Type type, string key, object DefaultValue)
         {
             if (!KeyExists(key))
             {
@@ -133,14 +58,14 @@ namespace SUCC
             return NodeManager.GetNodeData(node, type);
         }
 
-        /// <summary> save data to the file </summary>
+        /// <summary> Save data to the file </summary>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="value"> the value to save </param>
-        public void Set<T>(string key, T value)
-        {
-            Set(typeof(T), key, value);
-        }
+        public void Set<T>(string key, T value) => Set(typeof(T), key, value);
 
+        /// <summary> Non-generic version of Set. You probably want to use the other one. </summary>
+        /// <param name="key"> what the data is labeled as within the file </param>
+        /// <param name="value"> the value to save </param>
         public void Set(Type type, string key, object value)
         {
             if (value == null)
@@ -176,29 +101,7 @@ namespace SUCC
                 SaveAllData();
         }
 
-        /// <summary> returns all top level keys in the file, in order. </summary>
-        public string[] GetTopLevelKeys()
-        {
-            var keys = new string[TopLevelNodes.Count];
-            int count = 0;
-            foreach(var line in TopLevelLines)
-            {
-                if(line is KeyNode)
-                {
-                    var node = (KeyNode)line;
-                    keys[count] = node.Key;
-                    count++;
-                }
-            }
-
-            return keys;
-        }
-
-        /// <summary> whether a top-level key exists in the file </summary>
-        public bool KeyExists(string key)
-        {
-            return TopLevelNodes.ContainsKey(key);
-        }
+        
 
         /// <summary> Remove a top-level key and all its data from the file </summary>
         public void DeleteKey(string key)
@@ -244,36 +147,9 @@ namespace SUCC
             SaveAllData();
         }
 
-        public T GetAsObject<T>()
+        public void SaveAsDictionary<TKey, TValue>()
         {
-            return (T)GetAsObject(typeof(T));
-        }
-
-        public object GetAsObject(Type type)
-        {
-            object returnThis = Activator.CreateInstance(type);
-
-            var fields = type.GetFields();
-            foreach (var f in fields)
-            {
-                if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) { continue; }
-                if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) { continue; }
-
-                var value = Get(f.FieldType, f.Name, f.GetValue(returnThis));
-                f.SetValue(returnThis, value);
-            }
-
-            var properties = type.GetProperties();
-            foreach (var p in properties)
-            {
-                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) { continue; }
-                if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) { continue; }
-
-                var value = Get(p.PropertyType, p.Name, p.GetValue(returnThis));
-                p.SetValue(returnThis, value);
-            }
-
-            return returnThis;
+            throw new NotImplementedException();
         }
     }
 }
