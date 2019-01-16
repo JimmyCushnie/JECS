@@ -96,14 +96,14 @@ namespace SUCC
                     }
                     else
                     {
-                        int StackTopIndentation = LineIndentationLevel(NestingNodeStack.Peek().RawText);
-                        int LineIndentation = LineIndentationLevel(line);
+                        int StackTopIndentation = NestingNodeStack.Peek().IndentationLevel;
+                        int LineIndentation = line.GetIndentationLevel();
 
                         if (LineIndentation > StackTopIndentation)
                         {
                             if (NestingNodeStack.Peek().ChildNodes.Count > 0)
                             {
-                                int SiblingIndentation = LineIndentationLevel(NestingNodeStack.Peek().ChildNodes[0].RawText);
+                                int SiblingIndentation = NestingNodeStack.Peek().ChildNodes[0].IndentationLevel;
                                 if (LineIndentation != SiblingIndentation)
                                     throw new FormatException("The following line: '" + line + "' did not have the same indentation as its assumed sibling, '" + NestingNodeStack.Peek().ChildLines.First().RawText + "'");
 

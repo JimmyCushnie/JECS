@@ -38,24 +38,11 @@ namespace SUCC
 
         public static readonly string FileExtension = ".succ";
 
-        static int _indentationCount = 4;
-        public static int IndentationCount
-        {
-            get => _indentationCount;
-            set
-            {
-                if (value < 1)
-                    _indentationCount = 1;
-                else
-                    _indentationCount = value;
-            }
-        }
-
         /// <summary> detects whether a file path is relative or absolute, and returns the absolute path </summary>
-        public static string AbsolutePath(string RelativeOrAbsolutePath)
+        public static string AbsolutePath(string relativeOrAbsolutePath)
         {
-            if (Path.IsPathRooted(RelativeOrAbsolutePath)) return RelativeOrAbsolutePath;
-            return Path.Combine(DefaultPath, RelativeOrAbsolutePath);
+            if (Path.IsPathRooted(relativeOrAbsolutePath)) return relativeOrAbsolutePath;
+            return Path.Combine(DefaultPath, relativeOrAbsolutePath);
         }
 
         /// <summary> Does a SUCC file exist at the path? </summary>
@@ -68,7 +55,23 @@ namespace SUCC
 
 
 
-        internal static int LineIndentationLevel(string line)
-            => line.TakeWhile(c => c == ' ').Count(); // the number of spaces in line that precede the first non-space character
+
+
+
+
+
+        //TODO remove when we switch to FileStyle system
+        static int _indentationCount = 4;
+        public static int IndentationCount
+        {
+            get => _indentationCount;
+            set
+            {
+                if (value < 1)
+                    _indentationCount = 1;
+                else
+                    _indentationCount = value;
+            }
+        }
     }
 }

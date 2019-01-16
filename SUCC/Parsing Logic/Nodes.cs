@@ -8,7 +8,23 @@ namespace SUCC
     internal class Line
     {
         public string RawText { get; set; }
-        public int IndentationLevel => Utilities.LineIndentationLevel(RawText);
+        public int IndentationLevel
+        {
+            get => RawText.GetIndentationLevel();
+            set
+            {
+                if (value < 0) throw new ArgumentOutOfRangeException($"node indents must be at least 0. You tried to set it to {value}");
+
+                var indent = RawText.GetIndentationLevel();
+                if (value == indent) return;
+
+                var diff = value - indent;
+                if (diff > 0)
+                    RawText = new string(' ', diff) + RawText;
+                else
+                    RawText = RawText.Substring(startIndex: -diff);
+            }
+        }
     }
 
     internal abstract class Node : Line
@@ -143,7 +159,7 @@ namespace SUCC
                     throw new FormatException("Key node comprised of the following text: " + RawText + " did not contain the character ':'");
 
                 string aftercolon = text.Substring(ColonIndex + 1);
-                int spaces = Utilities.LineIndentationLevel(aftercolon);
+                int spaces = aftercolon.GetIndentationLevel();
 
                 if(spaces == 0)
                 {

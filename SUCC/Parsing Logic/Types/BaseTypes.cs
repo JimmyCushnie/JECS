@@ -128,7 +128,7 @@ namespace SUCC
         private static string SerializeString(object value)
         {
             string text = (string)value;
-            if (String.IsNullOrEmpty(text)) { return text; }
+            if (String.IsNullOrEmpty(text)) return String.Empty;
 
             if (
                 text[0] == ' '
