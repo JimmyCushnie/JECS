@@ -48,7 +48,7 @@ namespace SUCC
             var TopLevelLines = new List<Line>();
             var TopLevelNodes = new Dictionary<string, KeyNode>();
 
-            var NestingNodeStack = new Stack<Node>();
+            var NestingNodeStack = new Stack<Node>(); // the top of the stack is the node that new nodes should be children of
             bool DoingMultiLineString = false;
 
             // parse the input line by line

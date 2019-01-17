@@ -151,67 +151,51 @@ namespace SUCC
         // support for multi-line strings
         internal static void SerializeSpecialStringCase(string value, Node node)
         {
-            if (value != null && value.Contains(Environment.NewLine))
+            if (value != null && value.ContainsNewLine())
             {
-                node.Value = "\"\"\"";
-                node.ClearChildren();
+                node.Value = MultiLineStringNode.Terminator;
+                var lines = value.SplitIntoLines();
 
                 int indentation = node.IndentationLevel + Utilities.IndentationCount;
-                using (StringReader sr = new StringReader(value))
+                if (node.ChildNodes.Count > 0) indentation = node.ChildNodes[0].IndentationLevel;
+
+                node.CapChildCount(lines.Length + 1);
+
+                for (int i = 0; i < lines.Length; i++)
                 {
-                    string line;
-                    while ((line = sr.ReadLine()) != null) // this is effectively a ForEachLine, but it is platform agnostic (since new lines are encoded differently on different OSs)
-                    {
-                        string text = new string(' ', indentation) + SerializeString(line);
-                        text = text.Replace("#", "\\#"); // good god this code is a fucking mess
-                        Line newline = new Line() { RawText = text };
-                        node.AddChild(newline);
-                    }
+                    var newnode = node.GetChildAddresedByStringLineNumber(i);
+                    newnode.Value = BaseTypes.SerializeString(lines[i]);
                 }
 
-                string endtext = new string(' ', indentation) + "\"\"\"";
-                Line endline = new Line() { RawText = endtext };
-                node.AddChild(endline);
+                node.GetChildAddresedByStringLineNumber(lines.Length).MakeTerminator();
                 return;
             }
             else
             {
                 node.ClearChildren();
-                node.Value = SerializeString(value);
+                node.Value = BaseTypes.SerializeString(value);
             }
         }
         internal static string ParseSpecialStringCase(Node node)
         {
             string text = string.Empty;
 
-            foreach (var line in node.ChildLines)
+            for (int i = 0; i < node.ChildNodes.Count; i++)
             {
-                var lineText = line.RawText;
+                var line = node.ChildNodes[i] as MultiLineStringNode;
 
-                // remove everything after the comment indicator, unless it's preceded by a \
-
-                int PoundSignIndex = lineText.IndexOf('#');
-
-                while (PoundSignIndex > 0 && text[PoundSignIndex - 1] == '\\')
-                    PoundSignIndex = text.IndexOf('#', PoundSignIndex + 1);
-
-                if (PoundSignIndex > 0)
-                    lineText = lineText.Substring(0, PoundSignIndex - 1);
-
-                lineText = lineText.Trim();
-
-                if (lineText == "\"\"\"")
+                if (i == node.ChildNodes.Count - 1)
                 {
-                    break;
+                    if (line.IsTerminator) break;
+                    else throw new FormatException($"error parsing multi line string: the final child was not a terminator. Line so far was '{text}'");
                 }
 
-                lineText = (string)ParseString(lineText); // to remove quotations
-
-                text += lineText;
-                text += Environment.NewLine;
+                text += (string)ParseString(line.Value);
+                if (i != node.ChildNodes.Count - 2)
+                    text += Utilities.NewLine;
             }
 
-            return text.TrimEnd(Environment.NewLine.ToCharArray()); // remove all newlines at the end of the string
+            return text;
         }
 
         private static readonly object[] DoublePrecision = new object[] { "0.#####################################################################################################################################################################################################################################################################################################################################" };

@@ -147,6 +147,8 @@ namespace SUCC
 
         public string GetDataText()
         {
+            if (RawText.IsWhitespace()) return String.Empty;
+
             return RawText.Substring(DataStartIndex, DataEndIndex - DataStartIndex)
                 .Replace("\\#", "#"); // unescape comments
         }

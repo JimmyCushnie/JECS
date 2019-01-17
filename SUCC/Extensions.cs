@@ -30,5 +30,8 @@ namespace SUCC
 
         internal static bool ContainsNewLine(this string s)
             => s.Contains('\n');
+
+        internal static bool IsWhitespace(this string s)
+            => s.Trim().Length == 0;
     }
 }

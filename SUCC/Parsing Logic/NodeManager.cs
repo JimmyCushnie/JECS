@@ -39,7 +39,7 @@ namespace SUCC
         {
             try
             {
-                if (type == typeof(string) && node.Value == "\"\"\"" && node.ChildLines.Count > 0)
+                if (type == typeof(string) && node.Value == MultiLineStringNode.Terminator && node.ChildLines.Count > 0)
                     return BaseTypes.ParseSpecialStringCase(node);
 
                 if (BaseTypes.IsBaseType(type))
