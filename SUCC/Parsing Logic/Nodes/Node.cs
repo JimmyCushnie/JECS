@@ -28,6 +28,8 @@ namespace SUCC
 
         public KeyNode GetChildAddressedByName(string name)
         {
+            if (ChildNodeType != NodeChildrenType.key) throw new InvalidOperationException("can't get named child from this node");
+
             foreach (var node in ChildNodes)
             {
                 var keynode = node as KeyNode;
@@ -46,6 +48,8 @@ namespace SUCC
 
         public ListNode GetChildAddressedByListNumber(int number)
         {
+            if (ChildNodeType != NodeChildrenType.list) throw new InvalidOperationException("can't get numbered child from this node");
+
             // ensure proper number of child list nodes exist
             var indentation = GetProperChildIndentation();
             for (int i = ChildNodes.Count; i <= number; i++)
@@ -54,7 +58,22 @@ namespace SUCC
                 AddChild(newnode);
             }
 
-            return (ListNode)ChildNodes[number];
+            return ChildNodes[number] as ListNode;
+        }
+
+        public MultiLineStringNode GetChildAddresedByStringLineNumber(int number)
+        {
+            if (ChildNodeType != NodeChildrenType.multiLineString) throw new InvalidOperationException("can't get numbered string child from this node");
+
+            // ensure proper number of child string nodes exist
+            var indentation = GetProperChildIndentation();
+            for(int i = ChildNodes.Count; i <= number; i++)
+            {
+                var newnode = new MultiLineStringNode(indentation);
+                AddChild(newnode);
+            }
+
+            return ChildNodes[number] as MultiLineStringNode;
         }
 
         private int GetProperChildIndentation()
