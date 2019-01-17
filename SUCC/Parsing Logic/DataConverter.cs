@@ -77,7 +77,7 @@ namespace SUCC
 
                 if (LineHasData(line))
                 {
-                    Node node = GetNodeFromLine(line, i);
+                    Node node = GetNodeFromLine(line);
 
                     boobies:
 
@@ -108,7 +108,7 @@ namespace SUCC
                             }
                             else // if the parent already has children, check for errors with this line
                             {
-                                CheckNewSiblingForErrors(child: node, newParent: newParent, childLineNumber: i);
+                                CheckNewSiblingForErrors(child: node, newParent: newParent);
                             }
 
                             newParent.AddChild(node);
@@ -152,7 +152,7 @@ namespace SUCC
             return line.Length != 0 && line[0] != '#';
         }
 
-        private static Node GetNodeFromLine(string line, int lineNumber)
+        private static Node GetNodeFromLine(string line)
         {
             var DataType = GetDataLineType(line);
             Node node = null;
@@ -166,25 +166,24 @@ namespace SUCC
                     break;
 
                 default:
-                    throw new FormatException($"format error on line {lineNumber}: {line}");
+                    throw new FormatException($"format error on line: {line}");
             }
 
             return node;
         }
 
-        private static void CheckNewSiblingForErrors(Node child, Node newParent, int childLineNumber)
+        private static void CheckNewSiblingForErrors(Node child, Node newParent)
         {
             Node sibling = newParent.ChildNodes[0];
-            int SiblingIndentation = sibling.IndentationLevel;
-            if (child.RawText.GetIndentationLevel() != SiblingIndentation) // if there is a mismatch between the new node's indentation and its sibling's
-                throw new FormatException($"Line did not have the same indentation as its assumed sibling. Line was number {childLineNumber}, '{child.RawText}'; sibling was '{sibling.RawText}'");
+            if (child.IndentationLevel != sibling.IndentationLevel) // if there is a mismatch between the new node's indentation and its sibling's
+                throw new FormatException($"Line did not have the same indentation as its assumed sibling. Line was '{child.RawText}'; sibling was '{sibling.RawText}'");
 
             if (  // if there is a mismatch between the new node's type and its sibling's
                    (newParent.ChildNodeType == NodeChildrenType.key && !(child is KeyNode))
                 || (newParent.ChildNodeType == NodeChildrenType.list && !(child is ListNode))
                 || newParent.ChildNodeType == NodeChildrenType.multiLineString
                 || newParent.ChildNodeType == NodeChildrenType.none)
-                throw new FormatException($"Line did not match the child type of its parent. Line was number {childLineNumber}, '{child.RawText}'; parent was '{newParent.RawText}'");
+                throw new FormatException($"Line did not match the child type of its parent. Line was '{child.RawText}'; parent was '{newParent.RawText}'");
         }
 
         private enum DataLineType { none, key, list }

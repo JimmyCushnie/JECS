@@ -139,12 +139,22 @@ namespace SUCC.Types
 
             if (keyIsBase && !forceArrayMode)
             {
+                // we might have switched between standard and array dictionary storage, and if so, children need to be reset
+                if (node.ChildNodeType != NodeChildrenType.key)
+                    node.ClearChildren(newChildrenType: NodeChildrenType.key);
+
                 var CurrentKeys = new List<string>(capacity: dictionary.Count);
                 foreach (var key in dictionary.Keys)
                 {
                     var value = dictionary[key];
 
                     string keyAsText = BaseTypes.SerializeBaseType(key, keyType);
+                    if (keyAsText.Contains('\n'))
+                    {
+                        SetDictionaryNode(node, dictionary, dictionaryType, forceArrayMode: true);
+                        return;
+                    }
+
                     keyAsText = keyAsText.Quote(); // dictionary keys are always quoted when not in array mode
                     CurrentKeys.Add(keyAsText);
                     KeyNode child = node.GetChildAddressedByName(keyAsText);
@@ -159,9 +169,12 @@ namespace SUCC.Types
                         node.RemoveChild(key);
                 }
             }
-            else
+            else // save dictionary as KeyValuePair<TKey, TValue>[]
             {
-                // treat it as a WritableKeyValuePair<keyType, valueType>[]
+                // we might have switched between standard and array dictionary storage, and if so, children need to be reset
+                if (node.ChildNodeType != NodeChildrenType.list)
+                    node.ClearChildren(newChildrenType: NodeChildrenType.list);
+
                 var array = GetWritableKeyValuePairArray(dictionary);
                 NodeManager.SetNodeData(node, array, array.GetType());
             }
@@ -175,7 +188,7 @@ namespace SUCC.Types
 
             dynamic dictionary = Activator.CreateInstance(dictionaryType);
 
-            if (keyIsBase)
+            if (keyIsBase && node.ChildNodeType == NodeChildrenType.key)
             {
                 foreach (var child in node.ChildNodes)
                 {

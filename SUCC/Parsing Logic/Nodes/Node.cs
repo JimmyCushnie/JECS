@@ -72,10 +72,12 @@ namespace SUCC
         public bool ContainsChildNode(string key)
             => GetChildKeys().Contains(key);
 
-        public void ClearChildren()
+        public void ClearChildren(NodeChildrenType? newChildrenType = null)
         {
             m_ChildLines.Clear();
             m_ChildNodes.Clear();
+
+            if (newChildrenType != null) ChildNodeType = (NodeChildrenType)newChildrenType;
         }
 
         public void AddChild(Line newLine)
