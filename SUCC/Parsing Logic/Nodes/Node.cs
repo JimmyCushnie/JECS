@@ -28,7 +28,7 @@ namespace SUCC
 
         public KeyNode GetChildAddressedByName(string name)
         {
-            if (ChildNodeType != NodeChildrenType.key) throw new InvalidOperationException("can't get named child from this node");
+            EnsureProperType(NodeChildrenType.key);
 
             foreach (var node in ChildNodes)
             {
@@ -48,7 +48,7 @@ namespace SUCC
 
         public ListNode GetChildAddressedByListNumber(int number)
         {
-            if (ChildNodeType != NodeChildrenType.list) throw new InvalidOperationException("can't get numbered child from this node");
+            EnsureProperType(NodeChildrenType.list);
 
             // ensure proper number of child list nodes exist
             var indentation = GetProperChildIndentation();
@@ -63,7 +63,7 @@ namespace SUCC
 
         public MultiLineStringNode GetChildAddresedByStringLineNumber(int number)
         {
-            if (ChildNodeType != NodeChildrenType.multiLineString) throw new InvalidOperationException("can't get numbered string child from this node");
+            EnsureProperType(NodeChildrenType.multiLineString);
 
             // ensure proper number of child string nodes exist
             var indentation = GetProperChildIndentation();
@@ -84,6 +84,17 @@ namespace SUCC
             else
                 indentation = this.IndentationLevel + Utilities.IndentationCount; // otherwise, increase the indentation level in accordance with the FileStyle
             return indentation;
+        }
+
+        private void EnsureProperType(NodeChildrenType expectedType)
+        {
+            if (ChildNodeType != expectedType)
+            {
+                if (ChildNodes.Count == 0)
+                    ChildNodeType = expectedType;
+                else
+                    throw new InvalidOperationException($"can't get child from this node. Expected type was {expectedType}, but node children are of type {ChildNodeType}");
+            }
         }
 
 
@@ -156,9 +167,8 @@ namespace SUCC
         {
             RawText = 
                 RawText.Substring(0, DataStartIndex) 
-                + newData 
+                + newData.Replace("#", "\\#") // escape comments
                 + RawText.Substring(DataEndIndex, RawText.Length - DataEndIndex);
-            RawText = RawText.Replace("#", "\\#"); // escape comments
         }
 
         private int DataStartIndex => IndentationLevel;
