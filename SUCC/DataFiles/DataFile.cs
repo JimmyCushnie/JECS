@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace SUCC
 {
+    /// <summary>
+    /// Represents a SUCC file in system storage.
+    /// </summary>
     public class DataFile : DataFileBase
     {
         /// <summary> Whether the file will automatically save changes to disk with each Get() or Set(). If false, you must call SaveAllData() manually. </summary>

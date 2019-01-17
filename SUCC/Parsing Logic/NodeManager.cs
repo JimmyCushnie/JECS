@@ -10,6 +10,9 @@ using SUCC.Types;
 
 namespace SUCC
 {
+    /// <summary>
+    /// Gets and sets the data encoded by Nodes.
+    /// </summary>
     internal static class NodeManager
     {
         internal static void SetNodeData<T>(Node node, T data) => SetNodeData(node, data, typeof(T));
