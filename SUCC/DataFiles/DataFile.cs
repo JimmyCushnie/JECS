@@ -161,10 +161,22 @@ namespace SUCC
             if (!BaseTypes.IsBaseType(typeof(TKey)))
                 throw new Exception("When using GetAsDictionary, TKey must be a base type");
 
-            foreach(var key in dictionary.Keys)
+            var CurrentKeys = new List<string>(capacity: dictionary.Count);
+            foreach (var key in dictionary.Keys)
             {
                 var keyText = BaseTypes.SerializeBaseType(key);
+                if (keyText.Contains('\n')) throw new Exception($"can't save this file as a dictionary; a key contains a new line ({keyText})");
+                keyText = keyText.Quote();
+
+                CurrentKeys.Add(keyText);
                 Set(keyText, dictionary[key]);
+            }
+
+            // make sure that old data in the file is deleted when a new dictionary is saved.
+            foreach (var key in this.GetTopLevelKeys())
+            {
+                if (!CurrentKeys.Contains(key))
+                    this.TopLevelNodes.Remove(key);
             }
 
             SaveAllData();

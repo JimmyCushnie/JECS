@@ -155,8 +155,9 @@ namespace SUCC
             var keys = GetTopLevelKeys();
             var dictionary = new Dictionary<TKey, TValue>(capacity: keys.Length);
 
-            foreach (var keyText in keys)
+            foreach (var k in keys)
             {
+                var keyText = k.UnQuote();
                 TKey key = BaseTypes.ParseBaseType<TKey>(keyText);
                 TValue value = NodeManager.GetNodeData<TValue>(TopLevelNodes[keyText]);
                 dictionary.Add(key, value);
