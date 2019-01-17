@@ -131,27 +131,28 @@ namespace SUCC.Types
         }
 
 
-        private static void SetDictionaryNode(Node node, dynamic dictionary, Type dictionaryType)
+        private static void SetDictionaryNode(Node node, dynamic dictionary, Type dictionaryType, bool forceArrayMode = false)
         {
             Type keyType = dictionaryType.GetGenericArguments()[0];
             Type valueType = dictionaryType.GetGenericArguments()[1];
             bool keyIsBase = BaseTypes.IsBaseType(keyType);
 
-            if (keyIsBase)
+            if (keyIsBase && !forceArrayMode)
             {
                 var CurrentKeys = new List<string>(capacity: dictionary.Count);
                 foreach (var key in dictionary.Keys)
                 {
                     var value = dictionary[key];
 
-                    var keyAsText = BaseTypes.SerializeBaseType(key, keyType);
+                    string keyAsText = BaseTypes.SerializeBaseType(key, keyType);
+                    keyAsText = keyAsText.Quote(); // dictionary keys are always quoted when not in array mode
                     CurrentKeys.Add(keyAsText);
                     KeyNode child = node.GetChildAddressedByName(keyAsText);
                     NodeManager.SetNodeData(child, value, valueType);
                 }
 
                 // make sure that old data in the file is deleted when a new dictionary is saved.
-                // node.ClearChildren() is not used because we want to keep comments and newlines intact as much as possible.
+                // node.ClearChildren() is not used because we want to keep comments and whitespace intact as much as possible.
                 foreach (var key in node.GetChildKeys())
                 {
                     if (!CurrentKeys.Contains(key))
@@ -179,7 +180,7 @@ namespace SUCC.Types
                 foreach (var child in node.ChildNodes)
                 {
                     string childKey = (child as KeyNode).Key;
-                    dynamic key = BaseTypes.ParseBaseType(childKey, keyType);
+                    dynamic key = BaseTypes.ParseBaseType(childKey.UnQuote(), keyType); // dictionary keys are always quoted when not in array mode
                     dynamic value = NodeManager.GetNodeData(child, valueType);
                     dictionary.Add(key, value);
                 }
