@@ -14,8 +14,10 @@ namespace SUCC
         public abstract string Value { get; set; }
         public NodeChildrenType ChildNodeType = NodeChildrenType.none;
 
-        public List<Line> ChildLines = new List<Line>();
-        public List<Node> ChildNodes = new List<Node>();
+        private List<Line> m_ChildLines = new List<Line>();
+        private List<Node> m_ChildNodes = new List<Node>();
+        public IReadOnlyList<Line> ChildLines => m_ChildLines;
+        public IReadOnlyList<Node> ChildNodes => m_ChildNodes;
 
         public Node(string rawText) : base(rawText) { }
         public Node(int indentation)
@@ -37,20 +39,9 @@ namespace SUCC
             {
                 var newnode = new KeyNode(GetProperChildIndentation(), key);
 
-                ChildLines.Add(newnode);
-                ChildNodes.Add(newnode);
+                AddChild(newnode);
                 return newnode;
             }
-        }
-
-        public bool ContainsChildNode(string key)
-        {
-            foreach (var node in ChildNodes)
-            {
-                var keynode = node as KeyNode;
-                if (keynode.Key == key) return true;
-            }
-            return false;
         }
 
         public ListNode GetChildAddressedByListNumber(int number)
@@ -60,8 +51,7 @@ namespace SUCC
             for (int i = ChildNodes.Count; i <= number; i++)
             {
                 var newnode = new ListNode(indentation);
-                ChildNodes.Add(newnode);
-                ChildLines.Add(newnode);
+                AddChild(newnode);
             }
 
             return (ListNode)ChildNodes[number];
@@ -77,6 +67,31 @@ namespace SUCC
             return indentation;
         }
 
+
+
+        public bool ContainsChildNode(string key)
+        {
+            foreach (var node in ChildNodes)
+            {
+                var keynode = node as KeyNode;
+                if (keynode.Key == key) return true;
+            }
+            return false;
+        }
+
+        public void ClearChildren()
+        {
+            m_ChildLines.Clear();
+            m_ChildNodes.Clear();
+        }
+
+        public void AddChild(Line newLine)
+        {
+            m_ChildLines.Add(newLine);
+
+            Node newNode = newLine as Node;
+            if (newNode != null) m_ChildNodes.Add(newNode);
+        }
 
 
 

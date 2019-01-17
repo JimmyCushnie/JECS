@@ -154,9 +154,7 @@ namespace SUCC
             if (value != null && value.Contains(Environment.NewLine))
             {
                 node.Value = "\"\"\"";
-
-                node.ChildLines.Clear();
-                node.ChildNodes.Clear();
+                node.ClearChildren();
 
                 int indentation = node.IndentationLevel + Utilities.IndentationCount;
                 using (StringReader sr = new StringReader(value))
@@ -167,19 +165,18 @@ namespace SUCC
                         string text = new string(' ', indentation) + SerializeString(line);
                         text = text.Replace("#", "\\#"); // good god this code is a fucking mess
                         Line newline = new Line() { RawText = text };
-                        node.ChildLines.Add(newline);
+                        node.AddChild(newline);
                     }
                 }
 
                 string endtext = new string(' ', indentation) + "\"\"\"";
                 Line endline = new Line() { RawText = endtext };
-                node.ChildLines.Add(endline);
+                node.AddChild(endline);
                 return;
             }
             else
             {
-                node.ChildLines.Clear();
-                node.ChildNodes.Clear();
+                node.ClearChildren();
                 node.Value = SerializeString(value);
             }
         }

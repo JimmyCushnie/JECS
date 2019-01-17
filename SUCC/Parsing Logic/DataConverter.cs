@@ -15,7 +15,7 @@ namespace SUCC
         {
             return RecursivelySerializeLines(lines).TrimEnd(Utilities.NewLine.ToCharArray()); // remove all newlines at the end of the string
 
-            string RecursivelySerializeLines(List<Line> Lines)
+            string RecursivelySerializeLines(IReadOnlyList<Line> Lines)
             {
                 string output = string.Empty;
                 for (int i = 0; i < Lines.Count; i++)
@@ -64,7 +64,7 @@ namespace SUCC
 
                     var newboi = new MultiLineStringNode(rawText: line);
 
-                    NestingNodeStack.Peek().ChildLines.Add(newboi);
+                    NestingNodeStack.Peek().AddChild(newboi);
 
                     if (newboi.IsTerminator)
                     {
@@ -111,8 +111,7 @@ namespace SUCC
                                 CheckNewSiblingForErrors(child: node, newParent: newParent, childLineNumber: i);
                             }
 
-                            newParent.ChildLines.Add(node);
-                            newParent.ChildNodes.Add(node);
+                            newParent.AddChild(node);
                         }
                         else // if this should NOT be a child of the stack top
                         {
@@ -135,10 +134,10 @@ namespace SUCC
                 {
                     Line NoDataLine = new Line(rawText: line);
 
-                    if(NestingNodeStack.Count == 0)
+                    if (NestingNodeStack.Count == 0)
                         TopLevelLines.Add(NoDataLine);
                     else
-                        NestingNodeStack.Peek().ChildLines.Add(NoDataLine);
+                        NestingNodeStack.Peek().AddChild(NoDataLine);
                 }
             }
 
