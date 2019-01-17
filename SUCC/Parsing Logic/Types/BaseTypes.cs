@@ -42,8 +42,7 @@ namespace SUCC
         internal static string SerializeBaseType<T>(T thing) => SerializeBaseType(thing, typeof(T));
         internal static string SerializeBaseType(object thing, Type type)
         {
-            SerializeMethod method;
-            if (BaseSerializeMethods.TryGetValue(type, out method))
+            if (BaseSerializeMethods.TryGetValue(type, out SerializeMethod method))
                 return method(thing);
 
             if (type.IsEnum)
@@ -57,8 +56,7 @@ namespace SUCC
         {
             try
             {
-                ParseMethod method;
-                if (BaseParseMethods.TryGetValue(type, out method))
+                if (BaseParseMethods.TryGetValue(type, out ParseMethod method))
                     return method(text);
 
                 if (type.IsEnum)
@@ -272,8 +270,7 @@ namespace SUCC
         }
         private static object ParseDateTime(string text)
         {
-            DateTime result;
-            DateTime.TryParseExact(text, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out result);
+            DateTime.TryParseExact(text, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result);
             return result;
         }
 
@@ -295,8 +292,7 @@ namespace SUCC
         private static Dictionary<string, Type> TypeCache = new Dictionary<string, Type>();
         private static object ParseType(string typeName)
         {
-            Type type;
-            if (TypeCache.TryGetValue(typeName, out type))
+            if (TypeCache.TryGetValue(typeName, out Type type))
                 return type;
 
             foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
