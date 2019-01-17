@@ -74,10 +74,10 @@ namespace SUCC
                     switch (DataType)
                     {
                         case DataLineType.key:
-                            node = new KeyNode() { RawText = line };
+                            node = new KeyNode(rawText: line);
                             break;
                         case DataLineType.list:
-                            node = new ListNode() { RawText = line };
+                            node = new ListNode(rawText: line);
                             break;
 
                         default:

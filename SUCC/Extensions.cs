@@ -21,5 +21,8 @@ namespace SUCC
         /// <summary> the number of spaces in the string that precede the first non-space character </summary>
         internal static int GetIndentationLevel(this string s)
             => s.TakeWhile(c => c == ' ').Count();
+
+        internal static string AddSpaces(this string s, int count)
+            => s + new string(' ', count);
     }
 }

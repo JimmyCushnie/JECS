@@ -96,7 +96,7 @@ namespace SUCC
                 if (key[0] == ' ' || key[key.Length - 1] == ' ')
                     throw new FormatException("SUCC keys may not start or end with a space");
 
-                var newnode = new KeyNode() { RawText = key + ':' };
+                var newnode = new KeyNode(indentation: 0, key: key);
                 TopLevelNodes.Add(key, newnode);
                 TopLevelLines.Add(newnode);
             }
