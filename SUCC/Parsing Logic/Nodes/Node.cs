@@ -94,9 +94,9 @@ namespace SUCC
             RawText = RawText.Replace("#", "\\#"); // escape comments
         }
 
-        protected int DataStartIndex => IndentationLevel;
+        private int DataStartIndex => IndentationLevel;
 
-        protected int DataEndIndex
+        private int DataEndIndex
         {
             get
             {
