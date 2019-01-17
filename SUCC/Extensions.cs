@@ -14,7 +14,7 @@ namespace SUCC
 
         internal static string UnQuote(this string s)
         {
-            if (!s.IsQuoted()) throw new InvalidOperationException($"tried to unquote string {s} which is not quoted. Make sure you check for quotes before unquoting.");
+            if (!s.IsQuoted()) return s;
             return s.Substring(1, s.Length - 2);
         }
 
