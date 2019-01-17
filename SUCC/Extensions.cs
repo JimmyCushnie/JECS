@@ -24,5 +24,11 @@ namespace SUCC
 
         internal static string AddSpaces(this string s, int count)
             => s + new string(' ', count);
+
+        internal static string[] SplitIntoLines(this string s)
+            => s.Replace("\r\n", "\n").Split('\n'); // fuck windows line endings. WHY are they still used.
+
+        internal static bool ContainsNewLine(this string s)
+            => s.Contains('\n');
     }
 }

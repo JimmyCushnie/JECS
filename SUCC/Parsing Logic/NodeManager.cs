@@ -22,7 +22,7 @@ namespace SUCC
                 throw new Exception("you can't serialize null");
 
             string dataAsString = data as string;
-            if (type == typeof(string) && dataAsString.Contains(Environment.NewLine))
+            if (type == typeof(string) && dataAsString.ContainsNewLine())
                 BaseTypes.SerializeSpecialStringCase(dataAsString, node);
 
             else if (BaseTypes.IsBaseType(type))

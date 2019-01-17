@@ -54,6 +54,23 @@ namespace SUCC
         }
 
 
+        public static LineEndingStyle LineEndingStyle { get; set; } = LineEndingStyle.PlatformDefault;
+        internal static string NewLine
+        {
+            get
+            {
+                switch (LineEndingStyle)
+                {
+                    case LineEndingStyle.Unix:
+                        return "\n";
+                    case LineEndingStyle.Windows:
+                        return "\r\n";
+                    case LineEndingStyle.PlatformDefault:
+                    default:
+                        return Environment.NewLine;
+                }
+            }
+        }
 
 
 
@@ -73,5 +90,20 @@ namespace SUCC
                     _indentationCount = value;
             }
         }
+    }
+
+    /// <summary>
+    /// Different ways of saving line endings.
+    /// </summary>
+    public enum LineEndingStyle
+    {
+        /// <summary> Line endings are Windows style (CR LF) if on Windows and Unix style (LF) everywhere else. </summary>
+        PlatformDefault = 0,
+
+        /// <summary> Line endings are Unix style (LF) </summary>
+        Unix,
+
+        /// <summary> Line endings are Windows style (CR LF) </summary>
+        Windows,
     }
 }

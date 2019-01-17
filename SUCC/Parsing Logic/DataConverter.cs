@@ -4,8 +4,6 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
-using static SUCC.Utilities;
-
 namespace SUCC
 {
     internal static class DataConverter
@@ -14,20 +12,7 @@ namespace SUCC
         /// Parses a string of SUCC into a data structure
         /// </summary>
         internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string input)
-        {
-            var lines = new List<string>();
-            // parse the input line by line
-            using (StringReader sr = new StringReader(input))
-            {
-                string line;
-                while ((line = sr.ReadLine()) != null) // this is effectively a ForEachLine, but it is platform agnostic (since new lines are encoded differently on different OSs)
-                {
-                    lines.Add(line);
-                }
-            }
-
-            return DataStructureFromSUCC(lines.ToArray());
-        }
+            => DataStructureFromSUCC(input.SplitIntoLines());
 
         /// <summary>
         /// Parses lines of SUCC into a data structure
@@ -162,7 +147,7 @@ namespace SUCC
 
         public static string SUCCFromDataStructure(List<Line> lines)
         {
-            return RecursivelySerializeLines(lines).TrimEnd(Environment.NewLine.ToCharArray()); // remove all newlines at the end of the string
+            return RecursivelySerializeLines(lines).TrimEnd(Utilities.NewLine.ToCharArray()); // remove all newlines at the end of the string
 
             string RecursivelySerializeLines(List<Line> Lines)
             {
@@ -170,7 +155,7 @@ namespace SUCC
                 for (int i = 0; i < Lines.Count; i++)
                 {
                     output += Lines[i].RawText;
-                    output += Environment.NewLine;
+                    output += Utilities.NewLine;
 
                     if (Lines[i] is Node)
                     {

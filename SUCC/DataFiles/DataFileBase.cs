@@ -76,21 +76,12 @@ namespace SUCC
         }
 
         /// <summary> gets the data as it appears in file </summary>
-        public string GetRawText() => DataConverter.SUCCFromDataStructure(TopLevelLines);
+        public string GetRawText() 
+            => DataConverter.SUCCFromDataStructure(TopLevelLines);
 
         /// <summary> gets the data as it appears in file, as an array of strings (one for each line) </summary>
         public string[] GetRawLines()
-        {
-            var lines = new List<string>();
-            using (StringReader sr = new StringReader(GetRawText()))
-            {
-                string line;
-                while ((line = sr.ReadLine()) != null) // this is effectively a ForEachLine, but it is platform agnostic (since new lines are encoded differently on different OSs)
-                    lines.Add(line);
-            }
-
-            return lines.ToArray();
-        }
+            => GetRawText().SplitIntoLines();
 
         /// <summary> returns all top level keys in the file, in order. </summary>
         public string[] GetTopLevelKeys()
