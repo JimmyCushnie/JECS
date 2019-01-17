@@ -149,7 +149,7 @@ namespace SUCC.Types
                     var value = dictionary[key];
 
                     string keyAsText = BaseTypes.SerializeBaseType(key, keyType);
-                    if (keyAsText.Contains('\n'))
+                    if (keyAsText.ContainsNewLine())
                     {
                         SetDictionaryNode(node, dictionary, dictionaryType, forceArrayMode: true);
                         return;

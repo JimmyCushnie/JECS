@@ -95,7 +95,7 @@ namespace SUCC
                     throw new FormatException("SUCC keys may not contain the character ':'");
                 if (key.Contains('#'))
                     throw new FormatException("SUCC keys may not contain the character '#'");
-                if (key.Contains('\n'))
+                if (key.ContainsNewLine())
                     throw new FormatException("SUCC keys cannot contain a newline");
                 if (key[0] == ' ' || key[key.Length - 1] == ' ')
                     throw new FormatException("SUCC keys may not start or end with a space");
@@ -180,7 +180,7 @@ namespace SUCC
                 foreach (var key in dictionary.Keys)
                 {
                     var keyText = BaseTypes.SerializeBaseType(key);
-                    if (keyText.Contains('\n')) throw new Exception($"can't save this file as a dictionary; a key contains a new line ({keyText})");
+                    if (keyText.ContainsNewLine()) throw new Exception($"can't save this file as a dictionary; a key contains a new line ({keyText})");
                     keyText = keyText.Quote();
 
                     CurrentKeys.Add(keyText);
