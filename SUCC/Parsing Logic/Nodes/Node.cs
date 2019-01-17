@@ -6,6 +6,9 @@ namespace SUCC
 {
     internal enum NodeChildrenType { none, list, key, multiLineString }
 
+    /// <summary>
+    /// Represents a line of text in a SUCC file that contains data.
+    /// </summary>
     internal abstract class Node : Line
     {
         public abstract string Value { get; set; }

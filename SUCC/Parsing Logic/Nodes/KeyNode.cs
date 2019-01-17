@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace SUCC
 {
+    /// <summary>
+    /// Represents a line of text in a SUCC file that contains data addressed by key.
+    /// </summary>
     internal class KeyNode : Node
     {
         public KeyNode(string rawText) : base(rawText) { }

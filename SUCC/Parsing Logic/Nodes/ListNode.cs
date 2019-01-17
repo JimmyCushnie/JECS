@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace SUCC
 {
+    /// <summary>
+    /// Represents a line of text in a SUCC file that contains data in a list.
+    /// </summary>
     internal class ListNode : Node
     {
         public ListNode(string rawText) : base(rawText) { }

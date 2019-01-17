@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace SUCC
 {
+    /// <summary>
+    /// Represents a single line of text in a SUCC file.
+    /// </summary>
     internal class Line
     {
         public Line() { }
