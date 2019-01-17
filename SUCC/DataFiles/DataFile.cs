@@ -131,25 +131,35 @@ namespace SUCC
         public void SaveAsObject<T>(T savethis) => SaveAsObject(typeof(T), savethis);
         private void SaveAsObject(Type type, object savethis)
         {
-            var fields = type.GetFields();
-            foreach (var f in fields)
-            {
-                if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) continue;
-                if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
+            bool _autosave = AutoSave;
+            AutoSave = false; // don't write to disk when we don't have to
 
-                Set(f.FieldType, f.Name, f.GetValue(savethis));
+            try
+            {
+                var fields = type.GetFields();
+                foreach (var f in fields)
+                {
+                    if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) continue;
+                    if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
+
+                    Set(f.FieldType, f.Name, f.GetValue(savethis));
+                }
+
+                var properties = type.GetProperties();
+                foreach (var p in properties)
+                {
+                    if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
+                    if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
+
+                    Set(p.PropertyType, p.Name, p.GetValue(savethis));
+                }
+            }
+            finally
+            {
+                AutoSave = _autosave;
             }
 
-            var properties = type.GetProperties();
-            foreach (var p in properties)
-            {
-                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
-                if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
-
-                Set(p.PropertyType, p.Name, p.GetValue(savethis));
-            }
-
-            SaveAllData();
+            if (AutoSave) SaveAllData();
         }
 
         /// <summary>
@@ -161,25 +171,35 @@ namespace SUCC
             if (!BaseTypes.IsBaseType(typeof(TKey)))
                 throw new Exception("When using GetAsDictionary, TKey must be a base type");
 
-            var CurrentKeys = new List<string>(capacity: dictionary.Count);
-            foreach (var key in dictionary.Keys)
-            {
-                var keyText = BaseTypes.SerializeBaseType(key);
-                if (keyText.Contains('\n')) throw new Exception($"can't save this file as a dictionary; a key contains a new line ({keyText})");
-                keyText = keyText.Quote();
+            bool _autosave = AutoSave;
+            AutoSave = false; // don't write to disk when we don't have to
 
-                CurrentKeys.Add(keyText);
-                Set(keyText, dictionary[key]);
+            try
+            {
+                var CurrentKeys = new List<string>(capacity: dictionary.Count);
+                foreach (var key in dictionary.Keys)
+                {
+                    var keyText = BaseTypes.SerializeBaseType(key);
+                    if (keyText.Contains('\n')) throw new Exception($"can't save this file as a dictionary; a key contains a new line ({keyText})");
+                    keyText = keyText.Quote();
+
+                    CurrentKeys.Add(keyText);
+                    Set(keyText, dictionary[key]);
+                }
+
+                // make sure that old data in the file is deleted when a new dictionary is saved.
+                foreach (var key in this.GetTopLevelKeys())
+                {
+                    if (!CurrentKeys.Contains(key))
+                        this.TopLevelNodes.Remove(key);
+                }
+            }
+            finally
+            {
+                AutoSave = _autosave;
             }
 
-            // make sure that old data in the file is deleted when a new dictionary is saved.
-            foreach (var key in this.GetTopLevelKeys())
-            {
-                if (!CurrentKeys.Contains(key))
-                    this.TopLevelNodes.Remove(key);
-            }
-
-            SaveAllData();
+            if (AutoSave) SaveAllData();
         }
     }
 }
