@@ -70,14 +70,7 @@ namespace SUCC
 
 
         public bool ContainsChildNode(string key)
-        {
-            foreach (var node in ChildNodes)
-            {
-                var keynode = node as KeyNode;
-                if (keynode.Key == key) return true;
-            }
-            return false;
-        }
+            => GetChildKeys().Contains(key);
 
         public void ClearChildren()
         {
@@ -91,6 +84,42 @@ namespace SUCC
 
             Node newNode = newLine as Node;
             if (newNode != null) m_ChildNodes.Add(newNode);
+        }
+
+        public void RemoveChild(string key)
+        {
+            foreach (var node in ChildNodes)
+            {
+                var keynode = node as KeyNode;
+                if (keynode?.Key == key)
+                {
+                    m_ChildNodes.Remove(node);
+                    m_ChildLines.Remove(node);
+                    return;
+                }
+            }
+        }
+
+        public void CapChildCount(int count)
+        {
+            if (count < 0) throw new ArgumentOutOfRangeException("stop it");
+
+            while(ChildNodes.Count > count)
+            {
+                var removeThis = ChildNodes.Last();
+                m_ChildNodes.Remove(removeThis);
+                m_ChildLines.Remove(removeThis);
+            }
+        }
+
+        public string[] GetChildKeys()
+        {
+            var keys = new string[ChildNodes.Count];
+
+            for(int i = 0; i < ChildNodes.Count; i++)
+                keys[i] = (ChildNodes[i] as KeyNode).Key;
+
+            return keys;
         }
 
 

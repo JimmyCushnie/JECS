@@ -54,6 +54,8 @@ namespace SUCC.Types
 
         private static void SetArrayNode(Node node, dynamic array, Type arrayType)
         {
+            node.CapChildCount(array.Length); // prevent extra children from sticking around
+
             Type elementType = arrayType.GetElementType();
             for (int i = 0; i < array.Length; i++)
                 NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), array[i], elementType);
@@ -77,6 +79,8 @@ namespace SUCC.Types
 
         private static void SetListNode(Node node, dynamic list, Type listType)
         {
+            node.CapChildCount(list.Count);
+
             Type elementType = listType.GetGenericArguments()[0];
             for (int i = 0; i < list.Count; i++)
                 NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), list[i], elementType);
@@ -100,9 +104,10 @@ namespace SUCC.Types
 
         private static void SetHashSetNode(Node node, dynamic hashset, Type hashSetType)
         {
-            Type elementType = hashSetType.GetGenericArguments()[0];
+            node.CapChildCount(hashset.Count);
 
             int i = 0;
+            Type elementType = hashSetType.GetGenericArguments()[0];
             foreach (var item in hashset)
             {
                 NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), item, elementType);
@@ -134,12 +139,23 @@ namespace SUCC.Types
 
             if (keyIsBase)
             {
+                var CurrentKeys = new List<string>(capacity: dictionary.Count);
                 foreach (var key in dictionary.Keys)
                 {
                     var value = dictionary[key];
 
-                    KeyNode child = node.GetChildAddressedByName(BaseTypes.SerializeBaseType(key, keyType));
+                    var keyAsText = BaseTypes.SerializeBaseType(key, keyType);
+                    CurrentKeys.Add(keyAsText);
+                    KeyNode child = node.GetChildAddressedByName(keyAsText);
                     NodeManager.SetNodeData(child, value, valueType);
+                }
+
+                // make sure that old data in the file is deleted when a new dictionary is saved.
+                // node.ClearChildren() is not used because we want to keep comments and newlines intact as much as possible.
+                foreach (var key in node.GetChildKeys())
+                {
+                    if (!CurrentKeys.Contains(key))
+                        node.RemoveChild(key);
                 }
             }
             else
