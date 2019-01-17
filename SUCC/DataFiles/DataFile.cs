@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace SUCC
@@ -90,11 +91,11 @@ namespace SUCC
                     throw new FormatException("SUCC keys must contain at least one character");
                 if (key[0] == '-')
                     throw new FormatException("SUCC keys may not begin with the character '-'");
-                if (key.Contains(":"))
+                if (key.Contains(':'))
                     throw new FormatException("SUCC keys may not contain the character ':'");
-                if (key.Contains("#"))
+                if (key.Contains('#'))
                     throw new FormatException("SUCC keys may not contain the character '#'");
-                if (key.Contains("\n"))
+                if (key.Contains('\n'))
                     throw new FormatException("SUCC keys cannot contain a newline");
                 if (key[0] == ' ' || key[key.Length - 1] == ' ')
                     throw new FormatException("SUCC keys may not start or end with a space");
