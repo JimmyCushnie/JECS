@@ -18,11 +18,14 @@ namespace SUCC
         {
             if (type.IsEnum) return true;
             if (BaseSerializeMethods.ContainsKey(type)) return true;
+            if (BaseStyledSerializeMethods.ContainsKey(type)) return true;
             return false;
         }
 
         /// <summary> Turns an object into text </summary>
         public delegate string SerializeMethod(object thing);
+
+        private delegate string StyledSerializeMethod(object thing, FileStyle style);
 
         /// <summary> Turns text into an object </summary>
         public delegate object ParseMethod(string text);
@@ -39,11 +42,14 @@ namespace SUCC
             BaseParseMethods.Add(type, parseMethod);
         }
 
-        internal static string SerializeBaseType<T>(T thing) => SerializeBaseType(thing, typeof(T));
-        internal static string SerializeBaseType(object thing, Type type)
+        internal static string SerializeBaseType<T>(T thing, FileStyle style) => SerializeBaseType(thing, typeof(T), style);
+        internal static string SerializeBaseType(object thing, Type type, FileStyle style)
         {
-            if (BaseSerializeMethods.TryGetValue(type, out SerializeMethod method))
+            if (BaseSerializeMethods.TryGetValue(type, out var method))
                 return method(thing);
+
+            if (BaseStyledSerializeMethods.TryGetValue(type, out var stylemethod))
+                return stylemethod(thing, style);
 
             if (type.IsEnum)
                 return SerializeEnum(thing);
@@ -56,7 +62,7 @@ namespace SUCC
         {
             try
             {
-                if (BaseParseMethods.TryGetValue(type, out ParseMethod method))
+                if (BaseParseMethods.TryGetValue(type, out var method))
                     return method(text);
 
                 if (type.IsEnum)
@@ -70,8 +76,6 @@ namespace SUCC
 
         private static Dictionary<Type, SerializeMethod> BaseSerializeMethods = new Dictionary<Type, SerializeMethod>()
         {
-            [typeof(string)] = SerializeString,
-
             // integer types
             [typeof(int)] = SerializeInt,
             [typeof(decimal)] = SerializeInt, // decimals aren't actually ints, but they use the same serialize method as them
@@ -87,11 +91,15 @@ namespace SUCC
             [typeof(float)] = SerializeFloat,
             [typeof(double)] = SerializeFloat,
 
-
             [typeof(bool)] = SerializeBool,
             [typeof(DateTime)] = SerializeDateTime,
             [typeof(char)] = SerializeChar,
             [typeof(Type)] = SerializeType,
+        };
+
+        private static Dictionary<Type, StyledSerializeMethod> BaseStyledSerializeMethods = new Dictionary<Type, StyledSerializeMethod>()
+        {
+            [typeof(string)] = SerializeString,
         };
 
         private static Dictionary<Type, ParseMethod> BaseParseMethods = new Dictionary<Type, ParseMethod>()
@@ -106,13 +114,12 @@ namespace SUCC
             [typeof(uint)] = ParseUint,
             [typeof(ulong)] = ParseUlong,
             [typeof(ushort)] = ParseUshort,
+            [typeof(byte)] = ParseByte,
+            [typeof(sbyte)] = ParseSbyte,
 
             // floating point types
             [typeof(float)] = ParseFloat,
             [typeof(double)] = ParseDouble,
-
-            [typeof(byte)] = ParseByte,
-            [typeof(sbyte)] = ParseSbyte,
 
             [typeof(bool)] = ParseBool,
             [typeof(DateTime)] = ParseDateTime,
@@ -123,17 +130,17 @@ namespace SUCC
 
         #region base serialize/parse methods
 
-        private static string SerializeString(object value)
+        private static string SerializeString(object value, FileStyle style)
         {
             string text = (string)value;
             if (String.IsNullOrEmpty(text)) return String.Empty;
 
             if (
-                text[0] == ' '
-                || text[text.Length - 1] == ' '
-                || (text[0] == '"' && text[text.Length - 1] == '"')
+                style.AlwaysQuoteStrings ||
+                text[0] == ' ' || text[text.Length - 1] == ' ' ||
+                text.IsQuoted()
                 )
-                text = '"' + text + '"';
+                text = text.Quote();
 
             return text;
         }
