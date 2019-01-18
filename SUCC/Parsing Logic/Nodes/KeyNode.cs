@@ -42,7 +42,13 @@ namespace SUCC
             }
             set
             {
-                // todo add filestyle stuff here
+                if (this.UnappliedStyle)
+                {
+                    SetDataText(Key + ":".AddSpaces(Style.SpacesAfterColon) + value);
+                    this.UnappliedStyle = false;
+                    return;
+                }
+
                 var text = GetDataText();
                 int colonIndex = GetColonIndex(text);
 

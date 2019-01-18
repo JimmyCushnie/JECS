@@ -29,7 +29,13 @@ namespace SUCC
             }
             set
             {
-                // todo add filestyle stuff here
+                if (this.UnappliedStyle)
+                {
+                    SetDataText("-" + Style.SpacesAfterDash + value);
+                    this.UnappliedStyle = false;
+                    return;
+                }
+
                 var text = GetDataText();
                 int dashIndex = GetDashIndex(text);
 

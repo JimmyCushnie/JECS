@@ -15,6 +15,7 @@ namespace SUCC
         public NodeChildrenType ChildNodeType = NodeChildrenType.none;
 
         protected FileStyle Style;
+        protected bool UnappliedStyle = false;
 
         private List<Line> m_ChildLines = new List<Line>();
         private List<Node> m_ChildNodes = new List<Node>();
@@ -26,6 +27,7 @@ namespace SUCC
         {
             this.IndentationLevel = indentation;
             this.Style = style;
+            this.UnappliedStyle = true;
         }
 
 

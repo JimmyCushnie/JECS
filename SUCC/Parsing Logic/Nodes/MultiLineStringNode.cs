@@ -12,7 +12,7 @@ namespace SUCC
         public MultiLineStringNode(string rawText) : base(rawText) { }
         public MultiLineStringNode(int indentation, FileStyle style) : base(indentation, style)
         {
-            // todo add filestyle stuff here
+            this.UnappliedStyle = false; // currently, no styles apply to MultiLineStringNodes
         }
 
         public override string Value
