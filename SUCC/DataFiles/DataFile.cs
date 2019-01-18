@@ -15,7 +15,7 @@ namespace SUCC
         /// <summary> Rules for how to format new data saved to this file </summary>
         public FileStyle Style = FileStyle.Default;
 
-        /// <summary> Whether the file will automatically save changes to disk with each Get() or Set(). If false, you must call SaveAllData() manually. </summary>
+        /// <summary> If true, the DataFile will automatically save changes to disk with each Get or Set. If false, you must call SaveAllData() manually. </summary>
         /// <remarks> Be careful with this. You do not want to accidentally be writing to a user's disk at 1000MB/s for 3 hours. </remarks>
         public bool AutoSave { get; set; }
 
@@ -34,7 +34,7 @@ namespace SUCC
         /// <param name="path"> the path of the file. Can be either absolute or relative to the default path. </param>
         /// <param name="style"> the rules for how this file styles newly saved data </param>
         /// <param name="defaultFile"> optionally, if there isn't a file at the path, one can be created from a file in the Resources folder. </param>
-        /// <param name="autoSave"> if true, the file will automatically save changes to disk with each Get() or Set(). Otherwise, you must call SaveAllData() manually. </param>
+        /// <param name="autoSave"> if true, the DataFile will automatically save changes to disk with each Get or Set. </param>
         public DataFile(string path, FileStyle style, string defaultFile = null, bool autoSave = false) : base(path, defaultFile)
         {
             AutoSave = autoSave;
