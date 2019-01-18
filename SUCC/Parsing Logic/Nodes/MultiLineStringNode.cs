@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace SUCC
+﻿namespace SUCC
 {
     /// <summary>
     /// Represents a line of text in a SUCC file that contains part of a multi-line string.
