@@ -31,7 +31,7 @@ namespace SUCC
             {
                 if (this.UnappliedStyle)
                 {
-                    SetDataText("-" + Style.SpacesAfterDash + value);
+                    SetDataText("-".AddSpaces(Style.SpacesAfterDash) + value);
                     this.UnappliedStyle = false;
                     return;
                 }
