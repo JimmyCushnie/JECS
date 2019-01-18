@@ -48,8 +48,7 @@ namespace SUCC
         /// <summary> Serializes the data in this object to the file on disk. </summary>
         public void SaveAllData()
         {
-            var previousAutoReload = this.AutoReload;
-            AutoReload = false; // if we don't do this, the reload will trigger when writing data to disk
+            AllowAutoReload = false; // if we don't do this, the reload will trigger when writing data to disk
 
             try
             {
@@ -67,12 +66,18 @@ namespace SUCC
                     string ExistingSUCC = File.ReadAllText(FilePath);
 
                     if (SUCC != ExistingSUCC)
+                    {
                         File.WriteAllText(FilePath, SUCC);
+
+                        // FileSystemWatcher is a bitch. Disabling it takes several milliseconds and it is (almost) guaranteed that it will fire anyways in this context.
+                        // Therefore, we don't disable it, just block it, and wait for the inevitable call.
+                        Watcher.WaitForChanged(WatcherChangeTypes.Changed); // timeout is in milliseconds
+                    }
                 }
             }
             finally
             {
-                AutoReload = previousAutoReload;
+                AllowAutoReload = true;
             }
         }
 

@@ -16,6 +16,8 @@ namespace SUCC
             path = Utilities.AbsolutePath(path);
             path = Path.ChangeExtension(path, Utilities.FileExtension);
             this.FilePath = path;
+
+            SetupWatcher();
             this.AutoReload = autoReload;
 
             if (Utilities.SuccFileExists(path))
@@ -163,20 +165,18 @@ namespace SUCC
         }
 
 
-        bool _AutoReload;
         /// <summary> If true, the DataFile will automatically reload when the file changes on disk. If false, you can still call ReloadAllData().
         public bool AutoReload
         {
-            get => _AutoReload;
+            get => AllowAutoReload;
             set
             {
-                if (Watcher == null) SetupWatcher();
-
+                AllowAutoReload = value;
                 Watcher.EnableRaisingEvents = value;
-                _AutoReload = value;
             }
         }
 
+        protected FileSystemWatcher Watcher;
         private void SetupWatcher()
         {
             var info = new FileInfo(FilePath);
@@ -184,12 +184,18 @@ namespace SUCC
 
             Watcher.NotifyFilter = NotifyFilters.LastWrite;
             Watcher.Changed += this.OnFileAutoReloadWrapper;
-
-            this.OnAutoReload += this.ReloadAllData;
         }
 
-        private void OnFileAutoReloadWrapper(object idontcare, FileSystemEventArgs goaway) => OnAutoReload.Invoke();
-        private FileSystemWatcher Watcher;
+        // Watcher.EnableRaisingEvents is a bitch, have to use this. For more details see the comments on DataFile.SaveAllData
+        protected bool AllowAutoReload = true;
+
+        private void OnFileAutoReloadWrapper(object idontcare, FileSystemEventArgs goaway)
+        {
+            if (!AllowAutoReload) return;
+
+            ReloadAllData();
+            OnAutoReload?.Invoke();
+        }
 
         /// <summary>
         /// Invoked every time the file is auto-reloaded. This only happens when AutoReload is true.
