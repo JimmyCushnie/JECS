@@ -59,19 +59,26 @@ namespace SUCC
         /// <summary> Reloads the data stored on disk into this object. </summary>
         public void ReloadAllData()
         {
-            if (Application.platform == RuntimePlatform.WebGLPlayer)
+            try
             {
-                string file = PlayerPrefs.GetString(FilePath);
-                var data = DataConverter.DataStructureFromSUCC(file);
-                TopLevelLines = data.Item1;
-                TopLevelNodes = data.Item2;
+                if (Application.platform == RuntimePlatform.WebGLPlayer)
+                {
+                    string file = PlayerPrefs.GetString(FilePath);
+                    var data = DataConverter.DataStructureFromSUCC(file);
+                    TopLevelLines = data.Item1;
+                    TopLevelNodes = data.Item2;
+                }
+                else
+                {
+                    string[] lines = File.ReadAllLines(FilePath);
+                    var data = DataConverter.DataStructureFromSUCC(lines);
+                    TopLevelLines = data.Item1;
+                    TopLevelNodes = data.Item2;
+                }
             }
-            else
+            catch(Exception e)
             {
-                string[] lines = File.ReadAllLines(FilePath);
-                var data = DataConverter.DataStructureFromSUCC(lines);
-                TopLevelLines = data.Item1;
-                TopLevelNodes = data.Item2;
+                throw new Exception($"error parsing data from file at path {FilePath}: {e.Message}");
             }
         }
 
