@@ -48,8 +48,12 @@ namespace SUCC
         /// <summary> Does a SUCC file exist at the path? </summary>
         public static bool SuccFileExists(string relativeOrAbsolutePath)
         {
-            var path = Path.ChangeExtension(relativeOrAbsolutePath, FileExtension);
-            path = AbsolutePath(path);
+            var path = AbsolutePath(relativeOrAbsolutePath);
+            path = Path.ChangeExtension(path, FileExtension);
+
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+                return PlayerPrefs.GetString(path, "") == "";
+
             return File.Exists(path);
         }
 

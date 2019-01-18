@@ -17,7 +17,7 @@ namespace SUCC
             path = Path.ChangeExtension(path, Utilities.FileExtension);
             this.FilePath = path;
 
-            if (!filePresent())
+            if (!Utilities.SuccFileExists(path))
             {
                 if (defaultFile != null)
                 {
@@ -35,14 +35,6 @@ namespace SUCC
             }
 
             this.ReloadAllData();
-
-            bool filePresent()
-            {
-                if (Application.platform == RuntimePlatform.WebGLPlayer)
-                    return PlayerPrefs.GetString(path, "") == "";
-
-                return File.Exists(path);
-            }
 
             void writeFile(TextAsset file)
             {
