@@ -17,7 +17,11 @@ namespace SUCC
             path = Path.ChangeExtension(path, Utilities.FileExtension);
             this.FilePath = path;
 
-            if (!Utilities.SuccFileExists(path))
+            if (Utilities.SuccFileExists(path))
+            {
+                this.ReloadAllData();
+            }
+            else
             {
                 if (defaultFile != null)
                 {
@@ -34,8 +38,6 @@ namespace SUCC
                 }
             }
 
-            this.ReloadAllData();
-
             void writeFile(TextAsset file)
             {
                 if (Application.platform == RuntimePlatform.WebGLPlayer)
@@ -45,8 +47,8 @@ namespace SUCC
             }
         }
 
-        internal List<Line> TopLevelLines { get; private set; }
-        internal Dictionary<string, KeyNode> TopLevelNodes { get; private set; }
+        internal List<Line> TopLevelLines { get; private set; } = new List<Line>();
+        internal Dictionary<string, KeyNode> TopLevelNodes { get; private set; } = new Dictionary<string, KeyNode>();
 
         /// <summary> Reloads the data stored on disk into this object. </summary>
         public void ReloadAllData()
