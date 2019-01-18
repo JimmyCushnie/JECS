@@ -61,20 +61,15 @@ namespace SUCC
         {
             try
             {
+                string succ;
                 if (Application.platform == RuntimePlatform.WebGLPlayer)
-                {
-                    string file = PlayerPrefs.GetString(FilePath);
-                    var data = DataConverter.DataStructureFromSUCC(file);
-                    TopLevelLines = data.Item1;
-                    TopLevelNodes = data.Item2;
-                }
+                    succ = PlayerPrefs.GetString(FilePath);
                 else
-                {
-                    string[] lines = File.ReadAllLines(FilePath);
-                    var data = DataConverter.DataStructureFromSUCC(lines);
-                    TopLevelLines = data.Item1;
-                    TopLevelNodes = data.Item2;
-                }
+                    succ = File.ReadAllText(FilePath);
+
+                var data = DataConverter.DataStructureFromSUCC(succ, this);
+                TopLevelLines = data.Item1;
+                TopLevelNodes = data.Item2;
             }
             catch(Exception e)
             {

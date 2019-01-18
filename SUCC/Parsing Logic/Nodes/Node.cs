@@ -14,21 +14,33 @@ namespace SUCC
         public abstract string Value { get; set; }
         public NodeChildrenType ChildNodeType = NodeChildrenType.none;
 
-        protected FileStyle Style;
-        protected bool UnappliedStyle = false;
-
         private List<Line> m_ChildLines = new List<Line>();
         private List<Node> m_ChildNodes = new List<Node>();
         public IReadOnlyList<Line> ChildLines => m_ChildLines;
         public IReadOnlyList<Node> ChildNodes => m_ChildNodes;
 
-        public Node(string rawText) : base(rawText) { }
-        public Node(int indentation, FileStyle style)
+        // This is here so that nodes can access the style of their file. For nodes part of a ReadOnlyDataFile, it is null.
+        // We reference a DataFile rather than a FileStyle because if a user changes the Style of the File, that change is automatically seen by all its nodes.
+        public readonly DataFile File;
+
+        protected FileStyle Style
+            => File?.Style ?? throw new NullReferenceException("Tried to get the style of a node without a file.");
+
+        /// <summary> This constructor used when loading lines from file </summary>
+        public Node(string rawText, DataFile file) : base(rawText)
+        {
+            this.File = file;
+        }
+
+        /// <summary> This constructor used when creating new lines to add to the file </summary>
+        public Node(int indentation, DataFile file)
         {
             this.IndentationLevel = indentation;
-            this.Style = style;
+            this.File = file;
             this.UnappliedStyle = true;
         }
+
+        protected bool UnappliedStyle = false;
 
 
         public KeyNode GetChildAddressedByName(string name)
@@ -44,7 +56,7 @@ namespace SUCC
             return CreateKeyNode(name);
             KeyNode CreateKeyNode(string key)
             {
-                var newnode = new KeyNode(GetProperChildIndentation(), key, Style);
+                var newnode = new KeyNode(GetProperChildIndentation(), key, File);
 
                 AddChild(newnode);
                 return newnode;
@@ -59,7 +71,7 @@ namespace SUCC
             var indentation = GetProperChildIndentation();
             for (int i = ChildNodes.Count; i <= number; i++)
             {
-                var newnode = new ListNode(indentation, Style);
+                var newnode = new ListNode(indentation, File);
                 AddChild(newnode);
             }
 
@@ -74,7 +86,7 @@ namespace SUCC
             var indentation = GetProperChildIndentation();
             for(int i = ChildNodes.Count; i <= number; i++)
             {
-                var newnode = new MultiLineStringNode(indentation, Style);
+                var newnode = new MultiLineStringNode(indentation, File);
                 AddChild(newnode);
             }
 

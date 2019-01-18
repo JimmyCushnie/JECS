@@ -9,8 +9,8 @@ namespace SUCC
     /// </summary>
     internal class KeyNode : Node
     {
-        public KeyNode(string rawText) : base(rawText) { }
-        public KeyNode(int indentation, string key, FileStyle style) : base(indentation, style)
+        public KeyNode(string rawText, DataFile file) : base(rawText, file) { }
+        public KeyNode(int indentation, string key, DataFile file) : base(indentation, file)
         {
             RawText += key + ":";
         }

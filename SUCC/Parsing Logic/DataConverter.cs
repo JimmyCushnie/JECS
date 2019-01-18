@@ -37,19 +37,21 @@ namespace SUCC
         /// <summary>
         /// Parses a string of SUCC into a data structure
         /// </summary>
-        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string input)
-            => DataStructureFromSUCC(input.SplitIntoLines());
+        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string input, DataFileBase fileRef)
+            => DataStructureFromSUCC(input.SplitIntoLines(), fileRef);
 
         /// <summary>
         /// Parses lines of SUCC into a data structure
         /// </summary>
-        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string[] lines) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
+        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string[] lines, DataFileBase fileRef) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
         {
             var TopLevelLines = new List<Line>();
             var TopLevelNodes = new Dictionary<string, KeyNode>();
 
             var NestingNodeStack = new Stack<Node>(); // the top of the stack is the node that new nodes should be children of
             bool DoingMultiLineString = false;
+
+            var file = fileRef as DataFile; // this will be null if fileRef is a ReadOnlyDataFile
 
             // parse the input line by line
             for (int i = 0; i < lines.Length; i++)
@@ -62,7 +64,7 @@ namespace SUCC
                     if (NestingNodeStack.Peek().ChildNodeType != NodeChildrenType.multiLineString)
                         throw new Exception("oh fuck, we were supposed to be doing a multi-line string but the top of the node stack isn't a multi-line string node!");
 
-                    var newboi = new MultiLineStringNode(rawText: line);
+                    var newboi = new MultiLineStringNode(rawText: line, file);
 
                     NestingNodeStack.Peek().AddChild(newboi);
 
@@ -77,7 +79,7 @@ namespace SUCC
 
                 if (LineHasData(line))
                 {
-                    Node node = GetNodeFromLine(line);
+                    Node node = GetNodeFromLine(line, file);
 
                     boobies:
 
@@ -152,17 +154,17 @@ namespace SUCC
             return line.Length != 0 && line[0] != '#';
         }
 
-        private static Node GetNodeFromLine(string line)
+        private static Node GetNodeFromLine(string line, DataFile file)
         {
             var DataType = GetDataLineType(line);
             Node node = null;
             switch (DataType)
             {
                 case DataLineType.key:
-                    node = new KeyNode(rawText: line);
+                    node = new KeyNode(rawText: line, file);
                     break;
                 case DataLineType.list:
-                    node = new ListNode(rawText: line);
+                    node = new ListNode(rawText: line, file);
                     break;
 
                 default:

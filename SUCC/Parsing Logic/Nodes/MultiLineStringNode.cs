@@ -9,8 +9,8 @@ namespace SUCC
     /// </summary>
     internal class MultiLineStringNode : Node
     {
-        public MultiLineStringNode(string rawText) : base(rawText) { }
-        public MultiLineStringNode(int indentation, FileStyle style) : base(indentation, style)
+        public MultiLineStringNode(string rawText, DataFile file) : base(rawText, file) { }
+        public MultiLineStringNode(int indentation, DataFile file) : base(indentation, file)
         {
             this.UnappliedStyle = false; // currently, no styles apply to MultiLineStringNodes
         }
