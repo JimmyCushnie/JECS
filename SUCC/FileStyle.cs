@@ -19,18 +19,18 @@ namespace SUCC
         /// <summary>
         /// Creatse a new Style.
         /// </summary>
-        /// <param name="indentationInterval">The number of spaces used to indent a child line under its parent.</param>
-        /// <param name="spacesAfterColon">The number of spaces between the colon and the value in a key node.</param>
-        /// <param name="spacesAfterDash">The number of spaces between the dash and the value in a list node.</param>
+        /// <param name="indentationInterval">The number of spaces used to indent a child line under its parent. Must be at least 1.</param>
+        /// <param name="spacesAfterColon">The number of spaces between the colon and the value in a key node. Must be at least 0.</param>
+        /// <param name="spacesAfterDash">The number of spaces between the dash and the value in a list node. Must be at least 0.</param>
         /// <param name="alwaysQuoteStrings">SUCC strings can optionally be surrounded by "quotes". If this is true, they will be quoted even when not necessary.</param>
         /// <param name="alwaysArrayDictionaries">SUCC can store dictionaries as KeyValuePair arrays if the key type is complex. If this is true, dictionaries will always be stored like that.</param>
         public FileStyle(
             int indentationInterval = 4, int spacesAfterColon = 1, int spacesAfterDash = 1, 
             bool alwaysQuoteStrings = true, bool alwaysArrayDictionaries = false)
         {
-            _IndentationInterval = indentationInterval;
-            _SpacesAfterColon = spacesAfterColon;
-            _SpacesAfterDash = spacesAfterDash;
+            IndentationInterval = indentationInterval;
+            SpacesAfterColon = spacesAfterColon;
+            SpacesAfterDash = spacesAfterDash;
             AlwaysQuoteStrings = alwaysQuoteStrings;
             AlwaysArrayDictionaries = alwaysArrayDictionaries;
         }
@@ -52,7 +52,7 @@ namespace SUCC
         int _SpacesAfterDash;
 
         /// <summary>
-        /// The number of spaces used to indent a child line under its parent.
+        /// The number of spaces used to indent a child line under its parent. Must be at least 1.
         /// </summary>
         public int IndentationInterval
         {
@@ -67,7 +67,7 @@ namespace SUCC
         }
 
         /// <summary>
-        /// The number of spaces between the colon and the value in a key node.
+        /// The number of spaces between the colon and the value in a key node. Must be at least 0.
         /// </summary>
         public int SpacesAfterColon
         {
@@ -82,7 +82,7 @@ namespace SUCC
         }
 
         /// <summary>
-        /// The number of spaces between the dash and the value in a list node.
+        /// The number of spaces between the dash and the value in a list node. Must be at least 0.
         /// </summary>
         public int SpacesAfterDash
         {
