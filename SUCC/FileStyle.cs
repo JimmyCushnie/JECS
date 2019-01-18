@@ -26,7 +26,7 @@ namespace SUCC
         /// <param name="alwaysArrayDictionaries">SUCC can store dictionaries as KeyValuePair arrays if the key type is complex. If this is true, dictionaries will always be stored like that.</param>
         public FileStyle(
             int indentationInterval = 4, int spacesAfterColon = 1, int spacesAfterDash = 1, 
-            bool alwaysQuoteStrings = true, bool alwaysArrayDictionaries = false)
+            bool alwaysQuoteStrings = false, bool alwaysArrayDictionaries = false)
         {
             IndentationInterval = indentationInterval;
             SpacesAfterColon = spacesAfterColon;
