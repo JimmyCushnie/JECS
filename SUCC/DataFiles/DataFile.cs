@@ -181,6 +181,7 @@ namespace SUCC
                 {
                     var keyText = BaseTypes.SerializeBaseType(key);
                     if (keyText.ContainsNewLine()) throw new Exception($"can't save this file as a dictionary; a key contains a new line ({keyText})");
+                    if (keyText.Contains('#')) throw new Exception($"can't save this file as a dictionary; a key contains a comment indicator ({keyText})");
                     keyText = keyText.Quote();
 
                     CurrentKeys.Add(keyText);
