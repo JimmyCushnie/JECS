@@ -10,15 +10,9 @@ namespace SUCC
     internal class KeyNode : Node
     {
         public KeyNode(string rawText) : base(rawText) { }
-        public KeyNode(int indentation, string key) : base(indentation)
+        public KeyNode(int indentation, string key, FileStyle style) : base(indentation, style)
         {
-            // todo add filestyle stuff here
-            int spacesBeforeColon = 0;
-            int spacesAfterColon = 1;
-
-            RawText += 
-                key.AddSpaces(spacesBeforeColon) 
-                + ":".AddSpaces(spacesAfterColon);
+            RawText += key + ":";
         }
 
         public string Key
@@ -48,6 +42,7 @@ namespace SUCC
             }
             set
             {
+                // todo add filestyle stuff here
                 var text = GetDataText();
                 int colonIndex = GetColonIndex(text);
 

@@ -10,7 +10,7 @@ namespace SUCC
     internal class MultiLineStringNode : Node
     {
         public MultiLineStringNode(string rawText) : base(rawText) { }
-        public MultiLineStringNode(int indentation) : base(indentation)
+        public MultiLineStringNode(int indentation, FileStyle style) : base(indentation, style)
         {
             // todo add filestyle stuff here
         }

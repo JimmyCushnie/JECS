@@ -10,11 +10,9 @@ namespace SUCC
     internal class ListNode : Node
     {
         public ListNode(string rawText) : base(rawText) { }
-        public ListNode(int indentation) : base(indentation)
+        public ListNode(int indentation, FileStyle style) : base(indentation, style)
         {
-            // todo add filestyle stuff here
-            int spacesAfterDash = 1;
-            RawText += "-".AddSpaces(spacesAfterDash);
+            RawText += "-";
         }
 
         public override string Value
@@ -31,6 +29,7 @@ namespace SUCC
             }
             set
             {
+                // todo add filestyle stuff here
                 var text = GetDataText();
                 int dashIndex = GetDashIndex(text);
 

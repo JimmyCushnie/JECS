@@ -14,15 +14,18 @@ namespace SUCC
         public abstract string Value { get; set; }
         public NodeChildrenType ChildNodeType = NodeChildrenType.none;
 
+        protected FileStyle Style;
+
         private List<Line> m_ChildLines = new List<Line>();
         private List<Node> m_ChildNodes = new List<Node>();
         public IReadOnlyList<Line> ChildLines => m_ChildLines;
         public IReadOnlyList<Node> ChildNodes => m_ChildNodes;
 
         public Node(string rawText) : base(rawText) { }
-        public Node(int indentation)
+        public Node(int indentation, FileStyle style)
         {
             this.IndentationLevel = indentation;
+            this.Style = style;
         }
 
 
@@ -39,7 +42,7 @@ namespace SUCC
             return CreateKeyNode(name);
             KeyNode CreateKeyNode(string key)
             {
-                var newnode = new KeyNode(GetProperChildIndentation(), key);
+                var newnode = new KeyNode(GetProperChildIndentation(), key, Style);
 
                 AddChild(newnode);
                 return newnode;
@@ -54,7 +57,7 @@ namespace SUCC
             var indentation = GetProperChildIndentation();
             for (int i = ChildNodes.Count; i <= number; i++)
             {
-                var newnode = new ListNode(indentation);
+                var newnode = new ListNode(indentation, Style);
                 AddChild(newnode);
             }
 
@@ -69,7 +72,7 @@ namespace SUCC
             var indentation = GetProperChildIndentation();
             for(int i = ChildNodes.Count; i <= number; i++)
             {
-                var newnode = new MultiLineStringNode(indentation);
+                var newnode = new MultiLineStringNode(indentation, Style);
                 AddChild(newnode);
             }
 
@@ -82,7 +85,7 @@ namespace SUCC
             if (this.ChildNodes.Count > 0)
                 indentation = this.ChildNodes[0].IndentationLevel; // if we already have a child, match new indentation level to that child
             else
-                indentation = this.IndentationLevel + Utilities.IndentationCount; // otherwise, increase the indentation level in accordance with the FileStyle
+                indentation = this.IndentationLevel + Style.IndentationInterval; // otherwise, increase the indentation level in accordance with the FileStyle
             return indentation;
         }
 
