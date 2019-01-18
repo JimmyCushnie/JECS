@@ -11,11 +11,12 @@ namespace SUCC
         /// <summary> The absolute path of the file this object corresponds to. </summary>
         public readonly string FilePath;
 
-        public DataFileBase(string path, string defaultFile = null)
+        public DataFileBase(string path, string defaultFile, bool autoReload)
         {
             path = Utilities.AbsolutePath(path);
             path = Path.ChangeExtension(path, Utilities.FileExtension);
             this.FilePath = path;
+            this.AutoReload = autoReload;
 
             if (Utilities.SuccFileExists(path))
             {
@@ -160,5 +161,39 @@ namespace SUCC
 
             return dictionary;
         }
+
+
+        bool _AutoReload;
+        /// <summary> If true, the DataFile will automatically reload when the file changes on disk. If false, you can still call ReloadAllData().
+        public bool AutoReload
+        {
+            get => _AutoReload;
+            set
+            {
+                if (Watcher == null) SetupWatcher();
+
+                Watcher.EnableRaisingEvents = value;
+                _AutoReload = value;
+            }
+        }
+
+        private void SetupWatcher()
+        {
+            var info = new FileInfo(FilePath);
+            Watcher = new FileSystemWatcher(path: info.DirectoryName, filter: info.Name);
+
+            Watcher.NotifyFilter = NotifyFilters.LastWrite;
+            Watcher.Changed += this.OnFileAutoReloadWrapper;
+
+            this.OnAutoReload += this.ReloadAllData;
+        }
+
+        private void OnFileAutoReloadWrapper(object idontcare, FileSystemEventArgs goaway) => OnAutoReload.Invoke();
+        private FileSystemWatcher Watcher;
+
+        /// <summary>
+        /// Invoked every time the file is auto-reloaded. This only happens when AutoReload is true.
+        /// </summary>
+        public event Action OnAutoReload;
     }
 }
