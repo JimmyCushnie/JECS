@@ -77,7 +77,7 @@ namespace SUCC
                 if (value < 0)
                     throw new ArgumentOutOfRangeException($"SpacesAfterColon cannot be less than 0. You tried to set it to {value}");
                 else
-                    _IndentationInterval = value;
+                    _SpacesAfterColon = value;
             }
         }
 
@@ -92,7 +92,7 @@ namespace SUCC
                 if (value < 0)
                     throw new ArgumentOutOfRangeException($"SpacesAfterColon cannot be less than 0. You tried to set it to {value}");
                 else
-                    _IndentationInterval = value;
+                    _SpacesAfterDash = value;
             }
         }
     }
