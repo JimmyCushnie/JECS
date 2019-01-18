@@ -56,7 +56,11 @@ namespace SUCC
         /// </summary>
         public int IndentationInterval
         {
-            get => _IndentationInterval;
+            get
+            {
+                if (_IndentationInterval < 1) _IndentationInterval = 1;
+                return _IndentationInterval;
+            }
             set
             {
                 if (value < 1)
