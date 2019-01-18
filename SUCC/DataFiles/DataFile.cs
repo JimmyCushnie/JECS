@@ -103,22 +103,14 @@ namespace SUCC
 
             if (!KeyExists(key))
             {
-                if (string.IsNullOrEmpty(key))
-                    throw new FormatException("SUCC keys must contain at least one character");
-                if (key[0] == '-')
-                    throw new FormatException("SUCC keys may not begin with the character '-'");
-                if (key.Contains(':'))
-                    throw new FormatException("SUCC keys may not contain the character ':'");
-                if (key.Contains('#'))
-                    throw new FormatException("SUCC keys may not contain the character '#'");
-                if (key.ContainsNewLine())
-                    throw new FormatException("SUCC keys cannot contain a newline");
-                if (key[0] == ' ' || key[key.Length - 1] == ' ')
-                    throw new FormatException("SUCC keys may not start or end with a space");
-
-                var newnode = new KeyNode(indentation: 0, key, file: this);
-                TopLevelNodes.Add(key, newnode);
-                TopLevelLines.Add(newnode);
+                if (Utilities.IsValidKey(key, out string whyNot))
+                {
+                    var newnode = new KeyNode(indentation: 0, key, file: this);
+                    TopLevelNodes.Add(key, newnode);
+                    TopLevelLines.Add(newnode);
+                }
+                else
+                    throw new FormatException(whyNot);
             }
 
             var node = TopLevelNodes[key];

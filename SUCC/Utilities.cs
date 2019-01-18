@@ -57,6 +57,25 @@ namespace SUCC
             return File.Exists(path);
         }
 
+        internal static bool IsValidKey(string potentialKey, out string whyNot)
+        {
+            whyNot = null;
+
+            if (string.IsNullOrEmpty(potentialKey))
+                whyNot = "SUCC keys must contain at least one character";
+            else if (potentialKey[0] == '-')
+                whyNot = "SUCC keys may not begin with the character '-'";
+            else if (potentialKey.Contains(':'))
+                whyNot = "SUCC keys may not contain the character ':'";
+            else if (potentialKey.Contains('#'))
+                whyNot = "SUCC keys may not contain the character '#'";
+            else if (potentialKey.ContainsNewLine())
+                whyNot = "SUCC keys cannot contain a newline";
+            else if (potentialKey[0] == ' ' || potentialKey[potentialKey.Length - 1] == ' ')
+                whyNot = "SUCC keys may not start or end with a space";
+
+            return whyNot == null;
+        }
 
         public static LineEndingStyle LineEndingStyle { get; set; } = LineEndingStyle.PlatformDefault;
         internal static string NewLine
