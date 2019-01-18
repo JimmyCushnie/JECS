@@ -188,9 +188,8 @@ namespace SUCC
                 foreach (var key in dictionary.Keys)
                 {
                     var keyText = BaseTypes.SerializeBaseType(key, Style);
-                    if (keyText.ContainsNewLine()) throw new Exception($"can't save this file as a dictionary; a key contains a new line ({keyText})");
-                    if (keyText.Contains('#')) throw new Exception($"can't save this file as a dictionary; a key contains a comment indicator ({keyText})");
-                    keyText = keyText.Quote();
+                    if (!Utilities.IsValidKey(keyText, out string whyNot))
+                        throw new Exception($"can't save file as this dictionary. A key ({keyText}) is not valid: {whyNot}");
 
                     CurrentKeys.Add(keyText);
                     Set(keyText, dictionary[key]);

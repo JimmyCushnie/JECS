@@ -149,13 +149,13 @@ namespace SUCC.Types
                     var value = dictionary[key];
 
                     string keyAsText = BaseTypes.SerializeBaseType(key, keyType, style);
-                    if (keyAsText.ContainsNewLine() || keyAsText.Contains('#'))
+
+                    if (!Utilities.IsValidKey(keyAsText))
                     {
                         SetDictionaryNode(node, dictionary, dictionaryType, style, forceArrayMode: true);
                         return;
                     }
 
-                    keyAsText = keyAsText.Quote(); // dictionary keys are always quoted when not in array mode
                     CurrentKeys.Add(keyAsText);
                     KeyNode child = node.GetChildAddressedByName(keyAsText);
                     NodeManager.SetNodeData(child, value, valueType, style);
@@ -193,7 +193,7 @@ namespace SUCC.Types
                 foreach (var child in node.ChildNodes)
                 {
                     string childKey = (child as KeyNode).Key;
-                    dynamic key = BaseTypes.ParseBaseType(childKey.UnQuote(), keyType); // dictionary keys are always quoted when not in array mode
+                    dynamic key = BaseTypes.ParseBaseType(childKey, keyType);
                     dynamic value = NodeManager.GetNodeData(child, valueType);
                     dictionary.Add(key, value);
                 }
