@@ -18,7 +18,13 @@ namespace SUCC
         public override string Value
         {
             get => GetDataText();
-            set => SetDataText(value);
+            set
+            {
+                if (RawText.IsWhitespace())
+                    RawText += value;
+                else
+                    SetDataText(value);
+            }
         }
 
         public static readonly string Terminator = "\"\"\"";
