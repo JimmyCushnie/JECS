@@ -15,23 +15,23 @@ namespace SUCC
     /// </summary>
     internal static class NodeManager
     {
-        internal static void SetNodeData<T>(Node node, T data) => SetNodeData(node, data, typeof(T));
-        internal static void SetNodeData(Node node, object data, Type type)
+        internal static void SetNodeData<T>(Node node, T data, FileStyle style) => SetNodeData(node, data, typeof(T), style);
+        internal static void SetNodeData(Node node, object data, Type type, FileStyle style)
         {
             if (data == null)
                 throw new Exception("you can't serialize null");
 
             string dataAsString = data as string;
             if (type == typeof(string) && dataAsString.ContainsNewLine())
-                BaseTypes.SerializeSpecialStringCase(dataAsString, node);
+                BaseTypes.SerializeSpecialStringCase(dataAsString, node, style);
 
             else if (BaseTypes.IsBaseType(type))
-                node.Value = BaseTypes.SerializeBaseType(data, type);
+                node.Value = BaseTypes.SerializeBaseType(data, type, style);
 
-            else if (CollectionTypes.TrySetCollection(node, data, type))
+            else if (CollectionTypes.TrySetCollection(node, data, type, style))
                 return;
 
-            ComplexTypes.SetComplexNode(node, data, type);
+            ComplexTypes.SetComplexNode(node, data, type, style);
         }
 
         internal static T GetNodeData<T>(Node node) => (T)GetNodeData(node, typeof(T));

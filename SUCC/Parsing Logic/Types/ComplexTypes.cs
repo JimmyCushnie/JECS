@@ -11,7 +11,7 @@ namespace SUCC.Types
 {
     internal static class ComplexTypes
     {
-        internal static void SetComplexNode(Node node, object item, Type type)
+        internal static void SetComplexNode(Node node, object item, Type type, FileStyle style)
         {
             var fields = type.GetFields();
             foreach (var f in fields)
@@ -20,7 +20,7 @@ namespace SUCC.Types
                 if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
 
                 var child = node.GetChildAddressedByName(f.Name);
-                NodeManager.SetNodeData(child, f.GetValue(item), f.FieldType);
+                NodeManager.SetNodeData(child, f.GetValue(item), f.FieldType, style);
             }
 
             var properties = type.GetProperties();
@@ -30,7 +30,7 @@ namespace SUCC.Types
                 if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
 
                 var child = node.GetChildAddressedByName(p.Name);
-                NodeManager.SetNodeData(child, p.GetValue(item), p.PropertyType);
+                NodeManager.SetNodeData(child, p.GetValue(item), p.PropertyType, style);
 
             }
         }

@@ -13,7 +13,7 @@ namespace SUCC
     public class DataFile : DataFileBase
     {
         /// <summary> Rules for how to format new data saved to this file </summary>
-        public FileStyle Style { get; set; } = FileStyle.Default;
+        public FileStyle Style = FileStyle.Default;
 
         /// <summary> Whether the file will automatically save changes to disk with each Get() or Set(). If false, you must call SaveAllData() manually. </summary>
         /// <remarks> Be careful with this. You do not want to accidentally be writing to a user's disk at 1000MB/s for 3 hours. </remarks>
@@ -122,7 +122,7 @@ namespace SUCC
             }
 
             var node = TopLevelNodes[key];
-            NodeManager.SetNodeData(node, value, type);
+            NodeManager.SetNodeData(node, value, type, Style);
 
             if (AutoSave)
                 SaveAllData();
@@ -195,7 +195,7 @@ namespace SUCC
                 var CurrentKeys = new List<string>(capacity: dictionary.Count);
                 foreach (var key in dictionary.Keys)
                 {
-                    var keyText = BaseTypes.SerializeBaseType(key);
+                    var keyText = BaseTypes.SerializeBaseType(key, Style);
                     if (keyText.ContainsNewLine()) throw new Exception($"can't save this file as a dictionary; a key contains a new line ({keyText})");
                     if (keyText.Contains('#')) throw new Exception($"can't save this file as a dictionary; a key contains a comment indicator ({keyText})");
                     keyText = keyText.Quote();

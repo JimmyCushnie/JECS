@@ -71,25 +71,6 @@ namespace SUCC
                 }
             }
         }
-
-
-
-
-
-
-        //TODO remove when we switch to FileStyle system
-        static int _indentationCount = 4;
-        public static int IndentationCount
-        {
-            get => _indentationCount;
-            set
-            {
-                if (value < 1)
-                    _indentationCount = 1;
-                else
-                    _indentationCount = value;
-            }
-        }
     }
 
     /// <summary>

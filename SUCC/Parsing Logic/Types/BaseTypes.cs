@@ -156,22 +156,19 @@ namespace SUCC
         }
 
         // support for multi-line strings
-        internal static void SerializeSpecialStringCase(string value, Node node)
+        internal static void SerializeSpecialStringCase(string value, Node node, FileStyle style)
         {
             if (value != null && value.ContainsNewLine())
             {
                 node.Value = MultiLineStringNode.Terminator;
                 var lines = value.SplitIntoLines();
 
-                int indentation = node.IndentationLevel + Utilities.IndentationCount;
-                if (node.ChildNodes.Count > 0) indentation = node.ChildNodes[0].IndentationLevel;
-
                 node.CapChildCount(lines.Length + 1);
 
                 for (int i = 0; i < lines.Length; i++)
                 {
                     var newnode = node.GetChildAddresedByStringLineNumber(i);
-                    newnode.Value = BaseTypes.SerializeString(lines[i]);
+                    newnode.Value = BaseTypes.SerializeString(lines[i], style);
                 }
 
                 node.GetChildAddresedByStringLineNumber(lines.Length).MakeTerminator();
@@ -180,7 +177,7 @@ namespace SUCC
             else
             {
                 node.ClearChildren();
-                node.Value = BaseTypes.SerializeString(value);
+                node.Value = BaseTypes.SerializeString(value, style);
             }
         }
         internal static string ParseSpecialStringCase(Node node)

@@ -11,12 +11,12 @@ namespace SUCC.Types
 {
     internal static class CollectionTypes
     {
-        internal static bool TrySetCollection(Node node, object data, Type collectionType)
+        internal static bool TrySetCollection(Node node, object data, Type collectionType, FileStyle style)
         {
-            if (collectionType.IsArray) SetArrayNode(node, data, collectionType);
-            else if (collectionType.IsList()) SetListNode(node, data, collectionType);
-            else if (collectionType.IsHashSet()) SetHashSetNode(node, data, collectionType);
-            else if (collectionType.IsDictionary()) SetDictionaryNode(node, data, collectionType);
+            if (collectionType.IsArray) SetArrayNode(node, data, collectionType, style);
+            else if (collectionType.IsList()) SetListNode(node, data, collectionType, style);
+            else if (collectionType.IsHashSet()) SetHashSetNode(node, data, collectionType, style);
+            else if (collectionType.IsDictionary()) SetDictionaryNode(node, data, collectionType, style);
 
             else if (node.ChildNodeType == NodeChildrenType.list)
                 throw new FormatException($"{collectionType} is not a supported collection type");
@@ -52,13 +52,13 @@ namespace SUCC.Types
 
 
 
-        private static void SetArrayNode(Node node, dynamic array, Type arrayType)
+        private static void SetArrayNode(Node node, dynamic array, Type arrayType, FileStyle style)
         {
             node.CapChildCount(array.Length); // prevent extra children from sticking around
 
             Type elementType = arrayType.GetElementType();
             for (int i = 0; i < array.Length; i++)
-                NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), array[i], elementType);
+                NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), array[i], elementType, style);
         }
 
         private static object RetrieveArray(Node node, Type arrayType)
@@ -77,13 +77,13 @@ namespace SUCC.Types
         }
 
 
-        private static void SetListNode(Node node, dynamic list, Type listType)
+        private static void SetListNode(Node node, dynamic list, Type listType, FileStyle style)
         {
             node.CapChildCount(list.Count);
 
             Type elementType = listType.GetGenericArguments()[0];
             for (int i = 0; i < list.Count; i++)
-                NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), list[i], elementType);
+                NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), list[i], elementType, style);
         }
 
         private static object RetrieveList(Node node, Type listType)
@@ -102,7 +102,7 @@ namespace SUCC.Types
         }
 
 
-        private static void SetHashSetNode(Node node, dynamic hashset, Type hashSetType)
+        private static void SetHashSetNode(Node node, dynamic hashset, Type hashSetType, FileStyle style)
         {
             node.CapChildCount(hashset.Count);
 
@@ -110,7 +110,7 @@ namespace SUCC.Types
             Type elementType = hashSetType.GetGenericArguments()[0];
             foreach (var item in hashset)
             {
-                NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), item, elementType);
+                NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), item, elementType, style);
                 i++;
             }
         }
@@ -131,13 +131,13 @@ namespace SUCC.Types
         }
 
 
-        private static void SetDictionaryNode(Node node, dynamic dictionary, Type dictionaryType, bool forceArrayMode = false)
+        private static void SetDictionaryNode(Node node, dynamic dictionary, Type dictionaryType, FileStyle style, bool forceArrayMode = false)
         {
             Type keyType = dictionaryType.GetGenericArguments()[0];
             Type valueType = dictionaryType.GetGenericArguments()[1];
             bool keyIsBase = BaseTypes.IsBaseType(keyType);
 
-            if (keyIsBase && !forceArrayMode)
+            if (keyIsBase && !forceArrayMode && !style.AlwaysArrayDictionaries)
             {
                 // we might have switched between standard and array dictionary storage, and if so, children need to be reset
                 if (node.ChildNodeType != NodeChildrenType.key)
@@ -148,17 +148,17 @@ namespace SUCC.Types
                 {
                     var value = dictionary[key];
 
-                    string keyAsText = BaseTypes.SerializeBaseType(key, keyType);
+                    string keyAsText = BaseTypes.SerializeBaseType(key, keyType, style);
                     if (keyAsText.ContainsNewLine() || keyAsText.Contains('#'))
                     {
-                        SetDictionaryNode(node, dictionary, dictionaryType, forceArrayMode: true);
+                        SetDictionaryNode(node, dictionary, dictionaryType, style, forceArrayMode: true);
                         return;
                     }
 
                     keyAsText = keyAsText.Quote(); // dictionary keys are always quoted when not in array mode
                     CurrentKeys.Add(keyAsText);
                     KeyNode child = node.GetChildAddressedByName(keyAsText);
-                    NodeManager.SetNodeData(child, value, valueType);
+                    NodeManager.SetNodeData(child, value, valueType, style);
                 }
 
                 // make sure that old data in the file is deleted when a new dictionary is saved.
@@ -176,7 +176,7 @@ namespace SUCC.Types
                     node.ClearChildren(newChildrenType: NodeChildrenType.list);
 
                 var array = GetWritableKeyValuePairArray(dictionary);
-                NodeManager.SetNodeData(node, array, array.GetType());
+                NodeManager.SetNodeData(node, array, array.GetType(), style);
             }
         }
 
