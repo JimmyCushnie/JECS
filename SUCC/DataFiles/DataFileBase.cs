@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
 
 namespace SUCC
 {
@@ -10,7 +9,7 @@ namespace SUCC
         /// <summary> The absolute path of the file this object corresponds to. </summary>
         public readonly string FilePath;
 
-        public DataFileBase(string path, string defaultFile, bool autoReload)
+        public DataFileBase(string path, string defaultFileText, bool autoReload)
         {
             path = Utilities.AbsolutePath(path);
             path = Path.ChangeExtension(path, Utilities.FileExtension);
@@ -25,27 +24,10 @@ namespace SUCC
             }
             else
             {
-                if (defaultFile != null)
-                {
-                    var textFile = Resources.Load<TextAsset>(defaultFile);
-                    if (textFile == null)
-                        throw new Exception("The default file you specified doesn't exist in Resources :(");
-
-                    writeFile(textFile);
-                    Resources.UnloadAsset(textFile);
-                }
-                else if (Application.platform != RuntimePlatform.WebGLPlayer)
-                {
-                    File.Create(path).Close(); // create empty file on disk
-                }
-            }
-
-            void writeFile(TextAsset file)
-            {
-                if (Application.platform == RuntimePlatform.WebGLPlayer)
-                    PlayerPrefs.SetString(path, file.text);
+                if (defaultFileText != null)
+                    File.WriteAllText(path, defaultFileText);
                 else
-                    File.WriteAllBytes(path, file.bytes);
+                    File.Create(path).Close(); // create empty file on disk
             }
         }
 
@@ -57,11 +39,7 @@ namespace SUCC
         {
             try
             {
-                string succ;
-                if (Application.platform == RuntimePlatform.WebGLPlayer)
-                    succ = PlayerPrefs.GetString(FilePath);
-                else
-                    succ = File.ReadAllText(FilePath);
+                string succ = File.ReadAllText(FilePath);
 
                 var data = DataConverter.DataStructureFromSUCC(succ, this);
                 TopLevelLines = data.Item1;
