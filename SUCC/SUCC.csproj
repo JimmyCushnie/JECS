@@ -1,70 +1,12 @@
-﻿<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{35250E89-32B7-4AAB-903A-C84F6667094C}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <NoStandardLibraries>false</NoStandardLibraries>
-    <AssemblyName>SUCC</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\SUCC.dll\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <LangVersion>7.2</LangVersion>
-    <DocumentationFile>bin\Debug\SUCC.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <DocumentationFile>bin\Release\SUCC.xml</DocumentationFile>
-    <LangVersion>7.2</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RootNamespace>SUCC</RootNamespace>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="DataFiles\DataFile.cs" />
-    <Compile Include="DataFiles\DataFileBase.cs" />
-    <Compile Include="DataFiles\ReadOnlyDataFile.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="FileStyle.cs" />
-    <Compile Include="Parsing Logic\DataConverter.cs" />
-    <Compile Include="Parsing Logic\DontSaveAttribute.cs" />
-    <Compile Include="Parsing Logic\NodeManager.cs" />
-    <Compile Include="Parsing Logic\Nodes\KeyNode.cs" />
-    <Compile Include="Parsing Logic\Nodes\Line.cs" />
-    <Compile Include="Parsing Logic\Nodes\ListNode.cs" />
-    <Compile Include="Parsing Logic\Nodes\MultiLineStringNode.cs" />
-    <Compile Include="Parsing Logic\Nodes\Node.cs" />
-    <Compile Include="Parsing Logic\Types\BaseTypes.cs" />
-    <Compile Include="Parsing Logic\Types\CollectionTypes.cs" />
-    <Compile Include="Parsing Logic\Types\ComplexTypes.cs" />
-    <Compile Include="Parsing Logic\Types\ComplexTypeShortcuts.cs" />
-    <Compile Include="Utilities.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include=".vs\SUCC\v15\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
-  <ProjectExtensions>
-    <VisualStudio AllowExistingFolder="true" />
-  </ProjectExtensions>
+
 </Project>
