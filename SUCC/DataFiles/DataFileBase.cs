@@ -15,9 +15,6 @@ namespace SUCC
             path = Path.ChangeExtension(path, Utilities.FileExtension);
             this.FilePath = path;
 
-            SetupWatcher();
-            this.AutoReload = autoReload;
-
             if (Utilities.SuccFileExists(path))
             {
                 this.ReloadAllData();
@@ -29,6 +26,9 @@ namespace SUCC
                 else
                     File.Create(path).Close(); // create empty file on disk
             }
+
+            SetupWatcher(); // setup watcher AFTER file has been created
+            this.AutoReload = autoReload;
         }
 
         internal List<Line> TopLevelLines { get; private set; } = new List<Line>();
