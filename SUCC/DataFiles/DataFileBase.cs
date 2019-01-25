@@ -33,6 +33,7 @@ namespace SUCC
                 }
                 else if (Application.platform != RuntimePlatform.WebGLPlayer)
                 {
+                    Directory.CreateDirectory(new FileInfo(path).Directory.FullName);
                     File.Create(path).Close(); // create empty file on disk
                 }
             }
