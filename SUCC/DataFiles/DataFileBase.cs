@@ -24,7 +24,10 @@ namespace SUCC
                 if (defaultFileText != null)
                     File.WriteAllText(path, defaultFileText);
                 else
+                {
+                    Directory.CreateDirectory(new FileInfo(path).Directory.FullName);
                     File.Create(path).Close(); // create empty file on disk
+                }
             }
 
             SetupWatcher(); // setup watcher AFTER file has been created
