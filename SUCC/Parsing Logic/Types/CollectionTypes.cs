@@ -83,7 +83,7 @@ namespace SUCC.Types
             SetListNodeG.MakeGenericMethod(elementType)
                 .Invoke(null, node, list, style);
         }
-        private static MethodInfo SetListNodeG = GetMethod("SetListNodeGeneric");
+        private static MethodInfo SetListNodeG = GetMethod(nameof(SetListNodeGeneric));
         private static void SetListNodeGeneric<T>(Node node, List<T> list, FileStyle style)
         {
             node.CapChildCount(list.Count);
@@ -99,7 +99,7 @@ namespace SUCC.Types
             return RetrieveListG.MakeGenericMethod(elementType)
                 .Invoke(null, node);
         }
-        private static MethodInfo RetrieveListG = GetMethod("RetrieveListGeneric");
+        private static MethodInfo RetrieveListG = GetMethod(nameof(RetrieveListGeneric));
         private static List<T> RetrieveListGeneric<T>(Node node)
         {
             var list = new List<T>(capacity: node.ChildNodes.Count);
@@ -122,7 +122,7 @@ namespace SUCC.Types
             SetHashSetNodeG.MakeGenericMethod(elementType)
                 .Invoke(null, node, hashset, style);
         }
-        private static MethodInfo SetHashSetNodeG = GetMethod("SetHashSetNodeGeneric");
+        private static MethodInfo SetHashSetNodeG = GetMethod(nameof(SetHashSetNodeGeneric));
         private static void SetHashSetNodeGeneric<T>(Node node, HashSet<T> hashset, FileStyle style)
         {
             node.CapChildCount(hashset.Count);
@@ -142,7 +142,7 @@ namespace SUCC.Types
             return RetrieveHashSetG.MakeGenericMethod(elementType)
                 .Invoke(null, node);
         }
-        private static MethodInfo RetrieveHashSetG = GetMethod("RetrieveHashSetGeneric");
+        private static MethodInfo RetrieveHashSetG = GetMethod(nameof(RetrieveHashSetGeneric));
         private static HashSet<T> RetrieveHashSetGeneric<T>(Node node)
         {
             var hashset = new HashSet<T>(); // todo: use the capacity constructor once unity can use .Net 4.7.2 - i.e. new HashSet<T>(capacity: node.ChildNodes.Count)
@@ -166,7 +166,7 @@ namespace SUCC.Types
             SetDictionaryG.MakeGenericMethod(keyType, valueType)
                 .Invoke(null, node, dictionary, style, forceArrayMode);
         }
-        private static MethodInfo SetDictionaryG = GetMethod("SetDictionaryNodeGeneric");
+        private static MethodInfo SetDictionaryG = GetMethod(nameof(SetDictionaryNodeGeneric));
         private static void SetDictionaryNodeGeneric<TKey, TValue>(Node node, Dictionary<TKey, TValue> dictionary, FileStyle style, bool forceArrayMode = false)
         {
             bool keyIsBase = BaseTypes.IsBaseType(typeof(TKey));
@@ -222,7 +222,7 @@ namespace SUCC.Types
             return RetrieveDictionaryG.MakeGenericMethod(keyType, valueType)
                 .Invoke(null, node);
         }
-        private static MethodInfo RetrieveDictionaryG = GetMethod("RetrieveDictionaryGeneric");
+        private static MethodInfo RetrieveDictionaryG = GetMethod(nameof(RetrieveDictionaryGeneric));
         private static Dictionary<TKey, TValue> RetrieveDictionaryGeneric<TKey, TValue>(Node node)
         {
             bool keyIsBase = BaseTypes.IsBaseType(typeof(TKey));
