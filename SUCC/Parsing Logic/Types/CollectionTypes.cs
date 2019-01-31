@@ -1,9 +1,13 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace SUCC.Types
 {
+    // This class used to use dynamics instead of this non-generic generics trickery.
+    // However, the old way only worked when compiled with Unity's compiler for Windows.
+    // On other platforms, or when compiled by Visual Studio, they would throw RuntimeBinderExceptions.
     internal static class CollectionTypes
     {
         internal static bool TrySetCollection(Node node, object data, Type collectionType, FileStyle style)
@@ -46,14 +50,14 @@ namespace SUCC.Types
 
 
 
-
-        private static void SetArrayNode(Node node, dynamic array, Type arrayType, FileStyle style)
+        // arrays are the only type in here that doesn't require non-generic generics trickery
+        private static void SetArrayNode(Node node, object array, Type arrayType, FileStyle style)
         {
-            node.CapChildCount(array.Length); // prevent extra children from sticking around
-
             Type elementType = arrayType.GetElementType();
-            for (int i = 0; i < array.Length; i++)
-                NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), array[i], elementType, style);
+
+            var boi = (Array)array;
+            for (int i = 0; i < boi.Length; i++)
+                NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), boi.GetValue(i), elementType, style);
         }
 
         private static object RetrieveArray(Node node, Type arrayType)
@@ -72,24 +76,38 @@ namespace SUCC.Types
         }
 
 
-        private static void SetListNode(Node node, dynamic list, Type listType, FileStyle style)
+        private static void SetListNode(Node node, object list, Type listType, FileStyle style)
+        {
+            Type elementType = listType.GetGenericArguments()[0];
+
+            SetListNodeG.MakeGenericMethod(elementType)
+                .Invoke(null, node, list, style);
+        }
+        private static MethodInfo SetListNodeG = GetMethod("SetListNodeGeneric");
+        private static void SetListNodeGeneric<T>(Node node, List<T> list, FileStyle style)
         {
             node.CapChildCount(list.Count);
 
-            Type elementType = listType.GetGenericArguments()[0];
             for (int i = 0; i < list.Count; i++)
-                NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), list[i], elementType, style);
+                NodeManager.SetNodeData<T>(node.GetChildAddressedByListNumber(i), list[i], style);
         }
 
         private static object RetrieveList(Node node, Type listType)
         {
             Type elementType = listType.GetGenericArguments()[0];
-            dynamic list = Activator.CreateInstance(listType, node.ChildNodes.Count);
+
+            return RetrieveListG.MakeGenericMethod(elementType)
+                .Invoke(null, node);
+        }
+        private static MethodInfo RetrieveListG = GetMethod("RetrieveListGeneric");
+        private static List<T> RetrieveListGeneric<T>(Node node)
+        {
+            var list = new List<T>(capacity: node.ChildNodes.Count);
 
             for (int i = 0; i < node.ChildNodes.Count; i++)
             {
                 ListNode child = node.GetChildAddressedByListNumber(i);
-                dynamic item = NodeManager.GetNodeData(child, elementType);
+                var item = NodeManager.GetNodeData<T>(child);
                 list.Add(item);
             }
 
@@ -97,28 +115,42 @@ namespace SUCC.Types
         }
 
 
-        private static void SetHashSetNode(Node node, dynamic hashset, Type hashSetType, FileStyle style)
+        private static void SetHashSetNode(Node node, object hashset, Type hashsetType, FileStyle style)
+        {
+            Type elementType = hashsetType.GetGenericArguments()[0];
+
+            SetHashSetNodeG.MakeGenericMethod(elementType)
+                .Invoke(null, node, hashset, style);
+        }
+        private static MethodInfo SetHashSetNodeG = GetMethod("SetHashSetNodeGeneric");
+        private static void SetHashSetNodeGeneric<T>(Node node, HashSet<T> hashset, FileStyle style)
         {
             node.CapChildCount(hashset.Count);
 
             int i = 0;
-            Type elementType = hashSetType.GetGenericArguments()[0];
             foreach (var item in hashset)
             {
-                NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), item, elementType, style);
+                NodeManager.SetNodeData<T>(node.GetChildAddressedByListNumber(i), item, style);
                 i++;
             }
         }
 
-        private static object RetrieveHashSet(Node node, Type hashSetType)
+        private static object RetrieveHashSet(Node node, Type hashsetType)
         {
-            Type elementType = hashSetType.GetGenericArguments()[0];
-            dynamic hashset = Activator.CreateInstance(hashSetType); // todo: use the capacity constructor once unity can use .Net 4.7.2 - i.e. CreateInstance(hashSetType, node.ChildNodes.Count)
+            Type elementType = hashsetType.GetGenericArguments()[0];
+
+            return RetrieveHashSetG.MakeGenericMethod(elementType)
+                .Invoke(null, node);
+        }
+        private static MethodInfo RetrieveHashSetG = GetMethod("RetrieveHashSetGeneric");
+        private static HashSet<T> RetrieveHashSetGeneric<T>(Node node)
+        {
+            var hashset = new HashSet<T>(); // todo: use the capacity constructor once unity can use .Net 4.7.2 - i.e. new HashSet<T>(capacity: node.ChildNodes.Count)
 
             for (int i = 0; i < node.ChildNodes.Count; i++)
             {
                 ListNode child = node.GetChildAddressedByListNumber(i);
-                dynamic item = NodeManager.GetNodeData(child, elementType);
+                var item = NodeManager.GetNodeData<T>(child);
                 hashset.Add(item);
             }
 
@@ -126,11 +158,18 @@ namespace SUCC.Types
         }
 
 
-        private static void SetDictionaryNode(Node node, dynamic dictionary, Type dictionaryType, FileStyle style, bool forceArrayMode = false)
+        private static void SetDictionaryNode(Node node, object dictionary, Type dictionaryType, FileStyle style, bool forceArrayMode = false)
         {
             Type keyType = dictionaryType.GetGenericArguments()[0];
             Type valueType = dictionaryType.GetGenericArguments()[1];
-            bool keyIsBase = BaseTypes.IsBaseType(keyType);
+
+            SetDictionaryG.MakeGenericMethod(keyType, valueType)
+                .Invoke(null, node, dictionary, style, forceArrayMode);
+        }
+        private static MethodInfo SetDictionaryG = GetMethod("SetDictionaryNodeGeneric");
+        private static void SetDictionaryNodeGeneric<TKey, TValue>(Node node, Dictionary<TKey, TValue> dictionary, FileStyle style, bool forceArrayMode = false)
+        {
+            bool keyIsBase = BaseTypes.IsBaseType(typeof(TKey));
 
             if (keyIsBase && !forceArrayMode && !style.AlwaysArrayDictionaries)
             {
@@ -143,17 +182,17 @@ namespace SUCC.Types
                 {
                     var value = dictionary[key];
 
-                    string keyAsText = BaseTypes.SerializeBaseType(key, keyType, style);
+                    string keyAsText = BaseTypes.SerializeBaseType<TKey>(key, style);
 
                     if (!Utilities.IsValidKey(keyAsText))
                     {
-                        SetDictionaryNode(node, dictionary, dictionaryType, style, forceArrayMode: true);
+                        SetDictionaryNodeGeneric(node, dictionary, style, forceArrayMode: true);
                         return;
                     }
 
                     CurrentKeys.Add(keyAsText);
                     KeyNode child = node.GetChildAddressedByName(keyAsText);
-                    NodeManager.SetNodeData(child, value, valueType, style);
+                    NodeManager.SetNodeData<TValue>(child, value, style);
                 }
 
                 // make sure that old data in the file is deleted when a new dictionary is saved.
@@ -179,25 +218,30 @@ namespace SUCC.Types
         {
             Type keyType = dictionaryType.GetGenericArguments()[0];
             Type valueType = dictionaryType.GetGenericArguments()[1];
-            bool keyIsBase = BaseTypes.IsBaseType(keyType);
 
-            dynamic dictionary = Activator.CreateInstance(dictionaryType);
+            return RetrieveDictionaryG.MakeGenericMethod(keyType, valueType)
+                .Invoke(null, node);
+        }
+        private static MethodInfo RetrieveDictionaryG = GetMethod("RetrieveDictionaryGeneric");
+        private static Dictionary<TKey, TValue> RetrieveDictionaryGeneric<TKey, TValue>(Node node)
+        {
+            bool keyIsBase = BaseTypes.IsBaseType(typeof(TKey));
+
+            var dictionary = new Dictionary<TKey, TValue>(capacity: node.ChildNodes.Count);
 
             if (keyIsBase && node.ChildNodeType == NodeChildrenType.key)
             {
                 foreach (var child in node.ChildNodes)
                 {
                     string childKey = (child as KeyNode).Key;
-                    dynamic key = BaseTypes.ParseBaseType(childKey, keyType);
-                    dynamic value = NodeManager.GetNodeData(child, valueType);
+                    var key = BaseTypes.ParseBaseType<TKey>(childKey);
+                    var value = NodeManager.GetNodeData<TValue>(child);
                     dictionary.Add(key, value);
                 }
             }
             else
             {
-                // treat it as a WritableKeyValuePair<keyType, valueType>[]
-                var type = GetWritableKeyValuePairArray(dictionary).GetType();
-                dynamic array = NodeManager.GetNodeData(node, type);
+                var array = NodeManager.GetNodeData<WritableKeyValuePair<TKey, TValue>[]>(node);
                 foreach (var kvp in array)
                     dictionary.Add(kvp.Key, kvp.Value);
             }
@@ -227,5 +271,9 @@ namespace SUCC.Types
             public TKey Key { get; set; }
             public TValue Value { get; set; }
         }
+
+
+        private static MethodInfo GetMethod(string methodName)
+            => typeof(CollectionTypes).GetMethod(methodName, BindingFlags.Static | BindingFlags.NonPublic);
     }
 }

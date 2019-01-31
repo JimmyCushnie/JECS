@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Reflection;
 
 namespace SUCC
 {
@@ -31,5 +32,10 @@ namespace SUCC
 
         internal static bool IsWhitespace(this string s)
             => s.Trim().Length == 0;
+
+
+        // this is just to enable params
+        internal static object Invoke(this MethodInfo method, object obj, params object[] parameters)
+            => method.Invoke(obj, parameters);
     }
 }

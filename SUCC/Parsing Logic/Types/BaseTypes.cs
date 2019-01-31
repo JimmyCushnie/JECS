@@ -296,7 +296,7 @@ namespace SUCC
         }
         private static object ParseEnum(string text, Type type)
         {
-            return Enum.Parse(type, text);
+            return Enum.Parse(type, text, ignoreCase: true);
         }
 
         #endregion
