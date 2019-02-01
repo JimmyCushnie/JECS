@@ -16,11 +16,7 @@ namespace SUCC
             path = Path.ChangeExtension(path, Utilities.FileExtension);
             this.FilePath = path;
 
-            if (Utilities.SuccFileExists(path))
-            {
-                this.ReloadAllData();
-            }
-            else
+            if (!Utilities.SuccFileExists(path))
             {
                 if (defaultFile != null)
                 {
@@ -37,6 +33,8 @@ namespace SUCC
                     File.Create(path).Close(); // create empty file on disk
                 }
             }
+
+            this.ReloadAllData();
 
             SetupWatcher(); // setup watcher AFTER file has been created
             this.AutoReload = autoReload;
