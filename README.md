@@ -1,6 +1,6 @@
 # SUCC
 
-Sensible and Utilitarian C# Configuration
+Sensible and Utilitarian C# Configuration  
 Created by Jimmy Cushnie
 
 ---
