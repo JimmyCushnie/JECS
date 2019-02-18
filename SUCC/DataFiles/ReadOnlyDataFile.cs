@@ -11,9 +11,9 @@ namespace SUCC
         /// Creates a new DataFile object corresponding to a SUCC file in system storage.
         /// </summary>
         /// <param name="path"> the path of the file. Can be either absolute or relative to the default path. </param>
-        /// <param name="defaultFileText"> optionally, if there isn't a file at the path, one can be created from the text supplied here. </param>
+        /// <param name="defaultFile"> optionally, if there isn't a file at the path, one can be created from a file in the Resources folder. </param>
         /// <param name="autoReload"> if true, the DataFile will automatically reload when the file changes on disk. </param>
-        public ReadOnlyDataFile(string path, string defaultFileText = null, bool autoReload = false) : base(path, defaultFileText, autoReload) { }
+        public ReadOnlyDataFile(string path, string defaultFile = null, bool autoReload = false) : base(path, defaultFile, autoReload) { }
 
         /// <summary> Get some data from the file, or return a default value if the data does not exist </summary>
         /// <param name="key"> what the data is labeled as within the file </param>

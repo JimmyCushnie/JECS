@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using UnityEngine;
+using System.IO;
 using System.Linq;
 using System;
 
@@ -7,18 +8,30 @@ namespace SUCC
     public static class Utilities
     {
         /// <summary>
-        /// Set a default path for DataFiles to be relative to.
+        /// For the built game, this refers to the same folder that the executable is in. In the editor, it refers to [project folder]/Game. You can change it if you like.
         /// </summary>
-        private static string _DefaultPath;
+        private static string _DefaultPath = GetDefaultDefaultPath();
         public static string DefaultPath
         {
             get => _DefaultPath;
             set
             {
-                if (Path.IsPathRooted(value))
+                if (@Path.IsPathRooted(value))
                     throw new Exception($"When setting a custom default path, you must set an absolute path. The path {value} is not absolute.");
                 _DefaultPath = value;
             }
+        }
+
+        private static string GetDefaultDefaultPath()
+        {
+#if UNITY_EDITOR
+            string ProjectFolder = Directory.GetParent(Application.dataPath).FullName;
+            return Path.Combine(ProjectFolder, "Game");
+#elif UNITY_WEBGL
+            return "GameData";
+#else
+            return Directory.GetParent(Application.dataPath).FullName;
+#endif
         }
 
         public static readonly string FileExtension = ".succ";
@@ -27,9 +40,6 @@ namespace SUCC
         public static string AbsolutePath(string relativeOrAbsolutePath)
         {
             if (Path.IsPathRooted(relativeOrAbsolutePath)) return relativeOrAbsolutePath;
-            else if (DefaultPath == null)
-                throw new InvalidOperationException($"You can't use relative paths unless you've set a DefaultPath. Path {relativeOrAbsolutePath} was not absolute");
-
             return Path.Combine(DefaultPath, relativeOrAbsolutePath);
         }
 
@@ -38,6 +48,9 @@ namespace SUCC
         {
             var path = AbsolutePath(relativeOrAbsolutePath);
             path = Path.ChangeExtension(path, FileExtension);
+
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+                return PlayerPrefs.GetString(path, "") == "";
 
             return File.Exists(path);
         }
