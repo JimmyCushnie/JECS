@@ -51,7 +51,7 @@ weapons:
         attackSpeed: 0.4
 ```
 
-Look at that. That's a *beautiful* configuration file. There's zero wasted space on formatting. Everything is laid out clearly so that it's easy to find what you're looking for. The file is fast for a human to read and fast for a human to edit. If you were working on this a game and needed to add a new weapon type, what would you rather your configuration file look like?
+Look at that. That's a *beautiful* configuration file. There's zero wasted space on formatting. Everything is laid out clearly so that it's easy to find what you're looking for. The file is fast for a human to read and fast for a human to edit. If you were working on this game and needed to add a new weapon type, what would you rather the configuration file look like?
 
 Furthermore, SUCC gives you a lot of freedom when writing or editing config files. You can play around with the colon position and the indentation level, you can add whitespace, you can add comments. The following file will, to SUCC, load exactly the same as the preceding one:
 
