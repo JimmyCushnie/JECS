@@ -27,7 +27,7 @@ Do your configuration files look like this?
 </weapons>
 ```
 
-Do your configuration files, god forbid, look like this?<sup> <sup> <sup> <sup>cough cough<sup>easy save</sup></sup></sup></sup></sup>
+Do your configuration files, god forbid, look like this?<sup>cough cough<sup>easy save</sup></sup>
 
 ```
 {"weapons":{"__type":"System.Collections.Generic.List`1[[Weapon, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]],mscorlib","value":[{"name":"sword","damage":10,"attackSpeed":1},{"name":"dagger","damage":6,"attackSpeed":1.3},{"name":"axe","damage":20,"attackSpeed":0.4}]}}
