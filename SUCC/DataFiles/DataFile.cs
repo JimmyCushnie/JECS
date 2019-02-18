@@ -24,7 +24,7 @@ namespace SUCC
         /// <param name="defaultFileText"> optionally, if there isn't a file at the path, one can be created from the text supplied here. </param>
         /// <param name="autoSave"> if true, the file will automatically save changes to disk with each Get() or Set(). Otherwise, you must call SaveAllData() manually. </param>
         /// <param name="autoReload"> if true, the DataFile will automatically reload when the file changes on disk. </param>
-        public DataFile(string path, string defaultFileText = null, bool autoSave = false, bool autoReload = false) : this(path, FileStyle.Default, defaultFileText, autoSave, autoReload) { }
+        public DataFile(string path, string defaultFileText = null, bool autoSave = true, bool autoReload = false) : this(path, FileStyle.Default, defaultFileText, autoSave, autoReload) { }
 
         /// <summary>
         /// Creates a new DataFile object corresponding to a SUCC file in system storage, with the option to have a custom FileStyle.
@@ -32,9 +32,9 @@ namespace SUCC
         /// <param name="path"> the path of the file. Can be either absolute or relative to the default path. </param>
         /// <param name="style"> the rules for how this file styles newly saved data </param>
         /// <param name="defaultFileText"> optionally, if there isn't a file at the path, one can be created from the text supplied here. </param>
-        /// <param name="autoSave"> if true, the DataFile will automatically save changes to disk with each Get or Set. </param>
+        /// <param name="autoSave"> if true, the DataFile will automatically save changes to disk with each Get or Set. Otherwise, you must call SaveAllData() manually. </param>
         /// <param name="autoReload"> if true, the DataFile will automatically reload when the file changes on disk. </param>
-        public DataFile(string path, FileStyle style, string defaultFileText = null, bool autoSave = false, bool autoReload = false) : base(path, defaultFileText, autoReload)
+        public DataFile(string path, FileStyle style, string defaultFileText = null, bool autoSave = true, bool autoReload = false) : base(path, defaultFileText, autoReload)
         {
             AutoSave = autoSave;
             Style = style;
