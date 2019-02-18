@@ -9,20 +9,20 @@ Do your configuration files look like this?
 
 ```
 <weapons>
-	<weapon>
-		<name>sword</name>
-		<damage>10</damage>
-		<attackSpeed>1</attackSpeed>
+    <weapon>
+        <name>sword</name>
+        <damage>10</damage>
+        <attackSpeed>1</attackSpeed>
     </weapon>
     <weapon>
-    	<name>dagger</name>
-		<damage>6</damage>
-		<attackSpeed>1.3</attackSpeed>
+        <name>dagger</name>
+        <damage>6</damage>
+        <attackSpeed>1.3</attackSpeed>
     </weapon>
     <weapon>
-    	<name>axe</name>
-		<damage>20</damage>
-		<attackSpeed>0.4</attackSpeed>
+        <name>axe</name>
+        <damage>20</damage>
+        <attackSpeed>0.4</attackSpeed>
     </weapon>
 </weapons>
 ```
