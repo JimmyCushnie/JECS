@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
 
 namespace SUCC
 {
@@ -22,20 +21,20 @@ namespace SUCC
         /// Creates a new DataFile object corresponding to a SUCC file in system storage.
         /// </summary>
         /// <param name="path"> the path of the file. Can be either absolute or relative to the default path. </param>
-        /// <param name="defaultFile"> optionally, if there isn't a file at the path, one can be created from a file in the Resources folder. </param>
+        /// <param name="defaultFileText"> optionally, if there isn't a file at the path, one can be created from the text supplied here. </param>
         /// <param name="autoSave"> if true, the file will automatically save changes to disk with each Get() or Set(). Otherwise, you must call SaveAllData() manually. </param>
         /// <param name="autoReload"> if true, the DataFile will automatically reload when the file changes on disk. </param>
-        public DataFile(string path, string defaultFile = null, bool autoSave = true, bool autoReload = false) : this(path, FileStyle.Default, defaultFile, autoSave, autoReload) { }
+        public DataFile(string path, string defaultFileText = null, bool autoSave = true, bool autoReload = false) : this(path, FileStyle.Default, defaultFileText, autoSave, autoReload) { }
 
         /// <summary>
         /// Creates a new DataFile object corresponding to a SUCC file in system storage, with the option to have a custom FileStyle.
         /// </summary>
         /// <param name="path"> the path of the file. Can be either absolute or relative to the default path. </param>
         /// <param name="style"> the rules for how this file styles newly saved data </param>
-        /// <param name="defaultFile"> optionally, if there isn't a file at the path, one can be created from a file in the Resources folder. </param>
+        /// <param name="defaultFileText"> optionally, if there isn't a file at the path, one can be created from the text supplied here. </param>
         /// <param name="autoSave"> if true, the DataFile will automatically save changes to disk with each Get or Set. Otherwise, you must call SaveAllData() manually. </param>
         /// <param name="autoReload"> if true, the DataFile will automatically reload when the file changes on disk. </param>
-        public DataFile(string path, FileStyle style, string defaultFile = null, bool autoSave = true, bool autoReload = false) : base(path, defaultFile, autoReload)
+        public DataFile(string path, FileStyle style, string defaultFileText = null, bool autoSave = true, bool autoReload = false) : base(path, defaultFileText, autoReload)
         {
             AutoSave = autoSave;
             Style = style;
@@ -48,24 +47,14 @@ namespace SUCC
         {
             string SUCC = GetRawText();
 
-            if (Application.platform == RuntimePlatform.WebGLPlayer)
+            string ExistingSUCC = File.ReadAllText(FilePath);
+
+            if (SUCC != ExistingSUCC)
             {
-                string ExistingSUCC = PlayerPrefs.GetString(FilePath);
+                File.WriteAllText(FilePath, SUCC);
 
-                if (SUCC != ExistingSUCC)
-                    PlayerPrefs.SetString(FilePath, SUCC);
-            }
-            else
-            {
-                string ExistingSUCC = File.ReadAllText(FilePath);
-
-                if (SUCC != ExistingSUCC)
-                {
-                    File.WriteAllText(FilePath, SUCC);
-
-                    // FileSystemWatcher.Chagned takes several seconds to fire, so we use this.
-                    IgnoreNextFileReload = true;
-                }
+                // FileSystemWatcher.Chagned takes several seconds to fire, so we use this.
+                IgnoreNextFileReload = true;
             }
         }
 
