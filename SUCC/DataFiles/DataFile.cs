@@ -99,14 +99,9 @@ namespace SUCC
 
             if (!KeyExists(key))
             {
-                if (Utilities.IsValidKey(key, out string whyNot))
-                {
-                    var newnode = new KeyNode(indentation: 0, key, file: this);
-                    TopLevelNodes.Add(key, newnode);
-                    TopLevelLines.Add(newnode);
-                }
-                else
-                    throw new FormatException(whyNot);
+                var newnode = new KeyNode(indentation: 0, key, file: this);
+                TopLevelNodes.Add(key, newnode);
+                TopLevelLines.Add(newnode);
             }
 
             var node = TopLevelNodes[key];
