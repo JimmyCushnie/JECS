@@ -75,14 +75,15 @@ namespace SUCC
         /// <param name="defaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
         public override T Get<T>(string key, T defaultValue = default) => base.Get(key, defaultValue);
 
-        /// <summary> Non-generic version of Get. You probably want to use the other one. </summary>
+        /// <summary> Non-generic version of Get. You probably want to use Get<T>. </summary>
+        /// <param name="type"/> the type to get the data as </param>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="DefaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
-        public override object Get(Type type, string key, object DefaultValue)
+        public override object GetNonGeneric(Type type, string key, object DefaultValue)
         {
             if (!KeyExists(key))
             {
-                Set(type, key, DefaultValue);
+                SetNonGeneric(type, key, DefaultValue);
                 return DefaultValue;
             }
 
@@ -93,12 +94,13 @@ namespace SUCC
         /// <summary> Save data to the file </summary>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="value"> the value to save </param>
-        public void Set<T>(string key, T value) => Set(typeof(T), key, value);
+        public void Set<T>(string key, T value) => SetNonGeneric(typeof(T), key, value);
 
-        /// <summary> Non-generic version of Set. You probably want to use the other one. </summary>
+        /// <summary> Non-generic version of Set. You probably want to use Set<T>. </summary>
+        /// <param name="type"> the type to save the data as </param>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="value"> the value to save </param>
-        public void Set(Type type, string key, object value)
+        public void SetNonGeneric(Type type, string key, object value)
         {
             if (value == null)
                 throw new Exception("you can't serialize null");
@@ -141,8 +143,14 @@ namespace SUCC
         /// <summary>
         /// Save this file as an object of type T, using that type's fields and properties as top-level keys.
         /// </summary>
-        public void SaveAsObject<T>(T savethis) => SaveAsObject(typeof(T), savethis);
-        private void SaveAsObject(Type type, object savethis)
+        public void SaveAsObject<T>(T savethis) => SaveAsObjectNonGeneric(typeof(T), savethis);
+
+        /// <summary>
+        /// Non-generic version of SaveAsObject. You probably want to use SaveAsObject<T>.
+        /// </summary>
+        /// <param name="type"> what type to save this object as </param>
+        /// <param name="savethis"> the object to save </param>
+        public void SaveAsObjectNonGeneric(Type type, object savethis)
         {
             bool _autosave = AutoSave;
             AutoSave = false; // don't write to disk when we don't have to
@@ -155,7 +163,7 @@ namespace SUCC
                     if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) continue;
                     if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
 
-                    Set(f.FieldType, f.Name, f.GetValue(savethis));
+                    SetNonGeneric(f.FieldType, f.Name, f.GetValue(savethis));
                 }
 
                 var properties = type.GetProperties();
@@ -164,7 +172,7 @@ namespace SUCC
                     if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
                     if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
 
-                    Set(p.PropertyType, p.Name, p.GetValue(savethis));
+                    SetNonGeneric(p.PropertyType, p.Name, p.GetValue(savethis));
                 }
             }
             finally

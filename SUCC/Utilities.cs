@@ -8,7 +8,7 @@ namespace SUCC
     public static class Utilities
     {
         /// <summary>
-        /// For the built game, this refers to the same folder that the executable is in. In the editor, it refers to [project folder]/Game. You can change it if you like.
+        /// The path that DataFile locations will be relative to if you assign them a non-absolute path. By default this is the same folder your game executable is in, or [project folder]/Game in the editor. You can change it if you like.
         /// </summary>
         private static string _DefaultPath = GetDefaultDefaultPath();
         public static string DefaultPath
