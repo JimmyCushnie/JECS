@@ -7,9 +7,9 @@ namespace SUCC
     public static class Utilities
     {
         /// <summary>
-        /// Set a default path for DataFiles to be relative to.
+        /// The path that DataFile locations will be relative to if you assign them a non-absolute path. By default this is System.AppContext.BaseDirectory, but you can change it if you like.
         /// </summary>
-        private static string _DefaultPath;
+        private static string _DefaultPath = GetDefaultDefaultPath();
         public static string DefaultPath
         {
             get => _DefaultPath;
@@ -19,6 +19,11 @@ namespace SUCC
                     throw new Exception($"When setting a custom default path, you must set an absolute path. The path {value} is not absolute.");
                 _DefaultPath = value;
             }
+        }
+
+        private static string GetDefaultDefaultPath()
+        {
+            return System.AppContext.BaseDirectory;
         }
 
         public static readonly string FileExtension = ".succ";
