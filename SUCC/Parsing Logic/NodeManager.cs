@@ -24,7 +24,8 @@ namespace SUCC
             else if (CollectionTypes.TrySetCollection(node, data, type, style))
                 return;
 
-            ComplexTypes.SetComplexNode(node, data, type, style);
+            else
+                ComplexTypes.SetComplexNode(node, data, type, style);
         }
 
         internal static T GetNodeData<T>(Node node) => (T)GetNodeData(node, typeof(T));
