@@ -95,7 +95,7 @@ namespace SUCC
         public T GetAsObject<T>() => (T)GetAsObjectNonGeneric(typeof(T));
 
         /// <summary>
-        /// Non-generic version of GetAsObject. You probably wantto use GetAsObject<T>.
+        /// Non-generic version of GetAsObject. You probably wantto use GetAsObject.
         /// </summary>
         /// <param name="type"> the type to get this object as </param>
         public object GetAsObjectNonGeneric(Type type)

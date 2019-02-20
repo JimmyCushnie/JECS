@@ -64,7 +64,7 @@ namespace SUCC
         /// <param name="defaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
         public override T Get<T>(string key, T defaultValue = default) => base.Get(key, defaultValue);
 
-        /// <summary> Non-generic version of Get. You probably want to use Get<T>. </summary>
+        /// <summary> Non-generic version of Get. You probably want to use Get. </summary>
         /// <param name="type"/> the type to get the data as </param>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="DefaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
@@ -85,7 +85,7 @@ namespace SUCC
         /// <param name="value"> the value to save </param>
         public void Set<T>(string key, T value) => SetNonGeneric(typeof(T), key, value);
 
-        /// <summary> Non-generic version of Set. You probably want to use Set<T>. </summary>
+        /// <summary> Non-generic version of Set. You probably want to use Set. </summary>
         /// <param name="type"> the type to save the data as </param>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="value"> the value to save </param>
@@ -135,7 +135,7 @@ namespace SUCC
         public void SaveAsObject<T>(T savethis) => SaveAsObjectNonGeneric(typeof(T), savethis);
 
         /// <summary>
-        /// Non-generic version of SaveAsObject. You probably want to use SaveAsObject<T>.
+        /// Non-generic version of SaveAsObject. You probably want to use SaveAsObject.
         /// </summary>
         /// <param name="type"> what type to save this object as </param>
         /// <param name="savethis"> the object to save </param>

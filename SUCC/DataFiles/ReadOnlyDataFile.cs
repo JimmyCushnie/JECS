@@ -20,7 +20,7 @@ namespace SUCC
         /// <param name="defaultValue"> if the key does not exist in the file, this value is returned instead </param>
         public override T Get<T>(string key, T defaultValue = default) => base.Get(key, defaultValue);
 
-        /// <summary> Non-generic version of Get. You probably want to use Get<T>. </summary>
+        /// <summary> Non-generic version of Get. You probably want to use Get. </summary>
         /// <param name="type"/> the type to get the data as </param>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="DefaultValue"> if the key does not exist in the file, this value is returned instead </param>
