@@ -132,8 +132,14 @@ namespace SUCC
         /// <summary>
         /// Save this file as an object of type T, using that type's fields and properties as top-level keys.
         /// </summary>
-        public void SaveAsObject<T>(T savethis) => SaveAsObject(typeof(T), savethis);
-        private void SaveAsObject(Type type, object savethis)
+        public void SaveAsObject<T>(T savethis) => SaveAsObjectNonGeneric(typeof(T), savethis);
+
+        /// <summary>
+        /// Non-generic version of SaveAsObject. You probably want to use SaveAsObject<T>.
+        /// </summary>
+        /// <param name="type"> what type to save this object as </param>
+        /// <param name="savethis"> the object to save </param>
+        public void SaveAsObjectNonGeneric(Type type, object savethis)
         {
             bool _autosave = AutoSave;
             AutoSave = false; // don't write to disk when we don't have to

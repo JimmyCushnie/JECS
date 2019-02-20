@@ -92,8 +92,13 @@ namespace SUCC
         /// <summary>
         /// Interpret this file as an object of type T, using that type's fields and properties as top-level keys.
         /// </summary>
-        public T GetAsObject<T>() => (T)GetAsObject(typeof(T));
-        private object GetAsObject(Type type)
+        public T GetAsObject<T>() => (T)GetAsObjectNonGeneric(typeof(T));
+
+        /// <summary>
+        /// Non-generic version of GetAsObject. You probably wantto use GetAsObject<T>.
+        /// </summary>
+        /// <param name="type"> the type to get this object as </param>
+        public object GetAsObjectNonGeneric(Type type)
         {
             object returnThis = Activator.CreateInstance(type);
 
