@@ -2,6 +2,7 @@
 using System;
 using System.Globalization;
 using System.Reflection;
+using System.Linq;
 
 namespace SUCC
 {
@@ -48,7 +49,7 @@ namespace SUCC
                 return stylemethod(thing, style);
 
             if (type.IsEnum)
-                return SerializeEnum(thing);
+                return SerializeEnum(thing, style);
 
             throw new Exception($"Cannot serialize base type {type} - are you sure it is a base type?");
         }
@@ -87,7 +88,6 @@ namespace SUCC
             [typeof(float)] = SerializeFloat,
             [typeof(double)] = SerializeFloat,
 
-            [typeof(bool)] = SerializeBool,
             [typeof(DateTime)] = SerializeDateTime,
             [typeof(char)] = SerializeChar,
             [typeof(Type)] = SerializeType,
@@ -96,6 +96,7 @@ namespace SUCC
         private static Dictionary<Type, StyledSerializeMethod> BaseStyledSerializeMethods = new Dictionary<Type, StyledSerializeMethod>()
         {
             [typeof(string)] = SerializeString,
+            [typeof(bool)] = SerializeBool,
         };
 
         private static Dictionary<Type, ParseMethod> BaseParseMethods = new Dictionary<Type, ParseMethod>()
@@ -232,15 +233,27 @@ namespace SUCC
 
 
 
-        private static string SerializeBool(object value)
+        private static readonly string[] TrueStrings = new string[] { "true", "yes", "y", };
+        private static readonly string[] FalseStrings = new string[] { "false", "no", "n", };
+
+        private static string SerializeBool(object value, FileStyle style)
         {
-            return value.ToString().ToLower();
+            bool b = (bool)value;
+            switch (style.BoolStyle)
+            {
+                case BoolStyle.true_false: default:
+                    return b ? "true" : "false";
+                case BoolStyle.yes_no:
+                    return b ? "yes" : "no";
+                case BoolStyle.y_n:
+                    return b ? "y" : "n";
+            }
         }
         private static object ParseBool(string text)
         {
             text = text.ToLower();
-            if (text == "true") return true;
-            if (text == "false") return false;
+            if (TrueStrings.Contains(text)) return true;
+            if (FalseStrings.Contains(text)) return false;
             throw new FormatException($"cannot parse text {text} as boolean");
         }
 
@@ -290,9 +303,15 @@ namespace SUCC
             throw new FormatException($"cannot parse text {typeName} as System.Type");
         }
 
-        private static string SerializeEnum(object value)
+        private static string SerializeEnum(object value, FileStyle style)
         {
-            return value.ToString();
+            switch (style.EnumStyle)
+            {
+                case EnumStyle.name: default:
+                    return value.ToString();
+                case EnumStyle.number:
+                    return ((Enum)value).ToString("d");
+            }
         }
         private static object ParseEnum(string text, Type type)
         {
