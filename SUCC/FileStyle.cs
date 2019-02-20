@@ -35,6 +35,11 @@ namespace SUCC
         /// </summary>
         public bool AlwaysArrayDictionaries { get; set; } = false;
 
+        /// <summary>
+        /// SUCC can read booleans in several different ways. The BoolStyle determines which way specifies which of those ways to save booleans in.
+        /// </summary>
+        public BoolStyle BoolStyle { get; set; } = BoolStyle.true_false;
+
         int _IndentationInterval = 4;
         int _SpacesAfterColon = 1;
         int _SpacesAfterDash = 1;
@@ -83,5 +88,18 @@ namespace SUCC
                     _SpacesAfterDash = value;
             }
         }
+    }
+
+    /// <summary>
+    /// Different options for how to save boolean values
+    /// </summary>
+    public enum BoolStyle
+    {
+        /// <summary> save true as "true" and false as "false"
+        true_false,
+        /// <summary> save true as "yes" and false as "no"
+        yes_no,
+        /// <summary> save true as "y" and false as "n"
+        y_n,
     }
 }
