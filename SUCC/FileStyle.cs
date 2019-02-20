@@ -36,9 +36,14 @@ namespace SUCC
         public bool AlwaysArrayDictionaries { get; set; } = false;
 
         /// <summary>
-        /// SUCC can read booleans in several different ways. The BoolStyle determines which way specifies which of those ways to save booleans in.
+        /// SUCC can read booleans in several different ways. The BoolStyle specifies which of those ways to save them in.
         /// </summary>
         public BoolStyle BoolStyle { get; set; } = BoolStyle.true_false;
+
+        /// <summary>
+        /// SUCC can read enums in a couple different ways. The EnumStyle specifies which of those ways to save them in.
+        /// </summary>
+        public EnumStyle EnumStyle { get; set; } = EnumStyle.name;
 
         int _IndentationInterval = 4;
         int _SpacesAfterColon = 1;
@@ -101,5 +106,16 @@ namespace SUCC
         yes_no,
         /// <summary> save true as "y" and false as "n"
         y_n,
+    }
+
+    /// <summary>
+    /// Different options for how to save enum values
+    /// </summary>
+    public enum EnumStyle
+    {
+        /// <summary> save the enum as its name if it has one, otherwise save its number </summary>
+        name,
+        /// <summary> always save the enum as its number </summary>
+        number,
     }
 }

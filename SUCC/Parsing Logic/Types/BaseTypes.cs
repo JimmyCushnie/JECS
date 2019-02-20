@@ -49,7 +49,7 @@ namespace SUCC
                 return stylemethod(thing, style);
 
             if (type.IsEnum)
-                return SerializeEnum(thing);
+                return SerializeEnum(thing, style);
 
             throw new Exception($"Cannot serialize base type {type} - are you sure it is a base type?");
         }
@@ -303,9 +303,15 @@ namespace SUCC
             throw new FormatException($"cannot parse text {typeName} as System.Type");
         }
 
-        private static string SerializeEnum(object value)
+        private static string SerializeEnum(object value, FileStyle style)
         {
-            return value.ToString();
+            switch (style.EnumStyle)
+            {
+                case EnumStyle.name: default:
+                    return value.ToString();
+                case EnumStyle.number:
+                    return ((Enum)value).ToString("d");
+            }
         }
         private static object ParseEnum(string text, Type type)
         {
