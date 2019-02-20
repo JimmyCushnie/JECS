@@ -8,37 +8,6 @@ namespace SUCC
 {
     public static class BaseTypes
     {
-        /// <summary>
-        /// Returns true if the type is a base type.
-        /// </summary>
-        public static bool IsBaseType(Type type)
-        {
-            if (type.IsEnum) return true;
-            if (BaseSerializeMethods.ContainsKey(type)) return true;
-            if (BaseStyledSerializeMethods.ContainsKey(type)) return true;
-            return false;
-        }
-
-        /// <summary> Turns an object into text </summary>
-        public delegate string SerializeMethod(object thing);
-
-        private delegate string StyledSerializeMethod(object thing, FileStyle style);
-
-        /// <summary> Turns text into an object </summary>
-        public delegate object ParseMethod(string text);
-
-        /// <summary>
-        /// Add a base type to SUCC serialization. It is recommended that you call this method in a static constructor.
-        /// </summary>
-        public static void AddBaseType(Type type, SerializeMethod serializeMethod, ParseMethod parseMethod)
-        {
-            if (IsBaseType(type))
-                throw new Exception($"Type {type} is already a supported base type. You cannot re-add it.");
-
-            BaseSerializeMethods.Add(type, serializeMethod);
-            BaseParseMethods.Add(type, parseMethod);
-        }
-
         internal static string SerializeBaseType<T>(T thing, FileStyle style) => SerializeBaseType(thing, typeof(T), style);
         internal static string SerializeBaseType(object thing, Type type, FileStyle style)
         {
@@ -71,6 +40,33 @@ namespace SUCC
         }
 
 
+        /// <summary> Returns true if the type is a base type. </summary>
+        public static bool IsBaseType(Type type)
+        {
+            if (type.IsEnum) return true;
+            if (BaseSerializeMethods.ContainsKey(type)) return true;
+            if (BaseStyledSerializeMethods.ContainsKey(type)) return true;
+            return false;
+        }
+
+        /// <summary> Turns an object into text </summary>
+        public delegate string SerializeMethod(object thing);
+
+        /// <summary> Turns text into an object </summary>
+        public delegate object ParseMethod(string text);
+
+        /// <summary> Add a base type to SUCC serialization. You probably want to use BaseTypeAttribute for your own types, but this is useful for types you don't have control over. </summary>
+        public static void AddBaseType(Type type, SerializeMethod serializeMethod, ParseMethod parseMethod)
+        {
+            if (IsBaseType(type))
+                throw new Exception($"Type {type} is already a supported base type. You cannot re-add it.");
+
+            BaseSerializeMethods.Add(type, serializeMethod);
+            BaseParseMethods.Add(type, parseMethod);
+        }
+
+
+
         private static Dictionary<Type, SerializeMethod> BaseSerializeMethods = new Dictionary<Type, SerializeMethod>()
         {
             // integer types
@@ -93,6 +89,7 @@ namespace SUCC
             [typeof(Type)] = SerializeType,
         };
 
+        private delegate string StyledSerializeMethod(object thing, FileStyle style);
         private static Dictionary<Type, StyledSerializeMethod> BaseStyledSerializeMethods = new Dictionary<Type, StyledSerializeMethod>()
         {
             [typeof(string)] = SerializeString,
