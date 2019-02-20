@@ -8,7 +8,7 @@ namespace SUCC
     public class ReadOnlyDataFile : DataFileBase
     {
         /// <summary>
-        /// Creates a new DataFile object corresponding to a SUCC file in system storage.
+        /// Creates a new ReadOnlyDataFile object corresponding to a SUCC file in system storage.
         /// </summary>
         /// <param name="path"> the path of the file. Can be either absolute or relative to the default path. </param>
         /// <param name="defaultFileText"> optionally, if there isn't a file at the path, one can be created from the text supplied here. </param>
