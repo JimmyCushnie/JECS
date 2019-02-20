@@ -37,5 +37,12 @@ namespace SUCC
         // this is just to enable params
         internal static object Invoke(this MethodInfo method, object obj, params object[] parameters)
             => method.Invoke(obj, parameters);
+
+
+        internal static bool GetOrSetIsPrivate(this PropertyInfo p)
+            => p.GetMethod.IsPrivate || p.SetMethod.IsPrivate;
+
+        internal static bool IsStatic(this PropertyInfo p)
+            => p.GetMethod.IsStatic;
     }
 }

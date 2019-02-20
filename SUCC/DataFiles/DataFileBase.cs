@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using SUCC.Types;
 
 namespace SUCC
 {
@@ -89,35 +90,23 @@ namespace SUCC
         public abstract object GetNonGeneric(Type type, string key, object defaultValue);
 
 
-        /// <summary>
-        /// Interpret this file as an object of type T, using that type's fields and properties as top-level keys.
-        /// </summary>
+        /// <summary> Interpret this file as an object of type T, using that type's fields and properties as top-level keys. </summary>
         public T GetAsObject<T>() => (T)GetAsObjectNonGeneric(typeof(T));
 
-        /// <summary>
-        /// Non-generic version of GetAsObject. You probably wantto use GetAsObject.
-        /// </summary>
+        /// <summary> Non-generic version of GetAsObject. You probably wantto use GetAsObject. </summary>
         /// <param name="type"> the type to get this object as </param>
         public object GetAsObjectNonGeneric(Type type)
         {
             object returnThis = Activator.CreateInstance(type);
 
-            var fields = type.GetFields();
-            foreach (var f in fields)
+            foreach (var f in ComplexTypes.GetValidFields(type))
             {
-                if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) continue;
-                if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
-
                 var value = GetNonGeneric(f.FieldType, f.Name, f.GetValue(returnThis));
                 f.SetValue(returnThis, value);
             }
 
-            var properties = type.GetProperties();
-            foreach (var p in properties)
+            foreach (var p in ComplexTypes.GetValidProperties(type))
             {
-                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
-                if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
-
                 var value = GetNonGeneric(p.PropertyType, p.Name, p.GetValue(returnThis));
                 p.SetValue(returnThis, value);
             }
@@ -125,9 +114,7 @@ namespace SUCC
             return returnThis;
         }
 
-        /// <summary>
-        /// Interpret this file as a dictionary. Top-level keys in the file are interpreted as keys in the dictionary.
-        /// </summary>
+        /// <summary> Interpret this file as a dictionary. Top-level keys in the file are interpreted as keys in the dictionary. </summary>
         /// <remarks> TKey must be a Base Type </remarks>
         public Dictionary<TKey, TValue> GetAsDictionary<TKey, TValue>()
         {

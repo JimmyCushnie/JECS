@@ -55,7 +55,7 @@ namespace SUCC
         /// <summary> Turns text into an object </summary>
         public delegate object ParseMethod(string text);
 
-        /// <summary> Add a base type to SUCC serialization. You probably want to use BaseTypeAttribute for your own types, but this is useful for types you don't have control over. </summary>
+        /// <summary> Add a base type to SUCC serialization. It is recommended that you call this method in a static constructor. </summary>
         public static void AddBaseType(Type type, SerializeMethod serializeMethod, ParseMethod parseMethod)
         {
             if (IsBaseType(type))
