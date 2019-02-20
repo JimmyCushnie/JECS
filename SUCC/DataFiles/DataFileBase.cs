@@ -85,8 +85,8 @@ namespace SUCC
         }
 
         // Get<T> is virual so that derived classes can give it different xml documentation
-        public virtual T Get<T>(string key, T defaultValue) => (T)Get(typeof(T), key, defaultValue);
-        public abstract object Get(Type type, string key, object defaultValue);
+        public virtual T Get<T>(string key, T defaultValue) => (T)GetNonGeneric(typeof(T), key, defaultValue);
+        public abstract object GetNonGeneric(Type type, string key, object defaultValue);
 
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace SUCC
                 if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) continue;
                 if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
 
-                var value = Get(f.FieldType, f.Name, f.GetValue(returnThis));
+                var value = GetNonGeneric(f.FieldType, f.Name, f.GetValue(returnThis));
                 f.SetValue(returnThis, value);
             }
 
@@ -113,7 +113,7 @@ namespace SUCC
                 if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
                 if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
 
-                var value = Get(p.PropertyType, p.Name, p.GetValue(returnThis));
+                var value = GetNonGeneric(p.PropertyType, p.Name, p.GetValue(returnThis));
                 p.SetValue(returnThis, value);
             }
 
