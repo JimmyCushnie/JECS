@@ -15,24 +15,12 @@ namespace SUCC
         /// </summary>
         public static FileStyle Default = new FileStyle();
 
-
         /// <summary>
-        /// Creatse a new Style.
+        /// Creates a new FileStyle.
         /// </summary>
-        /// <param name="indentationInterval">The number of spaces used to indent a child line under its parent. Must be at least 1.</param>
-        /// <param name="spacesAfterColon">The number of spaces between the colon and the value in a key node. Must be at least 0.</param>
-        /// <param name="spacesAfterDash">The number of spaces between the dash and the value in a list node. Must be at least 0.</param>
-        /// <param name="alwaysQuoteStrings">SUCC strings can optionally be surrounded by "quotes". If this is true, they will be quoted even when not necessary.</param>
-        /// <param name="alwaysArrayDictionaries">SUCC can store dictionaries as KeyValuePair arrays if the key type is complex. If this is true, dictionaries will always be stored like that.</param>
-        public FileStyle(
-            int indentationInterval = 4, int spacesAfterColon = 1, int spacesAfterDash = 1, 
-            bool alwaysQuoteStrings = false, bool alwaysArrayDictionaries = false)
+        public FileStyle()
         {
-            IndentationInterval = indentationInterval;
-            SpacesAfterColon = spacesAfterColon;
-            SpacesAfterDash = spacesAfterDash;
-            AlwaysQuoteStrings = alwaysQuoteStrings;
-            AlwaysArrayDictionaries = alwaysArrayDictionaries;
+
         }
 
 
@@ -40,16 +28,16 @@ namespace SUCC
         /// <summary>
         /// SUCC strings can optionally be surrounded by "quotes". If this is true, they will be quoted even when not necessary.
         /// </summary>
-        public bool AlwaysQuoteStrings { get; set; }
+        public bool AlwaysQuoteStrings { get; set; } = false;
 
         /// <summary>
         /// SUCC can store dictionaries as KeyValuePair arrays if the key type is complex. If this is true, dictionaries will always be stored like that.
         /// </summary>
-        public bool AlwaysArrayDictionaries { get; set; }
+        public bool AlwaysArrayDictionaries { get; set; } = false;
 
-        int _IndentationInterval;
-        int _SpacesAfterColon;
-        int _SpacesAfterDash;
+        int _IndentationInterval = 4;
+        int _SpacesAfterColon = 1;
+        int _SpacesAfterDash = 1;
 
         /// <summary>
         /// The number of spaces used to indent a child line under its parent. Must be at least 1.
