@@ -27,7 +27,7 @@ Do your configuration files look like this?
 </weapons>
 ```
 
-Do your configuration files, god forbid, look like this?<sup>cough cough<sup>easy save</sup></sup>
+Do your configuration files, god forbid, look like this? <sup>cough cough<sup>easy save</sup></sup>
 
 ```
 {"weapons":{"__type":"System.Collections.Generic.List`1[[Weapon, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]],mscorlib","value":[{"name":"sword","damage":10,"attackSpeed":1},{"name":"dagger","damage":6,"attackSpeed":1.3},{"name":"axe","damage":20,"attackSpeed":0.4}]}}
@@ -145,5 +145,5 @@ SUCC will check if a value called "weapons" exists in the file. If so, it will r
 
 ## Start Using SUCC
 
-Much more information about SUCC can be found on the [wiki](https://github.com/JimmyCushnie/SUCC/wiki). If you are new to SUCC, you probably want to look at [Installing](https://github.com/JimmyCushnie/SUCC/wiki/1.-Installing) and [Basic Usage](https://github.com/JimmyCushnie/SUCC/wiki/2.-Basic-Usage).
+Much more information about SUCC can be found on the [wiki](https://github.com/JimmyCushnie/SUCC/wiki). If you're new to SUCC, you probably want to see the [Installing](https://github.com/JimmyCushnie/SUCC/wiki/Installing) and [Getting Started](https://github.com/JimmyCushnie/SUCC/wiki/Getting-Started) pages.
 
