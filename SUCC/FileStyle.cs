@@ -88,7 +88,7 @@ namespace SUCC
             set
             {
                 if (value < 0)
-                    throw new ArgumentOutOfRangeException($"SpacesAfterColon cannot be less than 0. You tried to set it to {value}");
+                    throw new ArgumentOutOfRangeException($"SpacesAfterDash cannot be less than 0. You tried to set it to {value}");
                 else
                     _SpacesAfterDash = value;
             }
