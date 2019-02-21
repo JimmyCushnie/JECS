@@ -79,8 +79,7 @@ namespace SUCC
                         return "\n";
                     case LineEndingStyle.Windows:
                         return "\r\n";
-                    case LineEndingStyle.PlatformDefault:
-                    default:
+                    case LineEndingStyle.PlatformDefault: default:
                         return Environment.NewLine;
                 }
             }
