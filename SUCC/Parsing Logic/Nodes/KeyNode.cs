@@ -10,6 +10,9 @@ namespace SUCC
         public KeyNode(string rawText, DataFile file) : base(rawText, file) { }
         public KeyNode(int indentation, string key, DataFile file) : base(indentation, file)
         {
+            if (!Utilities.IsValidKey(key, out string whyNot))
+                throw new FormatException(whyNot);
+
             RawText += key + ":";
         }
 
