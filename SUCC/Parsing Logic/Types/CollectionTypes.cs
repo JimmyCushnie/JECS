@@ -243,7 +243,7 @@ namespace SUCC.Types
             {
                 var array = NodeManager.GetNodeData<WritableKeyValuePair<TKey, TValue>[]>(node);
                 foreach (var kvp in array)
-                    dictionary.Add(kvp.Key, kvp.Value);
+                    dictionary.Add(kvp.key, kvp.value);
             }
 
             return dictionary;
@@ -254,7 +254,7 @@ namespace SUCC.Types
             var unwritable = Enumerable.ToArray(boi);
             var writable = new WritableKeyValuePair<TKey, TValue>[unwritable.Length];
 
-            for(int i = 0; i < unwritable.Length; i++)
+            for (int i = 0; i < unwritable.Length; i++)
                 writable[i] = new WritableKeyValuePair<TKey, TValue>(unwritable[i].Key, unwritable[i].Value);
 
             return writable;
@@ -264,12 +264,12 @@ namespace SUCC.Types
         {
             public WritableKeyValuePair(TKey key, TValue value)
             {
-                Key = key;
-                Value = value;
+                this.key = key;
+                this.value = value;
             }
 
-            public TKey Key { get; set; }
-            public TValue Value { get; set; }
+            public TKey key;
+            public TValue value;
         }
 
 
