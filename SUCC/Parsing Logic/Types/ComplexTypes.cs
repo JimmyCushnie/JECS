@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using System.Collections.Generic;
 
 namespace SUCC.Types
 {
@@ -6,25 +8,16 @@ namespace SUCC.Types
     {
         internal static void SetComplexNode(Node node, object item, Type type, FileStyle style)
         {
-            var fields = type.GetFields();
-            foreach (var f in fields)
+            foreach (var f in GetValidFields(type))
             {
-                if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) continue;
-                if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
-
                 var child = node.GetChildAddressedByName(f.Name);
                 NodeManager.SetNodeData(child, f.GetValue(item), f.FieldType, style);
             }
 
-            var properties = type.GetProperties();
-            foreach (var p in properties)
+            foreach (var p in GetValidProperties(type))
             {
-                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
-                if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
-
                 var child = node.GetChildAddressedByName(p.Name);
                 NodeManager.SetNodeData(child, p.GetValue(item), p.PropertyType, style);
-
             }
         }
 
@@ -32,12 +25,8 @@ namespace SUCC.Types
         {
             object returnThis = Activator.CreateInstance(type);
 
-            var fields = type.GetFields();
-            foreach (var f in fields)
+            foreach (var f in GetValidFields(type))
             {
-                if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) continue;
-                if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
-
                 if (!node.ContainsChildNode(f.Name)) continue;
 
                 var child = node.GetChildAddressedByName(f.Name);
@@ -45,12 +34,8 @@ namespace SUCC.Types
                 f.SetValue(returnThis, data);
             }
 
-            var properties = type.GetProperties();
-            foreach (var p in properties)
+            foreach (var p in GetValidProperties(type))
             {
-                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
-                if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
-
                 if (!node.ContainsChildNode(p.Name)) continue;
 
                 var child = node.GetChildAddressedByName(p.Name);
@@ -59,6 +44,41 @@ namespace SUCC.Types
             }
 
             return returnThis;
+        }
+        
+
+        internal static List<FieldInfo> GetValidFields(this Type type)
+        {
+            var validFields = new List<FieldInfo>();
+
+            var allFields = type.GetFields();
+            foreach (var f in allFields)
+            {
+                if (f.IsInitOnly || f.IsLiteral || f.IsStatic) continue;
+                if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
+                if (f.IsPrivate && !Attribute.IsDefined(f, typeof(DoSaveAttribute))) continue;
+
+                validFields.Add(f);
+            }
+
+            return validFields;
+        }
+
+        internal static List<PropertyInfo> GetValidProperties(this Type type)
+        {
+            var validProperties = new List<PropertyInfo>();
+
+            var allProperties = type.GetProperties();
+            foreach (var p in allProperties)
+            {
+                if (!p.CanRead || !p.CanWrite || p.IsStatic() || p.GetIndexParameters().Length > 0) continue;
+                if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
+                if (p.GetOrSetIsPrivate() && !Attribute.IsDefined(p, typeof(DoSaveAttribute))) continue;
+
+                validProperties.Add(p);
+            }
+
+            return validProperties;
         }
     }
 }

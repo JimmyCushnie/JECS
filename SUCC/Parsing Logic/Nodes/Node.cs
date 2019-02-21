@@ -153,7 +153,7 @@ namespace SUCC
         {
             if (count < 0) throw new ArgumentOutOfRangeException("stop it");
 
-            while(ChildNodes.Count > count)
+            while (ChildNodes.Count > count)
             {
                 var removeThis = ChildNodes.Last();
                 m_ChildNodes.Remove(removeThis);
@@ -165,7 +165,7 @@ namespace SUCC
         {
             var keys = new string[ChildNodes.Count];
 
-            for(int i = 0; i < ChildNodes.Count; i++)
+            for (int i = 0; i < ChildNodes.Count; i++)
                 keys[i] = (ChildNodes[i] as KeyNode).Key;
 
             return keys;

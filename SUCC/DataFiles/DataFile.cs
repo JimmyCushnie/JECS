@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using SUCC.Types;
 
 namespace SUCC
 {
@@ -75,7 +76,7 @@ namespace SUCC
         /// <param name="defaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
         public override T Get<T>(string key, T defaultValue = default) => base.Get(key, defaultValue);
 
-        /// <summary> Non-generic version of Get. You probably want to use Get<T>. </summary>
+        /// <summary> Non-generic version of Get. You probably want to use Get. </summary>
         /// <param name="type"/> the type to get the data as </param>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="DefaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
@@ -96,7 +97,7 @@ namespace SUCC
         /// <param name="value"> the value to save </param>
         public void Set<T>(string key, T value) => SetNonGeneric(typeof(T), key, value);
 
-        /// <summary> Non-generic version of Set. You probably want to use Set<T>. </summary>
+        /// <summary> Non-generic version of Set. You probably want to use Set. </summary>
         /// <param name="type"> the type to save the data as </param>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="value"> the value to save </param>
@@ -110,14 +111,9 @@ namespace SUCC
 
             if (!KeyExists(key))
             {
-                if (Utilities.IsValidKey(key, out string whyNot))
-                {
-                    var newnode = new KeyNode(indentation: 0, key, file: this);
-                    TopLevelNodes.Add(key, newnode);
-                    TopLevelLines.Add(newnode);
-                }
-                else
-                    throw new FormatException(whyNot);
+                var newnode = new KeyNode(indentation: 0, key, file: this);
+                TopLevelNodes.Add(key, newnode);
+                TopLevelLines.Add(newnode);
             }
 
             var node = TopLevelNodes[key];
@@ -128,7 +124,6 @@ namespace SUCC
         }
 
         
-
         /// <summary> Remove a top-level key and all its data from the file </summary>
         public void DeleteKey(string key)
         {
@@ -140,14 +135,11 @@ namespace SUCC
             TopLevelLines.Remove(node);
         }
 
-        /// <summary>
-        /// Save this file as an object of type T, using that type's fields and properties as top-level keys.
-        /// </summary>
+
+        /// <summary> Save this file as an object of type T, using that type's fields and properties as top-level keys. </summary>
         public void SaveAsObject<T>(T savethis) => SaveAsObjectNonGeneric(typeof(T), savethis);
 
-        /// <summary>
-        /// Non-generic version of SaveAsObject. You probably want to use SaveAsObject<T>.
-        /// </summary>
+        /// <summary> Non-generic version of SaveAsObject. You probably want to use SaveAsObject. </summary>
         /// <param name="type"> what type to save this object as </param>
         /// <param name="savethis"> the object to save </param>
         public void SaveAsObjectNonGeneric(Type type, object savethis)
@@ -157,23 +149,11 @@ namespace SUCC
 
             try
             {
-                var fields = type.GetFields();
-                foreach (var f in fields)
-                {
-                    if (f.IsInitOnly || f.IsLiteral || f.IsPrivate || f.IsStatic) continue;
-                    if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
-
+                foreach (var f in ComplexTypes.GetValidFields(type))
                     SetNonGeneric(f.FieldType, f.Name, f.GetValue(savethis));
-                }
 
-                var properties = type.GetProperties();
-                foreach (var p in properties)
-                {
-                    if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
-                    if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
-
+                foreach (var p in ComplexTypes.GetValidProperties(type))
                     SetNonGeneric(p.PropertyType, p.Name, p.GetValue(savethis));
-                }
             }
             finally
             {
@@ -183,9 +163,7 @@ namespace SUCC
             if (AutoSave) SaveAllData();
         }
 
-        /// <summary>
-        /// Save this file as a dictionary, using the dictionary's keys as top-level keys in the file.
-        /// </summary>
+        /// <summary> Save this file as a dictionary, using the dictionary's keys as top-level keys in the file. </summary>
         /// <remarks> TKey must be a Base Type </remarks>
         public void SaveAsDictionary<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
         {
