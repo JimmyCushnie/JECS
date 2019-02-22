@@ -116,7 +116,7 @@ namespace SUCC.Types
         private static bool TryCustomShortCut(string shortcut, Type type, out object result)
         {
             try { 
-            var m = type.GetMethod("Shortcut", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(String) }, null);
+            var m = type.GetMethod("Shortcut", BindingFlags.Static, null, new Type[] { typeof(String) }, null);
             if (m != null && m.ReturnType == type)
             {
                 result = m.Invoke(null, new object[] { shortcut });
