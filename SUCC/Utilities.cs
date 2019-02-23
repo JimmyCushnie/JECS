@@ -16,7 +16,7 @@ namespace SUCC
             get => _DefaultPath;
             set
             {
-                if (@Path.IsPathRooted(value))
+                if (!Path.IsPathRooted(value))
                     throw new Exception($"When setting a custom default path, you must set an absolute path. The path {value} is not absolute.");
                 _DefaultPath = value;
             }
