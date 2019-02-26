@@ -51,10 +51,10 @@ namespace SUCC.Types
         {
             var validFields = new List<FieldInfo>();
 
-            var allFields = type.GetFields();
+            var allFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             foreach (var f in allFields)
             {
-                if (f.IsInitOnly || f.IsLiteral || f.IsStatic) continue;
+                if (f.IsInitOnly || f.IsLiteral) continue;
                 if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
                 if (f.IsPrivate && !Attribute.IsDefined(f, typeof(DoSaveAttribute))) continue;
 
@@ -68,10 +68,10 @@ namespace SUCC.Types
         {
             var validProperties = new List<PropertyInfo>();
 
-            var allProperties = type.GetProperties();
+            var allProperties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             foreach (var p in allProperties)
             {
-                if (!p.CanRead || !p.CanWrite || p.IsStatic() || p.GetIndexParameters().Length > 0) continue;
+                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
                 if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
                 if (p.GetOrSetIsPrivate() && !Attribute.IsDefined(p, typeof(DoSaveAttribute))) continue;
 

@@ -41,8 +41,5 @@ namespace SUCC
 
         internal static bool GetOrSetIsPrivate(this PropertyInfo p)
             => p.GetMethod.IsPrivate || p.SetMethod.IsPrivate;
-
-        internal static bool IsStatic(this PropertyInfo p)
-            => p.GetMethod.IsStatic;
     }
 }
