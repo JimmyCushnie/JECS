@@ -18,12 +18,14 @@ namespace SUCC
 
             if (!Utilities.SuccFileExists(path))
             {
-                if (defaultFileText != null)
-                    File.WriteAllText(path, defaultFileText);
-                else
+                if (defaultFileText == null)
                 {
                     Directory.CreateDirectory(new FileInfo(path).Directory.FullName);
                     File.Create(path).Close(); // create empty file on disk
+                }
+                else
+                {
+                    File.WriteAllText(path, defaultFileText);
                 }
             }
 
