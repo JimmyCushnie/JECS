@@ -56,6 +56,9 @@ namespace SUCC.Types
             Type elementType = arrayType.GetElementType();
 
             var boi = (Array)array;
+
+            node.CapChildCount(boi.Length);
+
             for (int i = 0; i < boi.Length; i++)
                 NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), boi.GetValue(i), elementType, style);
         }
