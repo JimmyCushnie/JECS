@@ -27,6 +27,10 @@ namespace SUCC.Tests
 
         class ComplexType
         {
+            public int Integer;
+            [DoSave] private string String;
+            [DoSave] public bool Boolean { get; private set; }
+
             public ComplexType() { }
             public ComplexType(int integer, string text, bool boolean)
             {
@@ -34,10 +38,6 @@ namespace SUCC.Tests
                 String = text;
                 Boolean = boolean;
             }
-
-            public int Integer;
-            [DoSave] private string String;
-            [DoSave] public bool Boolean { get; private set; }
 
             public override bool Equals(object obj)
             {
