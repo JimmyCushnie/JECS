@@ -68,6 +68,8 @@ and this is the wonder that's keeping the stars apart
 i carry your heart(i carry it in my heart)
 ",
 
+            "🍆",
+
             // source: https://www.wattpad.com/430030556-the-holy-bible-with-emojis-genesis-genesis-1-1-1
             @"
 In the beginning🌄 God ⛏️🛠️created⚒️🔨 the heavens🌤️ and the 🌍🌎earth🌏🗺️. 2 Now the 🌍🌎earth🌏🗺️ was formless and empty, 🌚darkness🌚 was over the surface of the deep, and the 👻Spirit👻 of God was hovering over the 🌊💧waters💦💦💦.
@@ -92,11 +94,11 @@ So God ⛏️⚒️created🛠️🔨 mankind in his own image🖼️,
     in the image🖼️ of God he ⚒️⛏️created🔨🛠️ them;
     male♂️ and female♀️ he ⛏️⚒️created🛠️🔨 them.
 
-28 God 😇blessed😇🙏 them and said🗣️ to2️⃣ them, “Be🐝 🍇🍈🍉🍊🍋🍌🍍fruitful🍎🍏🍐🍑🍒🍓🥝 and increase➕ in number#️⃣; fill the 🌍🌎earth🌏🗺️ and subdue it. Rule over the 🦈🐙fish🦀🦐 in the sea🗺️ and the 🦃🐔🐓🐣🐤🐥birds🐦🐧🕊️🦅🦆🦉 in the sky🌥️ and over every living creature that moves on the ground.”
+God 😇blessed😇🙏 them and said🗣️ to2️⃣ them, “Be🐝 🍇🍈🍉🍊🍋🍌🍍fruitful🍎🍏🍐🍑🍒🍓🥝 and increase➕ in number#️⃣; fill the 🌍🌎earth🌏🗺️ and subdue it. Rule over the 🦈🐙fish🦀🦐 in the sea🗺️ and the 🦃🐔🐓🐣🐤🐥birds🐦🐧🕊️🦅🦆🦉 in the sky🌥️ and over every living creature that moves on the ground.”
 
-29 Then God said🗣️, “I👀 give you every seed-bearing plant🌱 on the face😎 of the whole 🌍🌎earth🌏🗺️ and every 🌲🌳tree🌴🌴 that has 🍇🍈🍉🍊🍋🍌🍍fruit🍎🍏🍐🍑🍒🍓🥝 with seed in it. They will be 🐝yours for4️⃣ 🍉🥕🌶️🍄🥒🥜🍗🍞🥖🍟🥞🧀🌭🌮🥙🥚food🥘🍲🥗🍿🍱🍘🍛🍜🍝🍡🍦🍢🍨🍣🍩🎂🍪🍰☕🥛🍺🍬🍮🥃🍶. 30 And to2️⃣ all the beasts👹👺 of the 🌍🌎earth🌏🗺️ and all the 🦃🐔🐓🐣🐤🐥birds🐦🐧🕊️🦅🦆🦉 in the sky🌥️ and all the creatures that move along the ground—everything that has the breath🌬️ of life in it—I👀 give every 💚green💚 plant🌱 for4️⃣ 🍉🥕🌶️🍄🥒🥜🍗🍞🥖🍟🥞🧀🌭🌮🥙🥚food🥘🍲🥗🍿🍱🍘🍛🍜🍝🍡🍦🍢🍨🍩🎂🍪🍰☕🥛🍺🍬🍮🥃🍶.” And it was so.
+Then God said🗣️, “I👀 give you every seed-bearing plant🌱 on the face😎 of the whole 🌍🌎earth🌏🗺️ and every 🌲🌳tree🌴🌴 that has 🍇🍈🍉🍊🍋🍌🍍fruit🍎🍏🍐🍑🍒🍓🥝 with seed in it. They will be 🐝yours for4️⃣ 🍉🥕🌶️🍄🥒🥜🍗🍞🥖🍟🥞🧀🌭🌮🥙🥚food🥘🍲🥗🍿🍱🍘🍛🍜🍝🍡🍦🍢🍨🍣🍩🎂🍪🍰☕🥛🍺🍬🍮🥃🍶. 30 And to2️⃣ all the beasts👹👺 of the 🌍🌎earth🌏🗺️ and all the 🦃🐔🐓🐣🐤🐥birds🐦🐧🕊️🦅🦆🦉 in the sky🌥️ and all the creatures that move along the ground—everything that has the breath🌬️ of life in it—I👀 give every 💚green💚 plant🌱 for4️⃣ 🍉🥕🌶️🍄🥒🥜🍗🍞🥖🍟🥞🧀🌭🌮🥙🥚food🥘🍲🥗🍿🍱🍘🍛🍜🍝🍡🍦🍢🍨🍩🎂🍪🍰☕🥛🍺🍬🍮🥃🍶.” And it was so.
 
-31 God saw👁️ all that he had ⛏️⚒️made🛠️🔨, and it was very good👍👌👌. And there was evening🌙, and there was morning☀️—the 6️⃣sixth ☀️day☀️.
+God saw👁️ all that he had ⛏️⚒️made🛠️🔨, and it was very good👍👌👌. And there was evening🌙, and there was morning☀️—the 6️⃣sixth ☀️day☀️.
 
 Thus the heavens🌤️ and the 🌍🌎earth🌏🗺️ were completed in all their vast array.
 
