@@ -230,8 +230,8 @@ namespace SUCC
 
 
 
-        private static readonly string[] TrueStrings = new string[] { "true", "yes", "y", };
-        private static readonly string[] FalseStrings = new string[] { "false", "no", "n", };
+        private static readonly string[] TrueStrings = new string[] { "true", "on", "yes", "y", };
+        private static readonly string[] FalseStrings = new string[] { "false", "off", "no", "n", };
 
         private static string SerializeBool(object value, FileStyle style)
         {
@@ -240,6 +240,8 @@ namespace SUCC
             {
                 case BoolStyle.true_false: default:
                     return b ? "true" : "false";
+                case BoolStyle.on_off:
+                    return b ? "on" : "off";
                 case BoolStyle.yes_no:
                     return b ? "yes" : "no";
                 case BoolStyle.y_n:
