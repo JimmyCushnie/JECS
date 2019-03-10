@@ -14,13 +14,7 @@
         public override string Value
         {
             get => GetDataText();
-            set
-            {
-                if (RawText.IsWhitespace())
-                    RawText += value;
-                else
-                    SetDataText(value);
-            }
+            set => SetDataText(value);
         }
 
         public static readonly string Terminator = "\"\"\"";

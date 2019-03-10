@@ -47,7 +47,8 @@ namespace SUCC.Tests
             @"
 this is a multi-line #string
 with #comment #symbols #in it
-also """"""""quotation "" marks ""
+""also quotation "" marks ""
+""
 it should parse normally
 ",
 
