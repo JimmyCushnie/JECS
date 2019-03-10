@@ -1,6 +1,43 @@
 # SUCC Changelog
 
-v0.3 | 2018-11-08 (72b1aa0)
+## v1.0 | tbd
+
+- refactored a LOT; code is much better
+- added [wiki](https://github.com/JimmyCushnie/SUCC/wiki)
+- can now be [installed as a package](https://github.com/JimmyCushnie/SUCC/wiki/Installing#as-unity-package) using the Unity Package Manager
+- added a version that [doesn't use Unity](https://github.com/JimmyCushnie/SUCC/wiki/Version-Differences)
+- added [custom base types](https://github.com/JimmyCushnie/SUCC/wiki/Adding-Custom-Base-Types)
+- added [ReadOnlyDataFile](https://github.com/JimmyCushnie/SUCC/wiki/Additional-DataFile-Functionality#readonlydatafile)
+- added [DataFile.GetAsDictionary and SaveAsDictionary](https://github.com/JimmyCushnie/SUCC/wiki/Additional-DataFile-Functionality#saveget-as-dictionary)
+- added [DataFile.AutoReload and DataFile.OnAutoReload](https://github.com/JimmyCushnie/SUCC/wiki/Additional-DataFile-Functionality#autoreload)
+- added [Custom Shortcuts](https://github.com/JimmyCushnie/SUCC/wiki/Complex-Type-Shortcuts#custom-shortcuts)
+- added [Utilities.SuccFileExists()](https://github.com/JimmyCushnie/SUCC/wiki/Utilities#succfileexists)
+- added [DataFile.GetRawText()](https://github.com/JimmyCushnie/SUCC/wiki/Additional-DataFile-Functionality#getrawtext-and-getrawlines)
+- added [AutoSave](https://github.com/JimmyCushnie/SUCC/wiki/Additional-DataFile-Functionality#autosave) bool to `DataFile`, which is on by default
+- added [FileStyle](https://github.com/JimmyCushnie/SUCC/wiki/File-Style) class to control various aspects of how generated files are formatted. Each DataFile can have its own Style, and there is a global default Style.
+- added [DoSaveAttribute](https://github.com/JimmyCushnie/SUCC/wiki/Custom-Complex-Type-Rules) for saving private fields and properties of complex types
+- added [Utilities.LineEndingStyle](https://github.com/JimmyCushnie/SUCC/wiki/Utilities#lineendingstyle) to control how line endings are saved in the files
+- [booleans](https://github.com/JimmyCushnie/SUCC/wiki/Base-Types#boolean) can now be loaded as "on"/"off", "yes"/"no", or "y"/"n" in addition to "true"/"false"
+- some error messages improved
+- no more restrictions on dictionary types
+- explicit support for generic collections: T[], List\<T>, Dictionary<T1, T2>, HashSet\<T>
+ - moved `Utilities.IndentationCount` to `FileStyle.IndentationInterval`
+- renamed non-generic DataFile.Get and Set to GetNonGeneric and SetNonGeneric
+- renamed non-generic DataFile.GetAsObject and SetAsObject to GetAsObjectNonGeneric and SetAsObjectNonGeneric
+- an error will now be thrown if trying to set indentation interval to less than 1
+- an error will now be thrown if you try to set [Utilities.DefaultPath](https://github.com/JimmyCushnie/SUCC/wiki/Utilities#defaultpath) to a path that is not absolute
+- usage of the DontSave attribute is now properly restricted to fields and properties
+- fixed issue where old data could stick around when new data was saved for collections
+- fixed complex type shortcuts not being erased when a new value is saved
+- fixed errors in Unity editor if you'd most recently compiled for webGL
+- fixed various issues relating to multi-line strings
+- various performance improvements
+- the main branch is now independent from Unity
+- renamed the project from Sensible Unity/C# Configuration to Sensible and Utilitarian C# Configuration
+- changed the license from MIT to WTFPL
+- added new branches for development. The `master`, `unity`, and `unity-package-manager` branches will henceforth be kept at the latest stable release.
+
+v0.3 | 2018-11-08
 ---
 
 * renamed library to SUCC, since the language has substantially diverged from PENIS
@@ -19,7 +56,7 @@ v0.3 | 2018-11-08 (72b1aa0)
 * added warning when trying to serialize null
 * updated documentation
 
-v0.2 | 2018-09-26 (6cdfba4)
+v0.2 | 2018-09-26
 ---
 
 * added property shortcuts
@@ -29,7 +66,7 @@ v0.2 | 2018-09-26 (6cdfba4)
 * relative files paths now work properly on non-windows OSs
 * fixed being unable to parse List\<T>
 
-v0.1 | 2018-09-22 (7f763fc)
+v0.1 | 2018-09-22
 ---
 
 * Initial release
