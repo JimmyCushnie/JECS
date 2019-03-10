@@ -8,6 +8,10 @@ namespace SUCC.Types
     {
         internal static void SetComplexNode(Node node, object item, Type type, FileStyle style)
         {
+            // clear the shortcut if there is any
+            if (!string.IsNullOrEmpty(node.Value))
+                node.Value = "";
+
             foreach (var f in GetValidFields(type))
             {
                 var child = node.GetChildAddressedByName(f.Name);
@@ -45,7 +49,7 @@ namespace SUCC.Types
 
             return returnThis;
         }
-        
+
 
         internal static List<FieldInfo> GetValidFields(this Type type)
         {
