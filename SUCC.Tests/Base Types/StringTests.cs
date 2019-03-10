@@ -9,18 +9,17 @@ namespace SUCC.Tests
     [TestClass]
     public class StringTests
     {
+        static DataFile file = new DataFile("tests/" + nameof(StringTests), autoSave: false);
+
         [TestMethod]
         public void StringTest()
         {
-            var file = new DataFile("tests/string", autoSave: false);
-
-            file.Set(key: "test strings", value: TestStrings);
+            file.Set(nameof(TestStrings), TestStrings);
 
             if (TestUtilities.SaveFiles)
                 file.SaveAllData();
 
-            var loaded = file.Get<string[]>("test strings");
-            //throw new Exception("aaah");
+            var loaded = file.Get<string[]>(nameof(TestStrings));
             CollectionAssert.AreEqual(TestStrings, loaded);
         }
 

@@ -8,15 +8,5 @@ namespace SUCC.Tests
     {
         /// <summary> Whether or not to save the files used in testing to disk </summary>
         public static bool SaveFiles = true;
-
-        public static string[] GenerateSUCCKeys(int count)
-        {
-            var array = new string[count];
-
-            for (int i = 0; i < count; i++)
-                array[i] = i.ToString();
-
-            return array;
-        }
     }
 }
