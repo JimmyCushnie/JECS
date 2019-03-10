@@ -6,6 +6,7 @@
 - added [wiki](https://github.com/JimmyCushnie/SUCC/wiki)
 - can now be [installed as a package](https://github.com/JimmyCushnie/SUCC/wiki/Installing#as-unity-package) using the Unity Package Manager
 - added a version that [doesn't use Unity](https://github.com/JimmyCushnie/SUCC/wiki/Version-Differences)
+- added [tests](https://github.com/JimmyCushnie/SUCC/tree/master/SUCC.Tests)
 - added [custom base types](https://github.com/JimmyCushnie/SUCC/wiki/Adding-Custom-Base-Types)
 - added [ReadOnlyDataFile](https://github.com/JimmyCushnie/SUCC/wiki/Additional-DataFile-Functionality#readonlydatafile)
 - added [DataFile.GetAsDictionary and SaveAsDictionary](https://github.com/JimmyCushnie/SUCC/wiki/Additional-DataFile-Functionality#saveget-as-dictionary)
