@@ -32,6 +32,7 @@
 - fixed complex type shortcuts not being erased when a new value is saved
 - fixed errors in Unity editor if you'd most recently compiled for webGL
 - fixed various issues relating to multi-line strings
+- fixed newly created data files beginning with an empty line
 - various performance improvements
 - the main branch is now independent from Unity
 - renamed the project from Sensible Unity/C# Configuration to Sensible and Utilitarian C# Configuration
