@@ -37,6 +37,9 @@ namespace SUCC.Tests
             "\"\"", // ""
             "\"\"\"", // """
 
+            Environment.NewLine,
+            Environment.NewLine + Environment.NewLine + Environment.NewLine,
+
             "#",
             "##",
             "###",
