@@ -18,7 +18,6 @@ namespace SUCC.Tests
             CollectionAssert.AreEqual(TestComplexTypes, loaded);
         }
 
-
         class ComplexType
         {
             public int Integer;
