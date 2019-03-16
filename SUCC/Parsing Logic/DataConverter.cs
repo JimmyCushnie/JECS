@@ -43,6 +43,12 @@ namespace SUCC
         /// </summary>
         internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string[] lines, DataFileBase fileRef) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
         {
+            // if the file is empty
+            // do this because otherwise new files are created with a newline at the top
+            if (lines.Length == 1 && lines[0] == "")
+                return (new List<Line>(), new Dictionary<string, KeyNode>());
+
+
             var TopLevelLines = new List<Line>();
             var TopLevelNodes = new Dictionary<string, KeyNode>();
 
