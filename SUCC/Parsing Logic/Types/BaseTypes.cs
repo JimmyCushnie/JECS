@@ -71,7 +71,6 @@ namespace SUCC
         {
             // integer types
             [typeof(int)] = SerializeInt,
-            [typeof(decimal)] = SerializeInt, // decimals aren't actually ints, but they use the same serialize method as them
             [typeof(long)] = SerializeInt,
             [typeof(short)] = SerializeInt,
             [typeof(uint)] = SerializeInt,
@@ -82,7 +81,8 @@ namespace SUCC
 
             // floating point types
             [typeof(float)] = SerializeFloat,
-            [typeof(double)] = SerializeFloat,
+            [typeof(double)] = SerializeDouble,
+            [typeof(decimal)] = SerializeDecimal,
 
             [typeof(DateTime)] = SerializeDateTime,
             [typeof(char)] = SerializeChar,
@@ -102,7 +102,6 @@ namespace SUCC
 
             // integer types
             [typeof(int)] = ParseInt,
-            [typeof(decimal)] = ParseDecimal,
             [typeof(long)] = ParseLong,
             [typeof(short)] = ParseShort,
             [typeof(uint)] = ParseUint,
@@ -114,6 +113,7 @@ namespace SUCC
             // floating point types
             [typeof(float)] = ParseFloat,
             [typeof(double)] = ParseDouble,
+            [typeof(decimal)] = ParseDecimal,
 
             [typeof(bool)] = ParseBool,
             [typeof(DateTime)] = ParseDateTime,
@@ -196,21 +196,42 @@ namespace SUCC
             return text;
         }
 
-        private static readonly object[] DoublePrecision = new object[] { "0.#####################################################################################################################################################################################################################################################################################################################################" };
-        private static string SerializeFloat(object value) // this method makes sure that maximum precision is used without going to scientific notation
-        {
-            var tostring = value.GetType().GetMethod("ToString", new Type[] { typeof(string) });
-            string s = (string)tostring.Invoke(obj: value, parameters: DoublePrecision);
-            return s.ToLower();
-        }
         private static string SerializeInt(object value)
         {
-            return value.ToString().ToLower();
+            return value.ToString();
         }
 
-        // all the annoying variations of the "number" object...
+        // this lets us use decimal places instead of scientific notation. Yes, it's horrible.
+        // see https://docs.microsoft.com/en-us/dotnet/api/system.single.tostring?view=netframework-4.7.2#System_Single_ToString_System_String_
+        private const string DoublePrecision = "0.#####################################################################################################################################################################################################################################################################################################################################";
+
+        private static string SerializeFloat(object value)
+        {
+            var f = (float)value;
+
+            if (float.IsPositiveInfinity(f)) return "infinity";
+            if (float.IsNegativeInfinity(f)) return "-infinity";
+            if (float.IsNaN(f)) return "nan";
+
+            return f.ToString(DoublePrecision);
+        }
+        private static string SerializeDouble(object value)
+        {
+            var d = (double)value;
+
+            if (double.IsPositiveInfinity(d)) return "infinity";
+            if (double.IsNegativeInfinity(d)) return "-infinity";
+            if (double.IsNaN(d)) return "nan";
+
+            return d.ToString(DoublePrecision);
+        }
+        private static string SerializeDecimal(object value)
+        {
+            return value.ToString();
+        }
+
+        // all the annoying variations of the "number" object... I really wish they'd implement an IParsable interface or something
         private static object ParseInt(string text)     => int.Parse(text);
-        private static object ParseDecimal(string text) => decimal.Parse(text);
         private static object ParseLong(string text)    => long.Parse(text);
         private static object ParseShort(string text)   => short.Parse(text);
         private static object ParseUint(string text)    => uint.Parse(text);
@@ -218,6 +239,7 @@ namespace SUCC
         private static object ParseUshort(string text)  => ushort.Parse(text);
         private static object ParseByte(string text)    => byte.Parse(text);
         private static object ParseSbyte(string text)   => sbyte.Parse(text);
+        private static object ParseDecimal(string text) => decimal.Parse(text);
 
         private static readonly NumberFormatInfo LowercaseParser = new NumberFormatInfo()
         {

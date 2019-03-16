@@ -182,10 +182,10 @@ namespace SUCC
         }
         public void SetDataText(string newData)
         {
-            RawText = 
-                RawText.Substring(0, DataStartIndex) 
+            RawText =
+                RawText.Substring(0, DataStartIndex) // add preceding whitespace
                 + newData.Replace("#", "\\#") // escape comments
-                + RawText.Substring(DataEndIndex, RawText.Length - DataEndIndex);
+                + RawText.Substring(DataEndIndex, RawText.Length - DataEndIndex); // add any following whitespace or comments
         }
 
         private int DataStartIndex => IndentationLevel;
@@ -196,13 +196,17 @@ namespace SUCC
             {
                 var text = RawText;
 
+                if (text.IsWhitespace()) return text.Length;
+
+                // find the first # in the string
                 int PoundSignIndex = text.IndexOf('#');
 
                 while (PoundSignIndex > 0 && text[PoundSignIndex - 1] == '\\') // retry PoundSignIndex if it's escaped by a \
                     PoundSignIndex = text.IndexOf('#', PoundSignIndex + 1);
 
+                // if the string contains a #, remove everything after it
                 if (PoundSignIndex > 0)
-                    text = text.Substring(0, PoundSignIndex); // remove everything after the comment indicator
+                    text = text.Substring(0, PoundSignIndex);
 
                 // remove trailing spaces
                 text = text.TrimEnd();
