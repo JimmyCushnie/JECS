@@ -48,17 +48,19 @@ namespace SUCC
         public void SaveAllData()
         {
             string SUCC = GetRawText();
+            string ExistingSUCC = string.Empty;
 
             if (Application.platform == RuntimePlatform.WebGLPlayer)
             {
-                string ExistingSUCC = PlayerPrefs.GetString(FilePath);
+                ExistingSUCC = PlayerPrefs.GetString(FilePath);
 
                 if (SUCC != ExistingSUCC)
                     PlayerPrefs.SetString(FilePath, SUCC);
             }
             else
             {
-                string ExistingSUCC = File.ReadAllText(FilePath);
+                if (File.Exists(FilePath)) // in case the file is deleted between when the file is initialized and when it's saved
+                    ExistingSUCC = File.ReadAllText(FilePath);
 
                 if (SUCC != ExistingSUCC)
                 {

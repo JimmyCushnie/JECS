@@ -33,6 +33,7 @@
 - fixed errors in Unity editor if you'd most recently compiled for webGL
 - fixed various issues relating to multi-line strings
 - fixed newly created data files beginning with an empty line
+- fixed error if file is deleted on disk while program is running
 - various performance improvements
 - the main branch is now independent from Unity
 - renamed the project from Sensible Unity/C# Configuration to Sensible and Utilitarian C# Configuration
