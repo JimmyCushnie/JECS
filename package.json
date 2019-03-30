@@ -1,7 +1,7 @@
 {
   "name": "com.jimmycushnie.succ",
   "displayName": "SUCC",
-  "version": "0.9.99",
+  "version": "1.0.0",
   "unity": "2018.3",
   "description": "Sensible Unity/C# Configuration",
   "keywords": [ "config", "file", "data" ],
