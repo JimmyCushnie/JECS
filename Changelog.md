@@ -1,6 +1,6 @@
 # SUCC Changelog
 
-## v1.0 | tbd
+## v1.0 | 2019-03-29
 
 - refactored a LOT; code is much better
 - added [wiki](https://github.com/JimmyCushnie/SUCC/wiki)
