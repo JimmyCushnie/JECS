@@ -1,4 +1,4 @@
-# SUCC
+<img src="https://raw.githubusercontent.com/JimmyCushnie/SUCC/master-dev/Succ_Logo_nosubtitle.png" width = 480>
 
 Sensible and Utilitarian C# Configuration  
 Created by Jimmy Cushnie
