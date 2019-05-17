@@ -10,6 +10,9 @@ namespace SUCC
         /// <summary> The absolute path of the file this object corresponds to. </summary>
         public readonly string FilePath;
 
+        /// <summary> The name of this file on disk (without the file path or extension) </summary>
+        public string FileName => Path.GetFileNameWithoutExtension(FilePath);
+
         public DataFileBase(string path, string defaultFileText, bool autoReload)
         {
             path = Utilities.AbsolutePath(path);
