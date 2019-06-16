@@ -20,6 +20,23 @@ namespace SUCC
         /// <param name="defaultValue"> if the key does not exist in the file, this value is returned instead </param>
         public override T Get<T>(string key, T defaultValue = default) => base.Get(key, defaultValue);
 
+        /// <summary> Like Get but works for nested paths instead of just the top level of the file </summary>
+        public override T GetAtPath<T>(T defaultValue, params string[] path) => base.GetAtPath(defaultValue, path);
+        /// <summary> Like Get but works for nested paths instead of just the top level of the file </summary>
+        public override object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path)
+        {
+            if (!KeyExistsAtPath(path)) // throws exception for us when path.length < 1
+                throw new Exception($"The specified path doesn't exist. Check whether {nameof(KeyExistsAtPath)} first.");
+
+            var topNode = TopLevelNodes[path[0]];
+            for (int i = 1; i < path.Length; i++)
+            {
+                topNode = topNode.GetChildAddressedByName(path[i]);
+            }
+
+            return NodeManager.GetNodeData(topNode, type);
+        }
+
         /// <summary> Non-generic version of Get. You probably want to use Get. </summary>
         /// <param name="type"/> the type to get the data as </param>
         /// <param name="key"> what the data is labeled as within the file </param>
