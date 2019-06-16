@@ -23,6 +23,13 @@ namespace SUCC
             throw new Exception($"Cannot serialize base type {type} - are you sure it is a base type?");
         }
 
+        internal static void SetBaseTypeNode(Node node, object thing, Type type, FileStyle style)
+        {
+            node.CapChildCount(0);
+            node.ChildNodeType = NodeChildrenType.none;
+            node.Value = SerializeBaseType(thing, type, style);
+        }
+
         internal static T ParseBaseType<T>(string text) => (T)ParseBaseType(text, typeof(T));
         internal static object ParseBaseType(string text, Type type)
         {
@@ -150,7 +157,7 @@ namespace SUCC
         }
 
         // support for multi-line strings
-        internal static void SerializeSpecialStringCase(string value, Node node, FileStyle style)
+        internal static void SetStringSpecialCase(Node node, string value, FileStyle style)
         {
             if (value != null && value.ContainsNewLine())
             {

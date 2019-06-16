@@ -45,7 +45,7 @@ namespace SUCC
 
         public KeyNode GetChildAddressedByName(string name)
         {
-            EnsureProperType(NodeChildrenType.key);
+            EnsureProperChildType(NodeChildrenType.key);
 
             foreach (var node in ChildNodes)
             {
@@ -65,7 +65,7 @@ namespace SUCC
 
         public ListNode GetChildAddressedByListNumber(int number)
         {
-            EnsureProperType(NodeChildrenType.list);
+            EnsureProperChildType(NodeChildrenType.list);
 
             // ensure proper number of child list nodes exist
             var indentation = GetProperChildIndentation();
@@ -80,11 +80,11 @@ namespace SUCC
 
         public MultiLineStringNode GetChildAddresedByStringLineNumber(int number)
         {
-            EnsureProperType(NodeChildrenType.multiLineString);
+            EnsureProperChildType(NodeChildrenType.multiLineString);
 
             // ensure proper number of child string nodes exist
             var indentation = GetProperChildIndentation();
-            for(int i = ChildNodes.Count; i <= number; i++)
+            for (int i = ChildNodes.Count; i <= number; i++)
             {
                 var newnode = new MultiLineStringNode(indentation, File);
                 AddChild(newnode);
@@ -103,8 +103,11 @@ namespace SUCC
             return indentation;
         }
 
-        private void EnsureProperType(NodeChildrenType expectedType)
+        private void EnsureProperChildType(NodeChildrenType expectedType)
         {
+            if (expectedType != NodeChildrenType.multiLineString && !string.IsNullOrEmpty(this.Value))
+                throw new Exception($"node has a value ({Value}), which means it can't have children");
+
             if (ChildNodeType != expectedType)
             {
                 if (ChildNodes.Count == 0)
