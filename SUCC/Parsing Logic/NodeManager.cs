@@ -16,10 +16,10 @@ namespace SUCC
 
             string dataAsString = data as string;
             if (type == typeof(string) && (dataAsString.ContainsNewLine() || node.ChildNodes.Count > 0))
-                BaseTypes.SerializeSpecialStringCase(dataAsString, node, style);
+                BaseTypes.SetStringSpecialCase(node, dataAsString, style);
 
             else if (BaseTypes.IsBaseType(type))
-                node.Value = BaseTypes.SerializeBaseType(data, type, style);
+                BaseTypes.SetBaseTypeNode(node, data, type, style);
 
             else if (CollectionTypes.TrySetCollection(node, data, type, style))
                 return;
