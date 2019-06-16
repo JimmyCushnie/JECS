@@ -115,7 +115,59 @@ namespace SUCC
                 SaveAllData();
         }
 
-        
+
+        public override T GetAtPath<T>(T defaultValue = default, params string[] path) => base.GetAtPath(defaultValue, path);
+        public override object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path)
+        {
+            if (!KeyExistsAtPath(path)) // throws exception for us when path.length < 1
+            {
+                SetAtPathNonGeneric(type, defaultValue, path);
+                return defaultValue;
+            }
+            
+            var topNode = TopLevelNodes[path[0]];
+            for (int i = 1; i < path.Length; i++)
+            {
+                topNode = topNode.GetChildAddressedByName(path[i]);
+            }
+
+            return NodeManager.GetNodeData(topNode, type);
+        }
+
+        public void SetAtPath<T>(T value, params string[] path) => SetAtPathNonGeneric(typeof(T), value, path);
+        public void SetAtPathNonGeneric(Type type, object value, params string[] path)
+        {
+            if (value == null)
+                throw new Exception("you can't serialize null");
+
+            if (value.GetType() != type)
+                throw new InvalidCastException($"{value} is not of type {type}!");
+
+            if (path.Length < 1)
+                throw new ArgumentException($"{nameof(path)} must have a length greater than 0");
+
+
+            if (!KeyExists(path[0]))
+            {
+                var newnode = new KeyNode(indentation: 0, key: path[0], file: this);
+                TopLevelNodes.Add(path[0], newnode);
+                TopLevelLines.Add(newnode);
+            }
+
+            var topNode = TopLevelNodes[path[0]];
+            
+            for (int i = 1; i < path.Length; i++)
+            {
+                topNode = topNode.GetChildAddressedByName(path[i]);
+            }
+
+            NodeManager.SetNodeData(topNode, value, type, Style);
+            
+            if (AutoSave)
+                SaveAllData();
+        }
+
+
         /// <summary> Remove a top-level key and all its data from the file </summary>
         public void DeleteKey(string key)
         {

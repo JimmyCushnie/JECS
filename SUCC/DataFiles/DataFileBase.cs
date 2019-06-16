@@ -90,9 +90,33 @@ namespace SUCC
             return TopLevelNodes.ContainsKey(key);
         }
 
+        /// <summary> whether a key exists in the file at a nested path </summary>
+        public bool KeyExistsAtPath(params string[] path)
+        {
+            if (path.Length < 1)
+                throw new ArgumentException($"{nameof(path)} must have a length greater than 0");
+
+            if (!KeyExists(path[0]))
+                return false;
+
+            var topNode = TopLevelNodes[path[0]];
+            for (int i = 1; i < path.Length; i++)
+            {
+                if (topNode.ContainsChildNode(path[i]))
+                    topNode = topNode.GetChildAddressedByName(path[i]);
+                else
+                    return false;
+            }
+
+            return true;
+        }
+
         // Get<T> is virual so that derived classes can give it different xml documentation
         public virtual T Get<T>(string key, T defaultValue) => (T)GetNonGeneric(typeof(T), key, defaultValue);
         public abstract object GetNonGeneric(Type type, string key, object defaultValue);
+
+        public virtual T GetAtPath<T>(T defaultValue, params string[] path) => (T)GetAtPathNonGeneric(typeof(T), defaultValue, path);
+        public abstract object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path);
 
 
         /// <summary> Interpret this file as an object of type T, using that type's fields and properties as top-level keys. </summary>
