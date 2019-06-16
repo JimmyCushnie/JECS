@@ -115,8 +115,9 @@ namespace SUCC
                 SaveAllData();
         }
 
-
+        /// <summary> Like Get but works for nested paths instead of just the top level of the file </summary>
         public override T GetAtPath<T>(T defaultValue = default, params string[] path) => base.GetAtPath(defaultValue, path);
+        /// <summary> Like Get but works for nested paths instead of just the top level of the file </summary>
         public override object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path)
         {
             if (!KeyExistsAtPath(path)) // throws exception for us when path.length < 1
@@ -134,7 +135,9 @@ namespace SUCC
             return NodeManager.GetNodeData(topNode, type);
         }
 
+        /// <summary> Like Set but works for nested paths instead of just the top level of the file </summary>
         public void SetAtPath<T>(T value, params string[] path) => SetAtPathNonGeneric(typeof(T), value, path);
+        /// <summary> Like Set but works for nested paths instead of just the top level of the file </summary>
         public void SetAtPathNonGeneric(Type type, object value, params string[] path)
         {
             if (value == null)
