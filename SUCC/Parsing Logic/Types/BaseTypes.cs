@@ -30,8 +30,8 @@ namespace SUCC
             node.Value = SerializeBaseType(thing, type, style);
         }
 
-        internal static T ParseBaseType<T>(string text) => (T)ParseBaseType(text, typeof(T));
-        internal static object ParseBaseType(string text, Type type)
+        public static T ParseBaseType<T>(string text) => (T)ParseBaseType(text, typeof(T));
+        public static object ParseBaseType(string text, Type type)
         {
             try
             {
