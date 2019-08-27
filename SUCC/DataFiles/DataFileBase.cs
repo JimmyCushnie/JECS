@@ -13,8 +13,11 @@ namespace SUCC
 
         /// <summary> The name of this file on disk (without the file path or extension) </summary>
         public string FileName => Path.GetFileNameWithoutExtension(FilePath);
+        
+        /// <summary> Size of this file on disk in bytes. If there is unsaved data in the file it will not be counted. </summary>
+        public long SizeOnDisk => new FileInfo(FilePath).Length;
 
-        public DataFileBase(string path, string defaultFile, bool autoReload)
+        public DataFileBase(string path, string defaultFileText, bool autoReload)
         {
             path = Utilities.AbsolutePath(path);
             path = Path.ChangeExtension(path, Utilities.FileExtension);
