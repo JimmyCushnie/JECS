@@ -136,6 +136,8 @@ namespace SUCC
             string text = (string)value;
             if (String.IsNullOrEmpty(text)) return String.Empty;
 
+            text = text.Replace("\t", "    "); // SUCC files cannot contain tabs. Prevent saving strings with tabs in them.
+
             if (
                 style.AlwaysQuoteStrings ||
                 text[0] == ' ' || text[text.Length - 1] == ' ' ||
