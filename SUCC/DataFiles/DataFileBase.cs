@@ -17,7 +17,7 @@ namespace SUCC
         /// <summary> Size of this file on disk in bytes. If there is unsaved data in the file it will not be counted. </summary>
         public long SizeOnDisk => new FileInfo(FilePath).Length;
 
-        public DataFileBase(string path, string defaultFileText, bool autoReload)
+        public DataFileBase(string path, string defaultFile, bool autoReload)
         {
             path = Utilities.AbsolutePath(path);
             path = Path.ChangeExtension(path, Utilities.FileExtension);
