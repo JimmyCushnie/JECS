@@ -57,13 +57,25 @@ namespace SUCC
         }
 
         /// <summary> Turns an object into text </summary>
-        public delegate string SerializeMethod(object thing);
-
+        public delegate string SerializeMethod<T>(T thing);
         /// <summary> Turns text into an object </summary>
-        public delegate object ParseMethod(string text);
+        public delegate T ParseMethod<T>(string text);
+
+        private delegate string SerializeMethod(object thing);
+        private delegate object ParseMethod(string text);
 
         /// <summary> Add a base type to SUCC serialization. It is recommended that you call this method in a static constructor. </summary>
-        public static void AddBaseType(Type type, SerializeMethod serializeMethod, ParseMethod parseMethod)
+        public static void AddBaseType<T>(SerializeMethod<T> serializeMethod, ParseMethod<T> parseMethod)
+        {
+            AddBaseType
+                (
+                typeof(T), 
+                (object obj) => serializeMethod((T)obj),
+                (string text) => parseMethod.Invoke(text)
+                );
+        }
+
+        private static void AddBaseType(Type type, SerializeMethod serializeMethod, ParseMethod parseMethod)
         {
             if (IsBaseType(type))
                 throw new Exception($"Type {type} is already a supported base type. You cannot re-add it.");
@@ -71,6 +83,8 @@ namespace SUCC
             BaseSerializeMethods.Add(type, serializeMethod);
             BaseParseMethods.Add(type, parseMethod);
         }
+
+
 
 
 
