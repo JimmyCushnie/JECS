@@ -89,8 +89,8 @@ namespace SUCC
         public string[] GetRawLines()
             => GetRawText().SplitIntoLines();
 
-        /// <summary> returns all top level keys in the file, in order. </summary>
-        public string[] GetTopLevelKeys()
+        /// <summary> returns all top level keys in the file, in the order they appear in the file. </summary>
+        public string[] GetTopLevelKeysInOrder()
         {
             var keys = new string[TopLevelNodes.Count];
             int count = 0;
@@ -106,6 +106,10 @@ namespace SUCC
 
             return keys;
         }
+
+        /// <summary> this is faster than GetTopLevelKeysInOrder() but the keys may not be in the order they appear in the file </summary>
+        public IReadOnlyCollection<string> TopLevelKeys
+            => TopLevelNodes.Keys;
 
         /// <summary> whether a top-level key exists in the file </summary>
         public bool KeyExists(string key)
@@ -173,8 +177,8 @@ namespace SUCC
             if (!BaseTypes.IsBaseType(typeof(TKey)))
                 throw new Exception("When using GetAsDictionary, TKey must be a base type");
 
-            var keys = GetTopLevelKeys();
-            var dictionary = new Dictionary<TKey, TValue>(capacity: keys.Length);
+            var keys = this.TopLevelKeys;
+            var dictionary = new Dictionary<TKey, TValue>(capacity: keys.Count);
 
             foreach (var keyText in keys)
             {
