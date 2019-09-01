@@ -234,7 +234,7 @@ namespace SUCC
                 }
 
                 // make sure that old data in the file is deleted when a new dictionary is saved.
-                foreach (var key in this.GetTopLevelKeys())
+                foreach (var key in this.TopLevelKeys)
                 {
                     if (!CurrentKeys.Contains(key))
                         this.TopLevelNodes.Remove(key);
