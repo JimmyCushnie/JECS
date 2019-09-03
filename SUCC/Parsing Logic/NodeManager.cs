@@ -14,6 +14,10 @@ namespace SUCC
             if (data == null)
                 throw new Exception("you can't serialize null");
 
+            // ensure the type is initialized. This is especially important if it's added as
+            // a base type in the type's static constructor.
+            System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
+
             string dataAsString = data as string;
             if (type == typeof(string) && (dataAsString.ContainsNewLine() || node.ChildNodes.Count > 0))
                 BaseTypes.SetStringSpecialCase(node, dataAsString, style);
@@ -31,6 +35,8 @@ namespace SUCC
         internal static T GetNodeData<T>(Node node) => (T)GetNodeData(node, typeof(T));
         internal static object GetNodeData(Node node, Type type)
         {
+            System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
+
             try
             {
                 if (type == typeof(string) && node.Value == MultiLineStringNode.Terminator && node.ChildLines.Count > 0)
