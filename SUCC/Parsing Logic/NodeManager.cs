@@ -53,9 +53,9 @@ namespace SUCC
 
                 return ComplexTypes.RetrieveComplexType(node, type);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                throw new Exception($"Error getting data of type {type} from node: {e.Message}");
+                throw new Exception($"Error getting data of type {type} from node: {e.InnerException}");
             }
         }
     }
