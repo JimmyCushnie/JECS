@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -11,24 +12,24 @@ namespace SUCC
         /// </summary>
         internal static string SUCCFromDataStructure(List<Line> lines)
         {
-            return RecursivelySerializeLines(lines).TrimEnd(Utilities.NewLine.ToCharArray()); // remove all newlines at the end of the string
+            var succBuilder = new StringBuilder();
+            recursivelyBuildLines(lines, succBuilder);
+            var succ = succBuilder.ToString().TrimEnd(Utilities.NewLine.ToCharArray()); // remove all newlines at the end of the string
+            return succ;
 
-            string RecursivelySerializeLines(IReadOnlyList<Line> Lines)
+            void recursivelyBuildLines(IReadOnlyList<Line> Lines, StringBuilder builder)
             {
-                string output = string.Empty;
                 for (int i = 0; i < Lines.Count; i++)
                 {
-                    output += Lines[i].RawText;
-                    output += Utilities.NewLine;
+                    builder.Append(Lines[i].RawText);
+                    builder.Append(Utilities.NewLine);
 
                     if (Lines[i] is Node)
                     {
-                        var heck = Lines[i] as Node;
-                        output += RecursivelySerializeLines(heck.ChildLines);
+                        var node = Lines[i] as Node;
+                        recursivelyBuildLines(node.ChildLines, builder);
                     }
                 }
-
-                return output;
             }
         }
 
