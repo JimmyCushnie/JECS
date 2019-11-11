@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace SUCC
 {
@@ -14,10 +15,10 @@ namespace SUCC
         public abstract string Value { get; set; }
         public NodeChildrenType ChildNodeType = NodeChildrenType.none;
 
-        private List<Line> m_ChildLines = new List<Line>();
-        private List<Node> m_ChildNodes = new List<Node>();
-        public IReadOnlyList<Line> ChildLines => m_ChildLines;
-        public IReadOnlyList<Node> ChildNodes => m_ChildNodes;
+        private readonly List<Line> _ChildLines = new List<Line>();
+        private readonly List<Node> _ChildNodes = new List<Node>();
+        public IReadOnlyList<Line> ChildLines => _ChildLines;
+        public IReadOnlyList<Node> ChildNodes => _ChildNodes;
 
         // This is here so that nodes can access the style of their file. For nodes part of a ReadOnlyDataFile, it is null.
         // We reference a DataFile rather than a FileStyle because if a user changes the Style of the File, that change is automatically seen by all its nodes.
@@ -124,18 +125,18 @@ namespace SUCC
 
         public void ClearChildren(NodeChildrenType? newChildrenType = null)
         {
-            m_ChildLines.Clear();
-            m_ChildNodes.Clear();
+            _ChildLines.Clear();
+            _ChildNodes.Clear();
 
             if (newChildrenType != null) ChildNodeType = (NodeChildrenType)newChildrenType;
         }
 
         public void AddChild(Line newLine)
         {
-            m_ChildLines.Add(newLine);
+            _ChildLines.Add(newLine);
 
             Node newNode = newLine as Node;
-            if (newNode != null) m_ChildNodes.Add(newNode);
+            if (newNode != null) _ChildNodes.Add(newNode);
         }
 
         public void RemoveChild(string key)
@@ -145,8 +146,8 @@ namespace SUCC
                 var keynode = node as KeyNode;
                 if (keynode?.Key == key)
                 {
-                    m_ChildNodes.Remove(node);
-                    m_ChildLines.Remove(node);
+                    _ChildNodes.Remove(node);
+                    _ChildLines.Remove(node);
                     return;
                 }
             }
@@ -154,13 +155,14 @@ namespace SUCC
 
         public void CapChildCount(int count)
         {
-            if (count < 0) throw new ArgumentOutOfRangeException("stop it");
+            if (count < 0) 
+                throw new ArgumentOutOfRangeException("stop it");
 
             while (ChildNodes.Count > count)
             {
                 var removeThis = ChildNodes.Last();
-                m_ChildNodes.Remove(removeThis);
-                m_ChildLines.Remove(removeThis);
+                _ChildNodes.Remove(removeThis);
+                _ChildLines.Remove(removeThis);
             }
         }
 
@@ -178,7 +180,8 @@ namespace SUCC
 
         public string GetDataText()
         {
-            if (RawText.IsWhitespace()) return String.Empty;
+            if (RawText.IsWhitespace()) 
+                return String.Empty;
 
             return RawText.Substring(DataStartIndex, DataEndIndex - DataStartIndex)
                 .Replace("\\#", "#"); // unescape comments
@@ -199,7 +202,8 @@ namespace SUCC
             {
                 var text = RawText;
 
-                if (text.IsWhitespace()) return text.Length;
+                if (text.IsWhitespace()) 
+                    return text.Length;
 
                 // find the first # in the string
                 int PoundSignIndex = text.IndexOf('#');
