@@ -30,9 +30,11 @@ namespace SUCC.MemoryFiles
 
         private string MemoryTextData = "";
 
+        /// <inheritdoc/>
         protected override string GetSavedText()
             => MemoryTextData;
 
+        /// <inheritdoc/>
         protected override void SetSavedText(string text)
             => MemoryTextData = text;
 

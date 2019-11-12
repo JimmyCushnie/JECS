@@ -40,6 +40,7 @@ namespace SUCC
             this.AutoReload = autoReload;
         }
 
+        /// <inheritdoc/>
         protected override string GetSavedText()
         {
             if (File.Exists(FilePath))

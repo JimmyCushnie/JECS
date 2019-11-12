@@ -5,12 +5,16 @@ using System.Linq;
 
 namespace SUCC
 {
+    /// <summary>
+    /// Provides various helpful functions for working with SUCC files.
+    /// </summary>
     public static class Utilities
     {
+        private static string _DefaultPath = GetDefaultDefaultPath();
+
         /// <summary>
         /// The path that DataFile locations will be relative to if you assign them a non-absolute path. By default this is System.AppContext.BaseDirectory, but you can change it if you like.
         /// </summary>
-        private static string _DefaultPath = GetDefaultDefaultPath();
         public static string DefaultPath
         {
             get => _DefaultPath;
@@ -27,6 +31,7 @@ namespace SUCC
             return System.AppContext.BaseDirectory;
         }
 
+        /// <summary> All SUCC files have this file extension. </summary>
         public static readonly string FileExtension = ".succ";
 
         /// <summary> detects whether a file path is relative or absolute, and returns the absolute path </summary>
@@ -69,6 +74,7 @@ namespace SUCC
             return whyNot == null;
         }
 
+        /// <summary> Controls how SUCC saves line endings. </summary>
         public static LineEndingStyle LineEndingStyle { get; set; } = LineEndingStyle.PlatformDefault;
         internal static string NewLine
         {

@@ -100,13 +100,13 @@ namespace SUCC
     /// </summary>
     public enum BoolStyle
     {
-        /// <summary> save true as "true" and false as "false"
+        /// <summary> save true as "true" and false as "false" </summary>
         true_false,
         /// <summary> save true as "on" and false as "off" </summary>
         on_off,
-        /// <summary> save true as "yes" and false as "no"
+        /// <summary> save true as "yes" and false as "no" </summary>
         yes_no,
-        /// <summary> save true as "y" and false as "n"
+        /// <summary> save true as "y" and false as "n" </summary>
         y_n,
     }
 

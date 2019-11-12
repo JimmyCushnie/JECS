@@ -12,6 +12,7 @@ namespace SUCC.Abstractions
         internal List<Line> TopLevelLines { get; private set; } = new List<Line>();
         internal Dictionary<string, KeyNode> TopLevelNodes { get; private set; } = new Dictionary<string, KeyNode>();
 
+        /// <summary> Load the file text from wherever you're storing it </summary>
         protected abstract string GetSavedText();
 
         /// <summary> Reloads the data stored on disk into this object. </summary>

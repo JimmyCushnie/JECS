@@ -16,12 +16,14 @@ namespace SUCC.Abstractions
         /// <remarks> Be careful with this. You do not want to accidentally be writing to a user's disk at 1000MB/s for 3 hours. </remarks>
         public bool AutoSave { get; set; }
 
+        /// <inheritdoc/>
         public ReadableWritableDataFile(bool autoSave, FileStyle style)
         {
             AutoSave = autoSave;
             Style = style;
         }
 
+        /// <summary> Save the file text to wherever you're storing it </summary>
         protected abstract void SetSavedText(string text);
 
         /// <summary> Serializes the data in this object to the file on disk. </summary>
@@ -42,7 +44,7 @@ namespace SUCC.Abstractions
             => base.Get(key, defaultValue);
 
         /// <summary> Non-generic version of Get. You probably want to use Get. </summary>
-        /// <param name="type"/> the type to get the data as </param>
+        /// <param name="type"> the type to get the data as </param>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="DefaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
         public override object GetNonGeneric(Type type, string key, object DefaultValue)

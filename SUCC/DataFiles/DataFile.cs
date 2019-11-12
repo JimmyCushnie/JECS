@@ -51,6 +51,7 @@ namespace SUCC
             this.AutoReload = autoReload;
         }
 
+        /// <inheritdoc/>
         protected override string GetSavedText()
         {
             if (File.Exists(FilePath))
@@ -59,6 +60,7 @@ namespace SUCC
             return String.Empty;
         }
 
+        /// <inheritdoc/>
         protected override void SetSavedText(string text)
         {
             File.WriteAllText(FilePath, text);

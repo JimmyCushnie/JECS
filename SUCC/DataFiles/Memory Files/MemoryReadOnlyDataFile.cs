@@ -24,7 +24,8 @@ namespace SUCC.MemoryFiles
 
 
         private string MemoryTextData = "";
-
+        
+        /// <inheritdoc/>
         protected override string GetSavedText()
             => MemoryTextData;
 

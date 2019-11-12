@@ -7,6 +7,9 @@ using System.Reflection;
 
 namespace SUCC
 {
+    /// <summary>
+    /// Manages SUCC's database of Base Types. https://github.com/JimmyCushnie/SUCC/wiki/Base-Types
+    /// </summary>
     public static class BaseTypes
     {
         internal static string SerializeBaseType<T>(T thing, FileStyle style) => SerializeBaseType(thing, typeof(T), style);
@@ -31,7 +34,9 @@ namespace SUCC
             node.Value = SerializeBaseType(thing, type, style);
         }
 
+        /// <summary> Turn some text into data, if that data is of a base type. </summary>
         public static T ParseBaseType<T>(string text) => (T)ParseBaseType(text, typeof(T));
+        /// <summary> Non-generic version of ParseBaseType </summary>
         public static object ParseBaseType(string text, Type type)
         {
             try
