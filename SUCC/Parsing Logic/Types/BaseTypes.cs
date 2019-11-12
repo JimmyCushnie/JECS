@@ -285,7 +285,7 @@ namespace SUCC
             return parse(text);
 
             T parse(string floatText)
-                => parseMethod.Invoke(floatText.ToLower(), LowercaseParser);
+                => parseMethod.Invoke(floatText.ToLower().Trim(), LowercaseParser);
         }
 
         private static readonly NumberFormatInfo LowercaseParser = new NumberFormatInfo()
