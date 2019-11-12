@@ -1,11 +1,13 @@
-﻿using System;
+﻿using SUCC.Abstractions;
+using System;
+using System.IO;
 
 namespace SUCC
 {
     /// <summary>
     /// A read-only version of DataFile. Data can be read from disk, but not saved to disk.
     /// </summary>
-    public class ReadOnlyDataFile : DataFileBase
+    public class ReadOnlyDataFile : ReadableDataFile, IDataFileOnDisk
     {
         /// <summary>
         /// Creates a new ReadOnlyDataFile object corresponding to a SUCC file in system storage.
@@ -13,40 +15,98 @@ namespace SUCC
         /// <param name="path"> the path of the file. Can be either absolute or relative to the default path. </param>
         /// <param name="defaultFile"> optionally, if there isn't a file at the path, one can be created from a file in the Resources folder. </param>
         /// <param name="autoReload"> if true, the DataFile will automatically reload when the file changes on disk. </param>
-        public ReadOnlyDataFile(string path, string defaultFile = null, bool autoReload = false) : base(path, defaultFile, autoReload) { }
-
-        /// <summary> Get some data from the file, or return a default value if the data does not exist </summary>
-        /// <param name="key"> what the data is labeled as within the file </param>
-        /// <param name="defaultValue"> if the key does not exist in the file, this value is returned instead </param>
-        public override T Get<T>(string key, T defaultValue = default) => base.Get(key, defaultValue);
-
-        /// <summary> Like Get but works for nested paths instead of just the top level of the file </summary>
-        public override T GetAtPath<T>(T defaultValue, params string[] path) => base.GetAtPath(defaultValue, path);
-        /// <summary> Like Get but works for nested paths instead of just the top level of the file </summary>
-        public override object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path)
+        public ReadOnlyDataFile(string path, string defaultFileText = null, bool autoReload = false)
         {
-            if (!KeyExistsAtPath(path)) // throws exception for us when path.length < 1
-                throw new Exception($"The specified path doesn't exist. Check whether {nameof(KeyExistsAtPath)} first.");
+            path = Utilities.AbsolutePath(path);
+            path = Path.ChangeExtension(path, Utilities.FileExtension);
+            this.FilePath = path;
 
-            var topNode = TopLevelNodes[path[0]];
-            for (int i = 1; i < path.Length; i++)
+            if (!Utilities.SuccFileExists(path))
             {
-                topNode = topNode.GetChildAddressedByName(path[i]);
+                if (defaultFileText == null)
+                {
+                    Directory.CreateDirectory(new FileInfo(path).Directory.FullName);
+                    File.Create(path).Close(); // create empty file on disk
+                }
+                else
+                {
+                    File.WriteAllText(path, defaultFileText);
+                }
             }
 
-            return NodeManager.GetNodeData(topNode, type);
+            this.ReloadAllData();
+
+            SetupWatcher(); // setup watcher AFTER file has been created
+            this.AutoReload = autoReload;
         }
 
-        /// <summary> Non-generic version of Get. You probably want to use Get. </summary>
-        /// <param name="type"/> the type to get the data as </param>
-        /// <param name="key"> what the data is labeled as within the file </param>
-        /// <param name="DefaultValue"> if the key does not exist in the file, this value is returned instead </param>
-        public override object GetNonGeneric(Type type, string key, object defaultValue)
+        /// <inheritdoc/>
+        protected override string GetSavedText()
         {
-            if (!KeyExists(key)) return defaultValue;
+            if (File.Exists(FilePath))
+                return File.ReadAllText(FilePath);
 
-            var node = TopLevelNodes[key];
-            return NodeManager.GetNodeData(node, type);
+            return String.Empty;
         }
+
+
+
+        #region IDataFileOnDisk implementation
+        // this code is copied between DataFile and ReadOnlyDataFile.
+        // todo: once we upgrade to c# 8, this can probably be abstracted to a default interface implementation.
+
+        /// <inheritdoc/>
+        public string FilePath { get; protected set; }
+        /// <inheritdoc/>
+        public string FileName => Path.GetFileNameWithoutExtension(FilePath);
+        /// <inheritdoc/>
+        public long SizeOnDisk => new FileInfo(FilePath).Length;
+        /// <inheritdoc/>
+        public event Action OnAutoReload;
+
+        /// <inheritdoc/>
+        public bool AutoReload
+        {
+            get => _AutoReload;
+            set
+            {
+                _AutoReload = value;
+                Watcher.EnableRaisingEvents = value;
+
+                if (value == true)
+                    IgnoreNextFileReload = false; // in case this was set to true while AutoReload was false
+            }
+        }
+        bool _AutoReload = true;
+
+        private FileSystemWatcher Watcher;
+        private void SetupWatcher()
+        {
+            var info = new FileInfo(FilePath);
+            Watcher = new FileSystemWatcher(path: info.DirectoryName, filter: info.Name);
+
+            Watcher.NotifyFilter = NotifyFilters.LastWrite;
+            Watcher.Changed += this.OnWatcherChanged;
+        }
+
+        // Watcher.Changed takes several seconds to fire, so we use this.
+        private bool IgnoreNextFileReload;
+
+        private void OnWatcherChanged(object idontcare, FileSystemEventArgs goaway)
+        {
+            if (!_AutoReload) 
+                return;
+
+            if (IgnoreNextFileReload)
+            {
+                IgnoreNextFileReload = false;
+                return;
+            }
+
+            ReloadAllData();
+            OnAutoReload?.Invoke();
+        }
+
+        #endregion
     }
 }

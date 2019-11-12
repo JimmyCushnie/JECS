@@ -1,5 +1,42 @@
 # SUCC Changelog
 
+## v1.1 | 2019-11-12
+
+* added [GetAtPath and SetAtPath](https://github.com/JimmyCushnie/SUCC/wiki/Additional-DataFile-Functionality#getatpath-and-setatpath)
+* added [MemoryDataFile and MemoryReadOnlyDataFile](https://github.com/JimmyCushnie/SUCC/wiki/Additional-DataFile-Functionality#getatpath-and-setatpath) (in the `SUCC.MemoryFiles` namespace)
+* added support for [writing rational floats](https://github.com/JimmyCushnie/SUCC/wiki/Base-Types#floating-point-types) in files; you can now write `1/3` instead of `0.33333`
+* [adding custom base types](https://github.com/JimmyCushnie/SUCC/wiki/Adding-Custom-Base-Types) is now much easier & done generically
+  * ```csharp
+    // old way:
+    SUCC.BaseTypes.AddBaseType
+        (
+        typeof(MyCustomType),
+        (object mct) => mct.ToString(),
+        (string text) => MyCustomType.Parse(text)
+        );
+    
+    // new way:
+    SUCC.BaseTypes.AddBaseType
+        (
+        mct => mct.ToString(),
+        MyCustomType.Parse
+        );
+    ```
+* added [FileName property](https://github.com/JimmyCushnie/SUCC/wiki/Additional-DataFile-Functionality#filepath-and-filename) to `DataFile` and `ReadOnlyDataFile`, as a complement to `FilePath`
+* added [SizeOnDisk](https://github.com/JimmyCushnie/SUCC/wiki/Additional-DataFile-Functionality#sizeondisk) property to `DataFile` and `ReadOnlyDataFile`
+* added an unordered [TopLevelKeys property](https://github.com/JimmyCushnie/SUCC/wiki/Additional-DataFile-Functionality#toplevelkeys) and renamed GetTopLevelKeys() to GetTopLevelKeysInOrder()
+* simplified repository branch structure; there is now only `master` for the standalone version and `unity` for the Unity version
+* made `BaseTypes.ParseBaseType` public
+* improved performance of saving files
+* added XML documentation for more things
+* various code cleanup
+* tests are much better and use the new MemoryDataFiles
+* prevent the user from saving strings with tabs in them (this is invalid SUCC)
+* fixed a few issues where invalid files could be generated
+* fixed custom base types sometimes not working
+* removed WebGL support from the Unity version
+* parsing error messages are *slightly* more helpful. There is still a lot of work to be done here though and this will likely be a focus of 1.2.
+
 ## v1.0 | 2019-03-29
 
 - refactored a LOT; code is much better
@@ -43,7 +80,7 @@
 v0.3 | 2018-11-08
 ---
 
-* renamed library to SUCC, since the language has substantially diverged from PENIS
+* renamed library to SUCC
 * file extension of saved data is now .succ
 * added constructor shortcuts
 * added method shortcuts

@@ -1,9 +1,10 @@
-﻿using System;
-using System.Text;
-using System.Linq;
+﻿using SUCC.Abstractions;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace SUCC
+namespace SUCC.InternalParsingLogic
 {
     internal static class DataConverter
     {
@@ -36,13 +37,13 @@ namespace SUCC
         /// <summary>
         /// Parses a string of SUCC into a data structure
         /// </summary>
-        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string input, DataFileBase fileRef)
+        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string input, ReadableDataFile fileRef)
             => DataStructureFromSUCC(input.SplitIntoLines(), fileRef);
 
         /// <summary>
         /// Parses lines of SUCC into a data structure
         /// </summary>
-        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string[] lines, DataFileBase fileRef) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
+        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string[] lines, ReadableDataFile fileRef) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
         {
             // if the file is empty
             // do this because otherwise new files are created with a newline at the top
@@ -62,7 +63,8 @@ namespace SUCC
             for (int i = 0; i < lines.Length; i++)
             {
                 var line = lines[i];
-                if (line.Contains('\t')) throw new FormatException("a SUCC file cannot contain tabs. Please use spaces instead.");
+                if (line.Contains('\t'))
+                    throw new FormatException("a SUCC file cannot contain tabs. Please use spaces instead.");
 
                 if (DoingMultiLineString)
                 {
@@ -186,8 +188,8 @@ namespace SUCC
                 throw new FormatException($"Line did not have the same indentation as its assumed sibling. Line was '{child.RawText}'; sibling was '{sibling.RawText}'");
 
             if (  // if there is a mismatch between the new node's type and its sibling's
-                   (newParent.ChildNodeType == NodeChildrenType.key && !(child is KeyNode))
-                || (newParent.ChildNodeType == NodeChildrenType.list && !(child is ListNode))
+                   newParent.ChildNodeType == NodeChildrenType.key && !(child is KeyNode)
+                || newParent.ChildNodeType == NodeChildrenType.list && !(child is ListNode)
                 || newParent.ChildNodeType == NodeChildrenType.multiLineString
                 || newParent.ChildNodeType == NodeChildrenType.none)
                 throw new FormatException($"Line did not match the child type of its parent. Line was '{child.RawText}'; parent was '{newParent.RawText}'");

@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
+using System.Reflection;
 
-namespace SUCC.Types
+namespace SUCC.InternalParsingLogic
 {
     internal static class ComplexTypes
     {

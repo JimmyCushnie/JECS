@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using SUCC.InternalParsingLogic;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
 
 namespace SUCC
 {
+    /// <summary>
+    /// Manages SUCC's database of Base Types. https://github.com/JimmyCushnie/SUCC/wiki/Base-Types
+    /// </summary>
     public static class BaseTypes
     {
         internal static string SerializeBaseType<T>(T thing, FileStyle style) => SerializeBaseType(thing, typeof(T), style);
@@ -30,7 +34,9 @@ namespace SUCC
             node.Value = SerializeBaseType(thing, type, style);
         }
 
+        /// <summary> Turn some text into data, if that data is of a base type. </summary>
         public static T ParseBaseType<T>(string text) => (T)ParseBaseType(text, typeof(T));
+        /// <summary> Non-generic version of ParseBaseType </summary>
         public static object ParseBaseType(string text, Type type)
         {
             try
@@ -88,7 +94,7 @@ namespace SUCC
 
 
 
-        private static Dictionary<Type, SerializeMethod> BaseSerializeMethods = new Dictionary<Type, SerializeMethod>()
+        private static Dictionary<Type, SerializeMethod> BaseSerializeMethods { get; } = new Dictionary<Type, SerializeMethod>()
         {
             // integer types
             [typeof(int)] = SerializeInt,
@@ -111,13 +117,13 @@ namespace SUCC
         };
 
         private delegate string StyledSerializeMethod(object thing, FileStyle style);
-        private static Dictionary<Type, StyledSerializeMethod> BaseStyledSerializeMethods = new Dictionary<Type, StyledSerializeMethod>()
+        private static Dictionary<Type, StyledSerializeMethod> BaseStyledSerializeMethods { get; } = new Dictionary<Type, StyledSerializeMethod>()
         {
             [typeof(string)] = SerializeString,
             [typeof(bool)] = SerializeBool,
         };
 
-        private static Dictionary<Type, ParseMethod> BaseParseMethods = new Dictionary<Type, ParseMethod>()
+        private static Dictionary<Type, ParseMethod> BaseParseMethods { get; } = new Dictionary<Type, ParseMethod>()
         {
             [typeof(string)] = ParseString,
 
@@ -262,7 +268,30 @@ namespace SUCC
         private static object ParseUshort(string text)  => ushort.Parse(text);
         private static object ParseByte(string text)    => byte.Parse(text);
         private static object ParseSbyte(string text)   => sbyte.Parse(text);
-        private static object ParseDecimal(string text) => decimal.Parse(text);
+
+        private static object ParseFloat(string text)   => ParseFloatWithRationalSupport(text, float.Parse,       (float a, float b) => a / b);
+        private static object ParseDouble(string text)  => ParseFloatWithRationalSupport(text, double.Parse,    (double a, double b) => a / b);
+        private static object ParseDecimal(string text) => ParseFloatWithRationalSupport(text, decimal.Parse, (decimal a, decimal b) => a / b);
+
+        private static T ParseFloatWithRationalSupport<T>(string text, Func<string, IFormatProvider, T> parseMethod, Func<T, T, T> divideMethod)
+        {
+            // we only really needed to support one /, but honestly supporting infinity of them is easier.
+            if (text.Contains('/'))
+            {
+                var numbers = text.Split('/').Select(parse).ToArray();
+                T result = numbers[0];
+
+                for (int i = 1; i < numbers.Length; i++)
+                    result = divideMethod.Invoke(result, numbers[i]);
+
+                return result;
+            }
+
+            return parse(text);
+
+            T parse(string floatText)
+                => parseMethod.Invoke(floatText.ToLower().Trim(), LowercaseParser);
+        }
 
         private static readonly NumberFormatInfo LowercaseParser = new NumberFormatInfo()
         {
@@ -270,8 +299,6 @@ namespace SUCC
             NegativeInfinitySymbol = "-infinity",
             NaNSymbol = "nan"
         };
-        private static object ParseFloat(string text) => float.Parse(text.ToLower(), LowercaseParser);
-        private static object ParseDouble(string text) => double.Parse(text.ToLower(), LowercaseParser);
 
 
 
@@ -327,7 +354,7 @@ namespace SUCC
             return t.FullName;
         }
 
-        private static Dictionary<string, Type> TypeCache = new Dictionary<string, Type>();
+        private static Dictionary<string, Type> TypeCache { get; } = new Dictionary<string, Type>();
         private static object ParseType(string typeName)
         {
             if (TypeCache.TryGetValue(typeName, out Type type))

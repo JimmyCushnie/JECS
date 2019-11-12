@@ -1,12 +1,14 @@
-﻿namespace SUCC
+﻿using SUCC.Abstractions;
+
+namespace SUCC.InternalParsingLogic
 {
     /// <summary>
     /// Represents a line of text in a SUCC file that contains part of a multi-line string.
     /// </summary>
     internal class MultiLineStringNode : Node
     {
-        public MultiLineStringNode(string rawText, DataFile file) : base(rawText, file) { }
-        public MultiLineStringNode(int indentation, DataFile file) : base(indentation, file)
+        public MultiLineStringNode(string rawText, ReadableWritableDataFile file) : base(rawText, file) { }
+        public MultiLineStringNode(int indentation, ReadableWritableDataFile file) : base(indentation, file)
         {
             this.UnappliedStyle = false; // currently, no styles apply to MultiLineStringNodes
         }

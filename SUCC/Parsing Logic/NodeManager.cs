@@ -1,7 +1,6 @@
 ﻿using System;
-using SUCC.Types;
 
-namespace SUCC
+namespace SUCC.InternalParsingLogic
 {
     /// <summary>
     /// Gets and sets the data encoded by Nodes.

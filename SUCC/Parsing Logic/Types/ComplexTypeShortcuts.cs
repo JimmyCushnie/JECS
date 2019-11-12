@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace SUCC.Types
+namespace SUCC.InternalParsingLogic
 {
     internal static class ComplexTypeShortcuts
     {
