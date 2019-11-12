@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace SUCC
 {
@@ -33,5 +34,22 @@ namespace SUCC
 
         protected override void SetSavedText(string text)
             => MemoryTextData = text;
+
+
+        /// <summary>
+        /// Saves the contents of this MemoryDataFile to disk and returns a disk DataFile corresponding to the new file.
+        /// </summary>
+        /// <param name="relativeOrAbsolutePath"> The path of the new file. </param>
+        /// <param name="overwrite"> If this is false, don't save the data if the file already exists on disk. </param>
+        /// <returns> Null if overwrite was set to false and a file already existed </returns>
+        public DataFile ConvertToFileOnDisk(string relativeOrAbsolutePath, bool overwrite = true)
+        {
+            if (!overwrite && Utilities.SuccFileExists(relativeOrAbsolutePath))
+                return null;
+
+            string path = Utilities.AbsolutePath(relativeOrAbsolutePath);
+            File.WriteAllText(path, this.GetRawText());
+            return new DataFile(path);
+        }
     }
 }
