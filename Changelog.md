@@ -34,6 +34,7 @@
 * prevent the user from saving strings with tabs in them (this is invalid SUCC)
 * fixed a few issues where invalid files could be generated
 * fixed custom base types sometimes not working
+* removed WebGL support from the Unity version
 * parsing error messages are *slightly* more helpful. There is still a lot of work to be done here though and this will likely be a focus of 1.2.
 
 ## v1.0 | 2019-03-29
