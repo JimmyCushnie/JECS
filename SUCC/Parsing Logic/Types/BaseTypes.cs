@@ -263,7 +263,30 @@ namespace SUCC
         private static object ParseUshort(string text)  => ushort.Parse(text);
         private static object ParseByte(string text)    => byte.Parse(text);
         private static object ParseSbyte(string text)   => sbyte.Parse(text);
-        private static object ParseDecimal(string text) => decimal.Parse(text);
+
+        private static object ParseFloat(string text)   => ParseFloatWithRationalSupport(text, float.Parse,       (float a, float b) => a / b);
+        private static object ParseDouble(string text)  => ParseFloatWithRationalSupport(text, double.Parse,    (double a, double b) => a / b);
+        private static object ParseDecimal(string text) => ParseFloatWithRationalSupport(text, decimal.Parse, (decimal a, decimal b) => a / b);
+
+        private static T ParseFloatWithRationalSupport<T>(string text, Func<string, IFormatProvider, T> parseMethod, Func<T, T, T> divideMethod)
+        {
+            // we only really needed to support one /, but honestly supporting infinity of them is easier.
+            if (text.Contains('/'))
+            {
+                var numbers = text.Split('/').Select(parse).ToArray();
+                T result = numbers[0];
+
+                for (int i = 1; i < numbers.Length; i++)
+                    result = divideMethod.Invoke(result, numbers[i]);
+
+                return result;
+            }
+
+            return parse(text);
+
+            T parse(string floatText)
+                => parseMethod.Invoke(floatText.ToLower(), LowercaseParser);
+        }
 
         private static readonly NumberFormatInfo LowercaseParser = new NumberFormatInfo()
         {
@@ -271,8 +294,6 @@ namespace SUCC
             NegativeInfinitySymbol = "-infinity",
             NaNSymbol = "nan"
         };
-        private static object ParseFloat(string text) => float.Parse(text.ToLower(), LowercaseParser);
-        private static object ParseDouble(string text) => double.Parse(text.ToLower(), LowercaseParser);
 
 
 
