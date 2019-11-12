@@ -1,64 +1,83 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using SUCC;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace SUCC.Tests
 {
     [TestClass]
-    public class StringTests
+    public class SaveLoad_StringTests
     {
-        static DataFile file = new DataFile("tests/" + nameof(StringTests), autoSave: false);
+        // string tests are extremely comprehensive because there are SO many different ways a string can fuck up the parsing logic.
 
         [TestMethod]
-        public void StringTest()
-        {
-            file.Set(nameof(TestStrings), TestStrings);
+        [DataRow("", DisplayName = "empty string")]
+        [DataRow(" ", DisplayName = "single space")]
+        [DataRow("   boobs", DisplayName = "leading spaces")]
+        [DataRow("boobs   ", DisplayName = "trailing spaces")]
+        [DataRow("   boobs   ", DisplayName = "leading and trailing spaces")]
+        [DataRow("\"", DisplayName = "double quotes")]
+        [DataRow("\"\"", DisplayName = "double quotes x2")]
+        [DataRow("\"\"\"", DisplayName = "double quotes x3")]
+        [DataRow("#", DisplayName = "pound sign")]
+        [DataRow("##", DisplayName = "pound sign x2")]
+        [DataRow("###", DisplayName = "pound sign x3")]
+        [DataRow("this is #not a #comment!", DisplayName = "fake comment")]
+        [DataRow("🍆", DisplayName = "emoji")]
+        [DataRow(multiLineString, DisplayName = "multi line string")]
+        [DataRow(multiLineStringWithPoundSigns, DisplayName = "multi line string with pound signs")]
+        [DataRow(multiLineStringWithDoubleQuotes, DisplayName = "multi line string with double quotes")]
+        [DataRow(multiLineStringWithLeadingTrailingSpaces, DisplayName = "multi line string with leading and trailing spaces")]
+        [DataRow(veryLongString, DisplayName = "very long string")]
+        [DataRow(poem, DisplayName = "poem")]
+        [DataRow(genemoji, DisplayName = "genemoji")]
+        public void SaveLoad_String(string SAVED_VALUE)
+            => TestUtilities.PerformSaveLoadTest(SAVED_VALUE);
 
-            if (TestUtilities.SaveFiles)
-                file.SaveAllData();
+        [TestMethod]
+        public void SaveLoad_String_NewLine()
+            => TestUtilities.PerformSaveLoadTest(Environment.NewLine);
 
-            var loaded = file.Get<string[]>(nameof(TestStrings));
-            CollectionAssert.AreEqual(TestStrings, loaded);
-        }
+        [TestMethod]
+        public void SaveLoad_String_NewLinex3()
+            => TestUtilities.PerformSaveLoadTest(Environment.NewLine + Environment.NewLine + Environment.NewLine);
 
-        static readonly string[] TestStrings = new string[]
-        {
-            "Hello", "testing testing 1 2 3...",
+        const string multiLineString = @"
+this is a
+string with multiple lines
+";
 
-            "",
-            " ",
-            "                   spaces at the beginning",
-            "spaces at the end              ",
-            "          both!            ",
+        const string multiLineStringWithPoundSigns = @"
+this is a
+string with multiple lines
+and #pound #signs
+####
+#yolo
+yolo#
+";
 
-            "\"", // "
-            "\"\"", // ""
-            "\"\"\"", // """
+        const string multiLineStringWithDoubleQuotes = @"
+this is a
+string with multiple lines
+and ""double quotes""
+""""
+""""""
+""yolo
+yolo""
+""yolo""
+";
 
-            Environment.NewLine,
-            Environment.NewLine + Environment.NewLine + Environment.NewLine,
+        const string multiLineStringWithLeadingTrailingSpaces = @"
+this is a
+string with multiple lines
+   and leading spaces
+and trailing spaces    
+    and both!    
+";
 
-            "#",
-            "##",
-            "###",
-            "####",
-            "this is #not a #comment!",
+        const string veryLongString = "What the fuck did you just fucking say about me, you little bitch? I'll have you know I graduated top of my public class in the Navy Seals, and I've been involved in numerous secret raids on Al-Quaeda, and I have over 300 confirmed kills. I am trained in gorilla warfare and I'm the top sniper in the entire US armed forces. You are nothing to me but just another target. I will wipe you the fuck out with precision the likes of which has never been seen before on this Earth, mark my fucking words. You think you can get away with saying that shit to me over the Internet? Think again, fucker. As we speak I am contacting my secret network of spies across the USA and your IP is being traced right now so you better prepare for the storm, maggot. The storm that wipes out the pathetic little thing you call your life. You're fucking dead, kid. I can be anywhere, anytime, and I can kill you in over seven hundred ways, and that's just with my bare hands. Not only am I extensively trained in unarmed combat, but I have access to the entire arsenal of the United States Marine Corps and I will use it to its full extent to wipe your miserable ass off the face of the continent, you little shit. If only you could have known what unholy retribution your little \"clever\" comment was about to bring down upon you, maybe you would have held your fucking tongue. But you couldn't, you didn't, and now you're paying the price, you goddamn idiot. I will shit fury all over you and you will drown in it. You're fucking dead, kiddo.";
 
-            @"
-this is a multi-line #string
-with #comment #symbols #in it
-""also quotation "" marks ""
-""
-it should parse normally
-",
-
-            "What the fuck did you just fucking say about me, you little bitch? I'll have you know I graduated top of my class in the Navy Seals, and I've been involved in numerous secret raids on Al-Quaeda, and I have over 300 confirmed kills. I am trained in gorilla warfare and I'm the top sniper in the entire US armed forces. You are nothing to me but just another target. I will wipe you the fuck out with precision the likes of which has never been seen before on this Earth, mark my fucking words. You think you can get away with saying that shit to me over the Internet? Think again, fucker. As we speak I am contacting my secret network of spies across the USA and your IP is being traced right now so you better prepare for the storm, maggot. The storm that wipes out the pathetic little thing you call your life. You're fucking dead, kid. I can be anywhere, anytime, and I can kill you in over seven hundred ways, and that's just with my bare hands. Not only am I extensively trained in unarmed combat, but I have access to the entire arsenal of the United States Marine Corps and I will use it to its full extent to wipe your miserable ass off the face of the continent, you little shit. If only you could have known what unholy retribution your little \"clever\" comment was about to bring down upon you, maybe you would have held your fucking tongue. But you couldn't, you didn't, and now you're paying the price, you goddamn idiot. I will shit fury all over you and you will drown in it. You're fucking dead, kiddo.",
-
-            // [i carry your heart with me(i carry it in] 
-            // by E. E. Cummings
-            @"
+        // [i carry your heart with me(i carry it in] 
+        // by E. E. Cummings
+        const string poem = @"
 i carry your heart with me(i carry it in
 my heart)i am never without it(anywhere
 i go you go,my dear;and whatever is done
@@ -76,12 +95,8 @@ higher than soul can hope or mind can hide)
 and this is the wonder that's keeping the stars apart
 
 i carry your heart(i carry it in my heart)
-",
-
-            "🍆",
-
-            // source: https://www.wattpad.com/430030556-the-holy-bible-with-emojis-genesis-genesis-1-1-1
-            @"
+";
+        const string genemoji = @"
 1 In the beginning🌄 God ⛏️🛠️created⚒️🔨 the heavens🌤️ and the 🌍🌎earth🌏🗺️. 2 Now the 🌍🌎earth🌏🗺️ was formless and empty, 🌚darkness🌚 was over the surface of the deep, and the 👻Spirit👻 of God was hovering over the 🌊💧waters💦💦💦.
 
 3 And God said🗣️, “Let there be🐝 light💡,” and there was light💡. 4 God saw👁️ that the 🌝light🌝 was good👍👌👌, and he separated the 🌝light🌝 from the 🌚darkness🌚. 5 God called📞 the 🌝light🌝 “day☀️,” and the 🌚darkness🌚 he called📞 “night🌙.” And there was 🌙evening, and there was ☀️morning—the 🥇first ☀️day☀️.
@@ -113,7 +128,7 @@ i carry your heart(i carry it in my heart)
 2 Thus the heavens🌤️ and the 🌍🌎earth🌏🗺️ were completed in all their vast array.
 
 2 By the 7️⃣seventh ☀️day☀️ God had finished the work he had been doing; so on the 7️⃣seventh ☀️day☀️ he 💤rested💤 from all his work. 3 Then God 😇blessed😇🙏 the 7️⃣seventh ☀️day☀️ and made it holy✝️😇🙏, because on it he 💤rested💤 from all the work of⛏️⚒️ creating🛠️🔨 that he had done.
-"
-        };
+
+";
     }
 }

@@ -1,12 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using SUCC;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SUCC.MemoryFiles;
 
 namespace SUCC.Tests
 {
-    public static class TestUtilities
+    static public class TestUtilities
     {
-        /// <summary> Whether or not to save the files used in testing to disk </summary>
-        public static bool SaveFiles = true;
+        public static void PerformSaveLoadTest<T>(T SAVED_VALUE)
+        {
+            const string SAVED_VALUE_KEY = "test key";
+            var file = new MemoryDataFile();
+
+            file.Set(SAVED_VALUE_KEY, SAVED_VALUE);
+            var loadedValue = file.Get<T>(SAVED_VALUE_KEY);
+
+            Assert.AreEqual(SAVED_VALUE, loadedValue);
+        }
     }
 }
