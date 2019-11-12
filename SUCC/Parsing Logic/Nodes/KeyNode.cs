@@ -7,8 +7,8 @@ namespace SUCC
     /// </summary>
     internal class KeyNode : Node
     {
-        public KeyNode(string rawText, DataFile file) : base(rawText, file) { }
-        public KeyNode(int indentation, string key, DataFile file) : base(indentation, file)
+        public KeyNode(string rawText, WritableDataFile file) : base(rawText, file) { }
+        public KeyNode(int indentation, string key, WritableDataFile file) : base(indentation, file)
         {
             if (!Utilities.IsValidKey(key, out string whyNot))
                 throw new FormatException(whyNot);

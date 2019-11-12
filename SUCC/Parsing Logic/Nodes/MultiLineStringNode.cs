@@ -5,8 +5,8 @@
     /// </summary>
     internal class MultiLineStringNode : Node
     {
-        public MultiLineStringNode(string rawText, DataFile file) : base(rawText, file) { }
-        public MultiLineStringNode(int indentation, DataFile file) : base(indentation, file)
+        public MultiLineStringNode(string rawText, WritableDataFile file) : base(rawText, file) { }
+        public MultiLineStringNode(int indentation, WritableDataFile file) : base(indentation, file)
         {
             this.UnappliedStyle = false; // currently, no styles apply to MultiLineStringNodes
         }

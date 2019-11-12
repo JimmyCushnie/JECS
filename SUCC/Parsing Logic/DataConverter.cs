@@ -36,13 +36,13 @@ namespace SUCC
         /// <summary>
         /// Parses a string of SUCC into a data structure
         /// </summary>
-        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string input, DataFileBase fileRef)
+        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string input, ReadableDataFile fileRef)
             => DataStructureFromSUCC(input.SplitIntoLines(), fileRef);
 
         /// <summary>
         /// Parses lines of SUCC into a data structure
         /// </summary>
-        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string[] lines, DataFileBase fileRef) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
+        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string[] lines, ReadableDataFile fileRef) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
         {
             // if the file is empty
             // do this because otherwise new files are created with a newline at the top
@@ -62,7 +62,8 @@ namespace SUCC
             for (int i = 0; i < lines.Length; i++)
             {
                 var line = lines[i];
-                if (line.Contains('\t')) throw new FormatException("a SUCC file cannot contain tabs. Please use spaces instead.");
+                if (line.Contains('\t')) 
+                    throw new FormatException("a SUCC file cannot contain tabs. Please use spaces instead.");
 
                 if (DoingMultiLineString)
                 {

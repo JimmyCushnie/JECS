@@ -7,8 +7,8 @@ namespace SUCC
     /// </summary>
     internal class ListNode : Node
     {
-        public ListNode(string rawText, DataFile file) : base(rawText, file) { }
-        public ListNode(int indentation, DataFile file) : base(indentation, file)
+        public ListNode(string rawText, WritableDataFile file) : base(rawText, file) { }
+        public ListNode(int indentation, WritableDataFile file) : base(indentation, file)
         {
             RawText += "-";
         }
