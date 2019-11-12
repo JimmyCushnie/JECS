@@ -92,7 +92,7 @@ namespace SUCC.Abstractions
         /// <summary> Get some data from the file, or return a default value if the data does not exist </summary>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="defaultValue"> if the key does not exist in the file, this value is returned instead </param>
-        public virtual T Get<T>(string key, T defaultValue)
+        public virtual T Get<T>(string key, T defaultValue = default)
             => (T)GetNonGeneric(typeof(T), key, defaultValue);
 
         /// <summary> Non-generic version of Get. You probably want to use Get. </summary>
