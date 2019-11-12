@@ -43,10 +43,8 @@ namespace SUCC
 
             this.ReloadAllData();
 
-#if !UNITY_WEBGL // no auto-reloading in webGL
             SetupWatcher(); // setup watcher AFTER file has been created
             this.AutoReload = autoReload;
-#endif
 
             void writeFile(TextAsset file)
             {
@@ -191,7 +189,6 @@ namespace SUCC
         }
 
 
-#if !UNITY_WEBGL // no auto-reloading in webGL
         bool _AutoReload = true;
         /// <summary> If true, the DataFile will automatically reload when the file changes on disk. If false, you can still call ReloadAllData().
         public bool AutoReload
@@ -237,7 +234,5 @@ namespace SUCC
         /// Invoked every time the file is auto-reloaded. This only happens when AutoReload is true.
         /// </summary>
         public event Action OnAutoReload;
-
-#endif
     }
 }

@@ -50,13 +50,6 @@ namespace SUCC
             string SUCC = GetRawText();
             string ExistingSUCC = string.Empty;
 
-#if UNITY_WEBGL
-            ExistingSUCC = PlayerPrefs.GetString(FilePath);
-
-            if (SUCC != ExistingSUCC)
-                PlayerPrefs.SetString(FilePath, SUCC);
-
-#else
             if (File.Exists(FilePath)) // in case the file is deleted between when the file is initialized and when it's saved
                 ExistingSUCC = File.ReadAllText(FilePath);
 
@@ -67,7 +60,6 @@ namespace SUCC
                 // FileSystemWatcher.Chagned takes several seconds to fire, so we use this.
                 IgnoreNextFileReload = true;
             }
-#endif
         }
 
 
