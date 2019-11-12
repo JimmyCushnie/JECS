@@ -147,7 +147,7 @@ namespace SUCC.Abstractions
                 f.SetValue(returnThis, value);
             }
 
-            foreach (var p in ComplexTypes.GetValidProperties(type)
+            foreach (var p in ComplexTypes.GetValidProperties(type))
             {
                 var value = GetNonGeneric(p.PropertyType, p.Name, p.GetValue(returnThis));
                 p.SetValue(returnThis, value);
