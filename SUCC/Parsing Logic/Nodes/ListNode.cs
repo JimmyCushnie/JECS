@@ -1,14 +1,15 @@
-﻿using System;
+﻿using SUCC.Abstractions;
+using System;
 
-namespace SUCC
+namespace SUCC.InternalParsingLogic
 {
     /// <summary>
     /// Represents a line of text in a SUCC file that contains data in a list.
     /// </summary>
     internal class ListNode : Node
     {
-        public ListNode(string rawText, WritableDataFile file) : base(rawText, file) { }
-        public ListNode(int indentation, WritableDataFile file) : base(indentation, file)
+        public ListNode(string rawText, ReadableWritableDataFile file) : base(rawText, file) { }
+        public ListNode(int indentation, ReadableWritableDataFile file) : base(indentation, file)
         {
             RawText += "-";
         }

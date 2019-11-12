@@ -1,14 +1,13 @@
-﻿using System;
+﻿using SUCC.InternalParsingLogic;
+using System;
 using System.Collections.Generic;
-using System.IO;
-using SUCC.Types;
 
-namespace SUCC
+namespace SUCC.Abstractions
 {
     /// <summary>
-    /// Represents a SUCC file in system storage.
+    /// A SUCC file that can be both read from and written to.
     /// </summary>
-    public abstract class WritableDataFile : ReadableDataFile
+    public abstract class ReadableWritableDataFile : ReadableDataFile
     {
         /// <summary> Rules for how to format new data saved to this file </summary>
         public FileStyle Style = FileStyle.Default;
@@ -17,7 +16,7 @@ namespace SUCC
         /// <remarks> Be careful with this. You do not want to accidentally be writing to a user's disk at 1000MB/s for 3 hours. </remarks>
         public bool AutoSave { get; set; }
 
-        public WritableDataFile(bool autoSave, FileStyle style)
+        public ReadableWritableDataFile(bool autoSave, FileStyle style)
         {
             AutoSave = autoSave;
             Style = style;
@@ -39,7 +38,7 @@ namespace SUCC
         /// <summary> Get some data from the file, saving a new value if the data does not exist </summary>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="defaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
-        public override T Get<T>(string key, T defaultValue = default) 
+        public override T Get<T>(string key, T defaultValue = default)
             => base.Get(key, defaultValue);
 
         /// <summary> Non-generic version of Get. You probably want to use Get. </summary>
@@ -61,7 +60,7 @@ namespace SUCC
         /// <summary> Save data to the file </summary>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="value"> the value to save </param>
-        public void Set<T>(string key, T value) 
+        public void Set<T>(string key, T value)
             => SetNonGeneric(typeof(T), key, value);
 
         /// <summary> Non-generic version of Set. You probably want to use Set. </summary>
@@ -89,7 +88,7 @@ namespace SUCC
             if (AutoSave)
                 SaveAllData();
         }
-        
+
         /// <inheritdoc/>
         public override object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path)
         {
@@ -98,7 +97,7 @@ namespace SUCC
                 SetAtPathNonGeneric(type, defaultValue, path);
                 return defaultValue;
             }
-            
+
             var topNode = TopLevelNodes[path[0]];
             for (int i = 1; i < path.Length; i++)
             {
@@ -109,7 +108,7 @@ namespace SUCC
         }
 
         /// <summary> Like Set but works for nested paths instead of just the top level of the file </summary>
-        public void SetAtPath<T>(T value, params string[] path) 
+        public void SetAtPath<T>(T value, params string[] path)
             => SetAtPathNonGeneric(typeof(T), value, path);
 
         /// <summary> Non-generic version of SetAtPath. You probably want to use SetAtPath. </summary>
@@ -133,14 +132,14 @@ namespace SUCC
             }
 
             var topNode = TopLevelNodes[path[0]];
-            
+
             for (int i = 1; i < path.Length; i++)
             {
                 topNode = topNode.GetChildAddressedByName(path[i]);
             }
 
             NodeManager.SetNodeData(topNode, value, type, Style);
-            
+
             if (AutoSave)
                 SaveAllData();
         }
@@ -220,7 +219,7 @@ namespace SUCC
                 AutoSave = _autosave;
             }
 
-            if (AutoSave) 
+            if (AutoSave)
                 SaveAllData();
         }
     }

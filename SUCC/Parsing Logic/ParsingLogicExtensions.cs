@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Reflection;
 
-namespace SUCC
+namespace SUCC.InternalParsingLogic
 {
-    internal static class Extensions
+    internal static class ParsingLogicExtensions
     {
         internal static string Quote(this string s)
             => '"' + s + '"';

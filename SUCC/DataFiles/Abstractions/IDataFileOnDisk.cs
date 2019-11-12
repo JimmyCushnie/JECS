@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using SUCC.Types;
 
-namespace SUCC
+namespace SUCC.Abstractions
 {
-    public interface IDataFileOnDisk
+    internal interface IDataFileOnDisk
     {
         /// <summary> The absolute path of the file this object corresponds to. </summary>
         string FilePath { get; }

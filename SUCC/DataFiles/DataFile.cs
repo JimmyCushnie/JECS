@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using SUCC.Abstractions;
+using System;
 using System.IO;
-using SUCC.Types;
 
 namespace SUCC
 {
     /// <summary>
     /// Represents a SUCC file in system storage.
     /// </summary>
-    public class DataFile : WritableDataFile, IDataFileOnDisk
+    public class DataFile : ReadableWritableDataFile, IDataFileOnDisk
     {
         /// <summary>
         /// Creates a new DataFile object corresponding to a SUCC file in system storage.

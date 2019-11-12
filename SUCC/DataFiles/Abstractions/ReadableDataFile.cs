@@ -1,9 +1,12 @@
-﻿using System;
+﻿using SUCC.InternalParsingLogic;
+using System;
 using System.Collections.Generic;
-using SUCC.Types;
 
-namespace SUCC
+namespace SUCC.Abstractions
 {
+    /// <summary>
+    /// A SUCC file that can be read from.
+    /// </summary>
     public abstract class ReadableDataFile
     {
         internal List<Line> TopLevelLines { get; private set; } = new List<Line>();
@@ -29,7 +32,7 @@ namespace SUCC
         }
 
         /// <summary> gets the data as it appears in file </summary>
-        public string GetRawText() 
+        public string GetRawText()
             => DataConverter.SUCCFromDataStructure(TopLevelLines);
 
         /// <summary> gets the data as it appears in file, as an array of strings (one for each line) </summary>
@@ -89,7 +92,7 @@ namespace SUCC
         /// <summary> Get some data from the file, or return a default value if the data does not exist </summary>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="defaultValue"> if the key does not exist in the file, this value is returned instead </param>
-        public virtual T Get<T>(string key, T defaultValue) 
+        public virtual T Get<T>(string key, T defaultValue)
             => (T)GetNonGeneric(typeof(T), key, defaultValue);
 
         /// <summary> Non-generic version of Get. You probably want to use Get. </summary>
@@ -108,7 +111,7 @@ namespace SUCC
         /// <summary> 
         /// Like Get but works for nested paths instead of just the top level of the file 
         /// </summary>
-        public virtual T GetAtPath<T>(T defaultValue, params string[] path) 
+        public virtual T GetAtPath<T>(T defaultValue, params string[] path)
             => (T)GetAtPathNonGeneric(typeof(T), defaultValue, path);
 
         /// <summary>
@@ -144,7 +147,7 @@ namespace SUCC
                 f.SetValue(returnThis, value);
             }
 
-            foreach (var p in ComplexTypes.GetValidProperties(type))
+            foreach (var p in ComplexTypes.GetValidProperties(type)
             {
                 var value = GetNonGeneric(p.PropertyType, p.Name, p.GetValue(returnThis));
                 p.SetValue(returnThis, value);

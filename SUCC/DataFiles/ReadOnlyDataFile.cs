@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SUCC.Abstractions;
+using System;
 using System.IO;
 
 namespace SUCC

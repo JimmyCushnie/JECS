@@ -1,9 +1,9 @@
-﻿using System;
+﻿using SUCC.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace SUCC
+namespace SUCC.InternalParsingLogic
 {
     internal enum NodeChildrenType { none, list, key, multiLineString }
 
@@ -22,19 +22,19 @@ namespace SUCC
 
         // This is here so that nodes can access the style of their file. For nodes part of a ReadOnlyDataFile, it is null.
         // We reference a DataFile rather than a FileStyle because if a user changes the Style of the File, that change is automatically seen by all its nodes.
-        public readonly WritableDataFile File;
+        public readonly ReadableWritableDataFile File;
 
         protected FileStyle Style
             => File?.Style ?? throw new NullReferenceException("Tried to get the style of a node without a file.");
 
         /// <summary> This constructor used when loading lines from file </summary>
-        public Node(string rawText, WritableDataFile file) : base(rawText)
+        public Node(string rawText, ReadableWritableDataFile file) : base(rawText)
         {
             this.File = file;
         }
 
         /// <summary> This constructor used when creating new lines to add to the file </summary>
-        public Node(int indentation, WritableDataFile file)
+        public Node(int indentation, ReadableWritableDataFile file)
         {
             this.IndentationLevel = indentation;
             this.File = file;

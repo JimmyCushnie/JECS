@@ -1,9 +1,10 @@
-﻿using System;
-using System.Text;
-using System.Linq;
+﻿using SUCC.Abstractions;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace SUCC
+namespace SUCC.InternalParsingLogic
 {
     internal static class DataConverter
     {
@@ -62,7 +63,7 @@ namespace SUCC
             for (int i = 0; i < lines.Length; i++)
             {
                 var line = lines[i];
-                if (line.Contains('\t')) 
+                if (line.Contains('\t'))
                     throw new FormatException("a SUCC file cannot contain tabs. Please use spaces instead.");
 
                 if (DoingMultiLineString)
@@ -187,8 +188,8 @@ namespace SUCC
                 throw new FormatException($"Line did not have the same indentation as its assumed sibling. Line was '{child.RawText}'; sibling was '{sibling.RawText}'");
 
             if (  // if there is a mismatch between the new node's type and its sibling's
-                   (newParent.ChildNodeType == NodeChildrenType.key && !(child is KeyNode))
-                || (newParent.ChildNodeType == NodeChildrenType.list && !(child is ListNode))
+                   newParent.ChildNodeType == NodeChildrenType.key && !(child is KeyNode)
+                || newParent.ChildNodeType == NodeChildrenType.list && !(child is ListNode)
                 || newParent.ChildNodeType == NodeChildrenType.multiLineString
                 || newParent.ChildNodeType == NodeChildrenType.none)
                 throw new FormatException($"Line did not match the child type of its parent. Line was '{child.RawText}'; parent was '{newParent.RawText}'");

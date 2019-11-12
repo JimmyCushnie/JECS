@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace SUCC.Types
+namespace SUCC.InternalParsingLogic
 {
     // This class used to use dynamics instead of this non-generic generics trickery.
     // However, the old way only worked when compiled with Unity's compiler for Windows.

@@ -1,14 +1,15 @@
-﻿using System;
+﻿using SUCC.Abstractions;
+using System;
 
-namespace SUCC
+namespace SUCC.InternalParsingLogic
 {
     /// <summary>
     /// Represents a line of text in a SUCC file that contains data addressed by key.
     /// </summary>
     internal class KeyNode : Node
     {
-        public KeyNode(string rawText, WritableDataFile file) : base(rawText, file) { }
-        public KeyNode(int indentation, string key, WritableDataFile file) : base(indentation, file)
+        public KeyNode(string rawText, ReadableWritableDataFile file) : base(rawText, file) { }
+        public KeyNode(int indentation, string key, ReadableWritableDataFile file) : base(indentation, file)
         {
             if (!Utilities.IsValidKey(key, out string whyNot))
                 throw new FormatException(whyNot);

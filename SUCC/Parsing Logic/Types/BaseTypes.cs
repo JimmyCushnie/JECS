@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using SUCC.InternalParsingLogic;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
 
 namespace SUCC
 {
