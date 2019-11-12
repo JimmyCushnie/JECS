@@ -19,6 +19,7 @@ namespace SUCC.MemoryFiles
         public MemoryReadOnlyDataFile(string rawFileText)
         {
             MemoryTextData = rawFileText;
+            this.ReloadAllData();
         }
 
 

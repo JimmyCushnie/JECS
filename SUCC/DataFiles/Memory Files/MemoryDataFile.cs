@@ -24,6 +24,7 @@ namespace SUCC.MemoryFiles
         public MemoryDataFile(string rawFileText, FileStyle style, bool autoSave = true) : base(autoSave, style)
         {
             MemoryTextData = rawFileText;
+            this.ReloadAllData();
         }
 
 
