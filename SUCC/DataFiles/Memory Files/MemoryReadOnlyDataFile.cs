@@ -11,6 +11,7 @@ namespace SUCC.MemoryFiles
         /// <summary>
         /// Creates an empty ReadOnlyDataFile in memory.
         /// </summary>
+        /// <remarks> why would you do this? </remarks>
         public MemoryReadOnlyDataFile() : this(string.Empty) { }
 
         /// <summary>
@@ -23,7 +24,7 @@ namespace SUCC.MemoryFiles
         }
 
 
-        private string MemoryTextData = "";
+        private readonly string MemoryTextData = "";
         
         /// <inheritdoc/>
         protected override string GetSavedText()

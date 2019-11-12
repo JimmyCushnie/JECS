@@ -94,7 +94,7 @@ namespace SUCC
 
 
 
-        private static Dictionary<Type, SerializeMethod> BaseSerializeMethods = new Dictionary<Type, SerializeMethod>()
+        private static Dictionary<Type, SerializeMethod> BaseSerializeMethods { get; } = new Dictionary<Type, SerializeMethod>()
         {
             // integer types
             [typeof(int)] = SerializeInt,
@@ -117,13 +117,13 @@ namespace SUCC
         };
 
         private delegate string StyledSerializeMethod(object thing, FileStyle style);
-        private static Dictionary<Type, StyledSerializeMethod> BaseStyledSerializeMethods = new Dictionary<Type, StyledSerializeMethod>()
+        private static Dictionary<Type, StyledSerializeMethod> BaseStyledSerializeMethods { get; } = new Dictionary<Type, StyledSerializeMethod>()
         {
             [typeof(string)] = SerializeString,
             [typeof(bool)] = SerializeBool,
         };
 
-        private static Dictionary<Type, ParseMethod> BaseParseMethods = new Dictionary<Type, ParseMethod>()
+        private static Dictionary<Type, ParseMethod> BaseParseMethods { get; } = new Dictionary<Type, ParseMethod>()
         {
             [typeof(string)] = ParseString,
 
@@ -354,7 +354,7 @@ namespace SUCC
             return t.FullName;
         }
 
-        private static Dictionary<string, Type> TypeCache = new Dictionary<string, Type>();
+        private static Dictionary<string, Type> TypeCache { get; } = new Dictionary<string, Type>();
         private static object ParseType(string typeName)
         {
             if (TypeCache.TryGetValue(typeName, out Type type))

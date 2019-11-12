@@ -53,7 +53,7 @@ namespace SUCC
             return File.Exists(path);
         }
 
-        internal static bool IsValidKey(string potentialKey) => IsValidKey(potentialKey, out var boobs);
+        internal static bool IsValidKey(string potentialKey) => IsValidKey(potentialKey, out _);
         internal static bool IsValidKey(string potentialKey, out string whyNot)
         {
             whyNot = null;

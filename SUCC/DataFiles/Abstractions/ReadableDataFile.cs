@@ -47,9 +47,8 @@ namespace SUCC.Abstractions
             int count = 0;
             foreach (var line in TopLevelLines)
             {
-                if (line is KeyNode)
+                if (line is KeyNode node)
                 {
-                    var node = (KeyNode)line;
                     keys[count] = node.Key;
                     count++;
                 }
