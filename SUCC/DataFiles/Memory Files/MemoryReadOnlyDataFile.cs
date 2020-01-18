@@ -12,7 +12,9 @@ namespace SUCC.MemoryFiles
         /// Creates an empty ReadOnlyDataFile in memory.
         /// </summary>
         /// <remarks> why would you do this? </remarks>
-        public MemoryReadOnlyDataFile() : this(string.Empty) { }
+        public MemoryReadOnlyDataFile() : this(string.Empty) 
+        { 
+        }
 
         /// <summary>
         /// Creates a ReadOnlyDataFile in memory with some preexisting SUCC content.
