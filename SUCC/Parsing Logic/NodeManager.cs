@@ -11,7 +11,15 @@ namespace SUCC.InternalParsingLogic
         internal static void SetNodeData(Node node, object data, Type type, FileStyle style)
         {
             if (data == null)
-                throw new Exception("you can't serialize null");
+            {
+                node.ClearChildren();
+                node.Value = Utilities.NullIndicator;
+                return;
+            }
+            else if (node.Value == Utilities.NullIndicator)
+            {
+                node.Value = String.Empty;
+            }
 
             // ensure the type is initialized. This is especially important if it's added as
             // a base type in the type's static constructor.
@@ -34,6 +42,11 @@ namespace SUCC.InternalParsingLogic
         internal static T GetNodeData<T>(Node node) => (T)GetNodeData(node, typeof(T));
         internal static object GetNodeData(Node node, Type type)
         {
+            if (node.Value == Utilities.NullIndicator)
+            {
+                return null;
+            }
+
             System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
 
             try
@@ -45,7 +58,9 @@ namespace SUCC.InternalParsingLogic
                     return BaseTypes.ParseBaseType(node.Value, type);
 
                 var collection = CollectionTypes.TryGetCollection(node, type);
-                if (collection != null) return collection;
+
+                if (collection != null) 
+                    return collection;
 
                 if (!String.IsNullOrEmpty(node.Value))
                     return ComplexTypeShortcuts.GetFromShortcut(node.Value, type);
