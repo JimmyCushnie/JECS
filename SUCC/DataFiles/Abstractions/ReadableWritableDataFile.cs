@@ -46,13 +46,13 @@ namespace SUCC.Abstractions
         /// <summary> Non-generic version of Get. You probably want to use Get. </summary>
         /// <param name="type"> the type to get the data as </param>
         /// <param name="key"> what the data is labeled as within the file </param>
-        /// <param name="DefaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
-        public override object GetNonGeneric(Type type, string key, object DefaultValue)
+        /// <param name="defaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
+        public override object GetNonGeneric(Type type, string key, object defaultValue)
         {
             if (!KeyExists(key))
             {
-                SetNonGeneric(type, key, DefaultValue);
-                return DefaultValue;
+                SetNonGeneric(type, key, defaultValue);
+                return defaultValue;
             }
 
             var node = TopLevelNodes[key];
