@@ -60,7 +60,7 @@ namespace SUCC
         /// <param name="defaultFile"> If there isn't already a file at the path, one can be created from the file in the Resources folder by this name. </param>
         /// <param name="autoSave"> If true, the DataFile will automatically save changes to disk with each Get or Set. Otherwise, you must call SaveAllData() manually. </param>
         /// <param name="autoReload"> If true, the DataFile will automatically reload when the file changes on disk. </param>
-        public DataFile(string path, string defaultFile = null, bool autoSave = true, bool autoReload = false) : this(path, defaultFile, FileStyle.Default, autoSave, autoReload)
+        public DataFile(string path, string defaultFile, bool autoSave = true, bool autoReload = false) : this(path, defaultFile, FileStyle.Default, autoSave, autoReload)
         {
         }
 
