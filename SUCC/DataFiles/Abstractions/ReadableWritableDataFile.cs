@@ -71,10 +71,7 @@ namespace SUCC.Abstractions
         /// <param name="value"> the value to save </param>
         public void SetNonGeneric(Type type, string key, object value)
         {
-            if (value == null)
-                throw new Exception("you can't serialize null");
-
-            if (value.GetType() != type)
+            if (value != null && value.GetType() != type)
                 throw new InvalidCastException($"{value} is not of type {type}!");
 
             if (!KeyExists(key))
