@@ -51,6 +51,32 @@ namespace SUCC
             this.AutoReload = autoReload;
         }
 
+        /// <summary>
+        /// Creates a new DataFile object corresponding to a SUCC file in system storage, with the option to assign a default file.
+        /// </summary>
+        /// <param name="path"> The path of the file. Can be either absolute or relative to the default path. </param>
+        /// <param name="defaultFile"> If there isn't already a file at the path, one can be created from the file in the Resources folder by this name. </param>
+        /// <param name="autoSave"> If true, the DataFile will automatically save changes to disk with each Get or Set. Otherwise, you must call SaveAllData() manually. </param>
+        /// <param name="autoReload"> If true, the DataFile will automatically reload when the file changes on disk. </param>
+        public DataFile(string path, string defaultFile = null, bool autoSave = true, bool autoReload = false) : this(path, defaultFile, FileStyle.Default, autoSave, autoReload)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new DataFile object corresponding to a SUCC file in system storage, with the options to have a custom FileStyle and to assign a default file.
+        /// </summary>
+        /// <param name="path"> The path of the file. Can be either absolute or relative to the default path. </param>
+        /// <param name="defaultFile"> If there isn't already a file at the path, one can be created from the file in the Resources folder by this name. </param>
+        /// <param name="style"> The rules for how this file styles newly saved data </param>
+        /// <param name="autoSave"> If true, the DataFile will automatically save changes to disk with each Get or Set. Otherwise, you must call SaveAllData() manually. </param>
+        /// <param name="autoReload"> If true, the DataFile will automatically reload when the file changes on disk. </param>
+        public DataFile(string path, string defaultFile, FileStyle style, bool autoSave = true, bool autoReload = false) :
+            this(
+                path, style, autoSave, autoReload,
+                defaultFileText: ResourcesUtilities.ReadTextFromFile(defaultFile))
+        {
+        }
+
         /// <inheritdoc/>
         protected override string GetSavedText()
         {
