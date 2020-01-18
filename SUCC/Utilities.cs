@@ -91,6 +91,8 @@ namespace SUCC
                 }
             }
         }
+
+        internal static string NullIndicator { get; } = "null";
     }
 
     /// <summary>
