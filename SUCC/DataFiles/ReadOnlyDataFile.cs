@@ -13,9 +13,9 @@ namespace SUCC
         /// Creates a new ReadOnlyDataFile object corresponding to a SUCC file in system storage.
         /// </summary>
         /// <param name="path"> the path of the file. Can be either absolute or relative to the default path. </param>
-        /// <param name="defaultFileText"> optionally, if there isn't a file at the path, one can be created from the text supplied here. </param>
         /// <param name="autoReload"> if true, the DataFile will automatically reload when the file changes on disk. </param>
-        public ReadOnlyDataFile(string path, string defaultFileText = null, bool autoReload = false)
+        /// <param name="defaultFileText"> optionally, if there isn't a file at the path, one can be created from the text supplied here. </param>
+        public ReadOnlyDataFile(string path, bool autoReload = false, string defaultFileText = null)
         {
             path = Utilities.AbsolutePath(path);
             path = Path.ChangeExtension(path, Utilities.FileExtension);
