@@ -1,5 +1,11 @@
 # SUCC Changelog
 
+## v1.2 | some time in the future probably
+
+* you can now save and load null
+* the Unity version can now use the main version's `defaultFileText` feature in addition to the Unity-exclusive `defaultFile` feature
+* changed some things about the API, it's possible your code will break sorry
+
 ## v1.1 | 2019-11-12
 
 * added [GetAtPath and SetAtPath](https://github.com/JimmyCushnie/SUCC/wiki/Additional-DataFile-Functionality#getatpath-and-setatpath)
