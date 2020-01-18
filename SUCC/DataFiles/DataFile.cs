@@ -12,20 +12,20 @@ namespace SUCC
         /// <summary>
         /// Creates a new DataFile object corresponding to a SUCC file in system storage.
         /// </summary>
-        /// <param name="path"> the path of the file. Can be either absolute or relative to the default path. </param>
-        /// <param name="autoSave"> if true, the file will automatically save changes to disk with each Get() or Set(). Otherwise, you must call SaveAllData() manually. </param>
-        /// <param name="autoReload"> if true, the DataFile will automatically reload when the file changes on disk. </param>
-        /// <param name="defaultFileText"> optionally, if there isn't a file at the path, one can be created from the text supplied here. </param>
+        /// <param name="path"> The path of the file. Can be either absolute or relative to the default path. </param>
+        /// <param name="autoSave"> If true, the file will automatically save changes to disk with each Get() or Set(). Otherwise, you must call SaveAllData() manually. </param>
+        /// <param name="autoReload"> If true, the DataFile will automatically reload when the file changes on disk. </param>
+        /// <param name="defaultFileText"> If there isn't already a file at the path, one can be created from the text supplied here. </param>
         public DataFile(string path, bool autoSave = true, bool autoReload = false, string defaultFileText = null) : this(path, FileStyle.Default, autoSave, autoReload, defaultFileText) { }
 
         /// <summary>
         /// Creates a new DataFile object corresponding to a SUCC file in system storage, with the option to have a custom FileStyle.
         /// </summary>
-        /// <param name="path"> the path of the file. Can be either absolute or relative to the default path. </param>
-        /// <param name="style"> the rules for how this file styles newly saved data </param>
-        /// <param name="autoSave"> if true, the DataFile will automatically save changes to disk with each Get or Set. Otherwise, you must call SaveAllData() manually. </param>
-        /// <param name="autoReload"> if true, the DataFile will automatically reload when the file changes on disk. </param>
-        /// <param name="defaultFileText"> optionally, if there isn't a file at the path, one can be created from the text supplied here. </param>
+        /// <param name="path"> The path of the file. Can be either absolute or relative to the default path. </param>
+        /// <param name="style"> The rules for how this file styles newly saved data </param>
+        /// <param name="autoSave"> If true, the DataFile will automatically save changes to disk with each Get or Set. Otherwise, you must call SaveAllData() manually. </param>
+        /// <param name="autoReload"> If true, the DataFile will automatically reload when the file changes on disk. </param>
+        /// <param name="defaultFileText"> If there isn't already a file at the path, one can be created from the text supplied here. </param>
         public DataFile(string path, FileStyle style, bool autoSave = true, bool autoReload = false, string defaultFileText = null) : base(autoSave, style)
         {
             path = Utilities.AbsolutePath(path);
