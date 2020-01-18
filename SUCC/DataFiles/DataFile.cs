@@ -16,7 +16,9 @@ namespace SUCC
         /// <param name="autoSave"> If true, the file will automatically save changes to disk with each Get() or Set(). Otherwise, you must call SaveAllData() manually. </param>
         /// <param name="autoReload"> If true, the DataFile will automatically reload when the file changes on disk. </param>
         /// <param name="defaultFileText"> If there isn't already a file at the path, one can be created from the text supplied here. </param>
-        public DataFile(string path, bool autoSave = true, bool autoReload = false, string defaultFileText = null) : this(path, FileStyle.Default, autoSave, autoReload, defaultFileText) { }
+        public DataFile(string path, bool autoSave = true, bool autoReload = false, string defaultFileText = null) : this(path, FileStyle.Default, autoSave, autoReload, defaultFileText) 
+        { 
+        }
 
         /// <summary>
         /// Creates a new DataFile object corresponding to a SUCC file in system storage, with the option to have a custom FileStyle.

@@ -11,7 +11,9 @@ namespace SUCC.MemoryFiles
         /// <summary>
         /// Creates an empty DataFile in memory.
         /// </summary>
-        public MemoryDataFile() : this(string.Empty) { }
+        public MemoryDataFile() : this(string.Empty) 
+        { 
+        }
 
         /// <summary>
         /// Creates a DataFile in memory with some preexisting SUCC content.
