@@ -12,6 +12,7 @@ namespace SUCC.Tests
         [DataRow("", DisplayName = "empty string")]
         [DataRow(" ", DisplayName = "single space")]
         [DataRow(null, DisplayName = "null")]
+        [DataRow("null", DisplayName = "'null'")]
         [DataRow("   boobs", DisplayName = "leading spaces")]
         [DataRow("boobs   ", DisplayName = "trailing spaces")]
         [DataRow("   boobs   ", DisplayName = "leading and trailing spaces")]
