@@ -18,12 +18,7 @@ namespace SUCC.MemoryFiles
         /// <summary>
         /// Creates a DataFile in memory with some preexisting SUCC content.
         /// </summary>
-        public MemoryDataFile(string rawFileText, bool autoSave = true) : this(rawFileText, FileStyle.Default, autoSave) { }
-
-        /// <summary>
-        /// Creates a DataFile in memory with some preexisting SUCC content and a custom FileStyle.
-        /// </summary>
-        public MemoryDataFile(string rawFileText, FileStyle style, bool autoSave = true) : base(autoSave, style)
+        public MemoryDataFile(string rawFileText)
         {
             MemoryTextData = rawFileText;
             this.ReloadAllData();

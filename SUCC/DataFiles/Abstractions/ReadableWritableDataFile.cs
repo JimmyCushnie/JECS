@@ -16,13 +16,6 @@ namespace SUCC.Abstractions
         /// <remarks> Be careful with this. You do not want to accidentally be writing to a user's disk at 1000MB/s for 3 hours. </remarks>
         public bool AutoSave { get; set; }
 
-        /// <inheritdoc/>
-        public ReadableWritableDataFile(bool autoSave, FileStyle style)
-        {
-            AutoSave = autoSave;
-            Style = style;
-        }
-
         /// <summary> Save the file text to wherever you're storing it </summary>
         protected abstract void SetSavedText(string text);
 

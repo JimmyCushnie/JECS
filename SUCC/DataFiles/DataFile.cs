@@ -13,22 +13,8 @@ namespace SUCC
         /// Creates a new DataFile object corresponding to a SUCC file in system storage.
         /// </summary>
         /// <param name="path"> The path of the file. Can be either absolute or relative to the default path. </param>
-        /// <param name="autoSave"> If true, the file will automatically save changes to disk with each Get() or Set(). Otherwise, you must call SaveAllData() manually. </param>
-        /// <param name="autoReload"> If true, the DataFile will automatically reload when the file changes on disk. </param>
         /// <param name="defaultFileText"> If there isn't already a file at the path, one can be created from the text supplied here. </param>
-        public DataFile(string path, bool autoSave = true, bool autoReload = false, string defaultFileText = null) : this(path, FileStyle.Default, autoSave, autoReload, defaultFileText) 
-        { 
-        }
-
-        /// <summary>
-        /// Creates a new DataFile object corresponding to a SUCC file in system storage, with the option to have a custom FileStyle.
-        /// </summary>
-        /// <param name="path"> The path of the file. Can be either absolute or relative to the default path. </param>
-        /// <param name="style"> The rules for how this file styles newly saved data </param>
-        /// <param name="autoSave"> If true, the DataFile will automatically save changes to disk with each Get or Set. Otherwise, you must call SaveAllData() manually. </param>
-        /// <param name="autoReload"> If true, the DataFile will automatically reload when the file changes on disk. </param>
-        /// <param name="defaultFileText"> If there isn't already a file at the path, one can be created from the text supplied here. </param>
-        public DataFile(string path, FileStyle style, bool autoSave = true, bool autoReload = false, string defaultFileText = null) : base(autoSave, style)
+        public DataFile(string path, string defaultFileText = null)
         {
             path = Utilities.AbsolutePath(path);
             path = Path.ChangeExtension(path, Utilities.FileExtension);
@@ -50,7 +36,6 @@ namespace SUCC
             this.ReloadAllData();
 
             SetupWatcher(); // setup watcher AFTER file has been created
-            this.AutoReload = autoReload;
         }
 
         /// <summary>
@@ -127,7 +112,7 @@ namespace SUCC
                     IgnoreNextFileReload = false; // in case this was set to true while AutoReload was false
             }
         }
-        bool _AutoReload = true;
+        bool _AutoReload = false;
 
         private FileSystemWatcher Watcher;
         private void SetupWatcher()
@@ -137,6 +122,7 @@ namespace SUCC
 
             Watcher.NotifyFilter = NotifyFilters.LastWrite;
             Watcher.Changed += this.OnWatcherChanged;
+            Watcher.EnableRaisingEvents = this.AutoReload;
         }
 
         // Watcher.Changed takes several seconds to fire, so we use this.
