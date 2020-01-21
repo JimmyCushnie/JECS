@@ -38,6 +38,12 @@ namespace SUCC
             SetupWatcher(); // setup watcher AFTER file has been created
         }
 
+        public static ReadOnlyDataFile WithDefaultFile(string path, string defaultFile)
+        {
+            string defaultFileText = ResourcesUtilities.ReadTextFromFile(defaultFile);
+            return new ReadOnlyDataFile(path, defaultFileText);
+        }
+
         /// <inheritdoc/>
         protected override string GetSavedText()
         {
