@@ -11,7 +11,7 @@ namespace SUCC
     public class FileStyle
     {
         /// <summary>
-        /// If you do not specify a FileStyle when creating a DataFile, this will be used.
+        /// If you do not specify a FileStyle for your DataFile, this will be used.
         /// </summary>
         public static FileStyle Default { get; set; } = new FileStyle();
 
