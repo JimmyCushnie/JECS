@@ -14,7 +14,7 @@ namespace SUCC
         /// </summary>
         /// <param name="path"> The path of the file. Can be either absolute or relative to the default path. </param>
         /// <param name="defaultFileText"> If there isn't already a file at the path, one can be created from the text supplied here. </param>
-        public ReadOnlyDataFile(string path, string defaultFileText = null)
+        public ReadOnlyDataFile(string path, string defaultFileText = null) : base(defaultFileText)
         {
             path = Utilities.AbsolutePath(path);
             path = Path.ChangeExtension(path, Utilities.FileExtension);
