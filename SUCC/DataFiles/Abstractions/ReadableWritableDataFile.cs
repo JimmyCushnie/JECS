@@ -14,7 +14,7 @@ namespace SUCC.Abstractions
 
         /// <summary> If true, the DataFile will automatically save changes to disk with each Get or Set. If false, you must call SaveAllData() manually. </summary>
         /// <remarks> Be careful with this. You do not want to accidentally be writing to a user's disk at 1000MB/s for 3 hours. </remarks>
-        public bool AutoSave { get; set; }
+        public bool AutoSave { get; set; } = true;
 
         /// <summary> Save the file text to wherever you're storing it </summary>
         protected abstract void SetSavedText(string text);
