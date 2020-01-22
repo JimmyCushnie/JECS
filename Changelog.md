@@ -5,6 +5,10 @@
 * you can now save and load null
 * the Unity version can now use the main version's `defaultFileText` feature in addition to the Unity-exclusive `defaultFile` feature
 * changed some things about the API, it's possible your code will break sorry
+* fixed some bugs
+* if you supply a `defaultFileText` when creating a `DataFile`, if you use `Get` and you don't provide a default value, the default value will be searched for in the `defaultFileText`
+
+todo update the docs for 1.2
 
 ## v1.1 | 2019-11-12
 

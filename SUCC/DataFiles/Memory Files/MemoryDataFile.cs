@@ -18,7 +18,7 @@ namespace SUCC.MemoryFiles
         /// <summary>
         /// Creates a DataFile in memory with some preexisting SUCC content.
         /// </summary>
-        public MemoryDataFile(string rawFileText)
+        public MemoryDataFile(string rawFileText, string defaultFileText = null) : base(defaultFileText)
         {
             MemoryTextData = rawFileText;
             this.ReloadAllData();

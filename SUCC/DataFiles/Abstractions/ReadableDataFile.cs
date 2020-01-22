@@ -1,4 +1,5 @@
 ﻿using SUCC.InternalParsingLogic;
+using SUCC.MemoryFiles;
 using System;
 using System.Collections.Generic;
 
@@ -11,6 +12,17 @@ namespace SUCC.Abstractions
     {
         internal List<Line> TopLevelLines { get; private set; } = new List<Line>();
         internal Dictionary<string, KeyNode> TopLevelNodes { get; private set; } = new Dictionary<string, KeyNode>();
+
+        // When a default value is not supplied, we search for it in this.
+        protected MemoryReadOnlyDataFile DefaultFileCache { get; }
+
+        public ReadableDataFile(string defaultFileText = null)
+        {
+            if (defaultFileText == null)
+                DefaultFileCache = null; // prevent infinite recursion lol
+            else
+                DefaultFileCache = new MemoryReadOnlyDataFile(defaultFileText, null);
+        }
 
         /// <summary> Load the file text from wherever you're storing it </summary>
         protected abstract string GetSavedText();
@@ -86,13 +98,26 @@ namespace SUCC.Abstractions
             return true;
         }
 
-        // many of these methods are virtual so that their overrides in WritableDataFile
+
+        /// <summary> Like <see cref="Get{T}(string, T)"/>, but the default value is searched for in the default file text </summary>
+        public T Get<T>(string key)
+            => (T)GetNonGeneric(typeof(T), key);
+
+        /// <summary> Like <see cref="GetNonGeneric(Type, string, object)"/>, but the default value is searched for in the default file text </summary>
+        public object GetNonGeneric(Type type, string key)
+        {
+            var defaultDefaultValue = GetDefaultValue(type);
+            object defaultValue = DefaultFileCache?.GetNonGeneric(type, key, defaultDefaultValue) ?? defaultDefaultValue;
+            return this.GetNonGeneric(type, key, defaultValue);
+        }
+
+        // many of these methods are virtual so that their overrides in ReadableWritableDataFile
         // can have differing xml documentation.
 
         /// <summary> Get some data from the file, or return a default value if the data does not exist </summary>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="defaultValue"> if the key does not exist in the file, this value is returned instead </param>
-        public virtual T Get<T>(string key, T defaultValue = default)
+        public virtual T Get<T>(string key, T defaultValue)
             => (T)GetNonGeneric(typeof(T), key, defaultValue);
 
         /// <summary> Non-generic version of Get. You probably want to use Get. </summary>
@@ -108,6 +133,18 @@ namespace SUCC.Abstractions
             return NodeManager.GetNodeData(node, type);
         }
 
+        /// <summary> Like <see cref="GetAtPath{T}(T, string[])"/>, but the default value is searched for in the default file text </summary>
+        public T GetAtPath<T>(params string[] path)
+            => (T)GetAtPathNonGeneric(typeof(T), path);
+
+        /// <summary> Like <see cref="GetAtPathNonGeneric(Type, object, string[])"/>, but the value is searched for in the default file text </summary>
+        public object GetAtPathNonGeneric(Type type, params string[] path)
+        {
+            var defaultDefaultValue = GetDefaultValue(type);
+            object defaultValue = DefaultFileCache?.GetAtPathNonGeneric(type, defaultDefaultValue, path) ?? defaultDefaultValue;
+            return this.GetAtPathNonGeneric(type, defaultValue, path);
+        }
+
         /// <summary> 
         /// Like Get but works for nested paths instead of just the top level of the file 
         /// </summary>
@@ -119,8 +156,11 @@ namespace SUCC.Abstractions
         /// </summary>
         public virtual object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path)
         {
+            if (defaultValue != null && defaultValue.GetType() != type)
+                throw new Exception($"{nameof(defaultValue)} is not of type {type}!");
+
             if (!KeyExistsAtPath(path))
-                throw new Exception($"The specified path doesn't exist. Check {nameof(KeyExistsAtPath)} first.");
+                return defaultValue;
 
             var topNode = TopLevelNodes[path[0]];
             for (int i = 1; i < path.Length; i++)
@@ -174,6 +214,17 @@ namespace SUCC.Abstractions
             }
 
             return dictionary;
+        }
+
+
+
+
+        private static object GetDefaultValue(Type t)
+        {
+            if (t.IsValueType && Nullable.GetUnderlyingType(t) == null)
+                return Activator.CreateInstance(t);
+            else
+                return null;
         }
     }
 }

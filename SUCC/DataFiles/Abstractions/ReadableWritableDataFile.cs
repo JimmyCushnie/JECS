@@ -16,6 +16,10 @@ namespace SUCC.Abstractions
         /// <remarks> Be careful with this. You do not want to accidentally be writing to a user's disk at 1000MB/s for 3 hours. </remarks>
         public bool AutoSave { get; set; } = true;
 
+        public ReadableWritableDataFile(string defaultFileText = null) : base(defaultFileText)
+        {
+        }
+
         /// <summary> Save the file text to wherever you're storing it </summary>
         protected abstract void SetSavedText(string text);
 
@@ -29,11 +33,10 @@ namespace SUCC.Abstractions
                 SetSavedText(SUCC);
         }
 
-
         /// <summary> Get some data from the file, saving a new value if the data does not exist </summary>
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="defaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
-        public override T Get<T>(string key, T defaultValue = default)
+        public override T Get<T>(string key, T defaultValue)
             => base.Get(key, defaultValue);
 
         /// <summary> Non-generic version of Get. You probably want to use Get. </summary>
@@ -106,11 +109,8 @@ namespace SUCC.Abstractions
         /// <summary> Non-generic version of SetAtPath. You probably want to use SetAtPath. </summary>
         public void SetAtPathNonGeneric(Type type, object value, params string[] path)
         {
-            if (value == null)
-                throw new Exception("you can't serialize null");
-
-            if (value.GetType() != type)
-                throw new InvalidCastException($"{value} is not of type {type}!");
+            if (value != null && value.GetType() != type)
+                throw new InvalidCastException($"{nameof(value)} is not of type {type}!");
 
             if (path.Length < 1)
                 throw new ArgumentException($"{nameof(path)} must have a length greater than 0");

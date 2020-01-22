@@ -19,7 +19,7 @@ namespace SUCC.MemoryFiles
         /// <summary>
         /// Creates a ReadOnlyDataFile in memory with some preexisting SUCC content.
         /// </summary>
-        public MemoryReadOnlyDataFile(string rawFileText)
+        public MemoryReadOnlyDataFile(string rawFileText, string defaultFileText = null) : base(defaultFileText)
         {
             MemoryTextData = rawFileText;
             this.ReloadAllData();
