@@ -81,7 +81,7 @@ namespace SUCC
                     IgnoreNextFileReload = false; // in case this was set to true while AutoReload was false
             }
         }
-        bool _AutoReload = true;
+        bool _AutoReload = false;
 
         private FileSystemWatcher Watcher;
         private void SetupWatcher()
