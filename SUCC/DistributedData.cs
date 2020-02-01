@@ -31,7 +31,7 @@ namespace SUCC
         /// Creates a new <see cref="DistributedData"/> from a list of file paths on disk.
         /// </summary>
         /// <param name="paths">The paths to the files, same rules as with the <see cref="ReadOnlyDataFile"/> constructor</param>
-        public DistributedData(IReadOnlyList<string> paths)
+        public DistributedData(IEnumerable<string> paths)
         {
             foreach (var path in paths)
                 _Files.Add(new ReadOnlyDataFile(path));
