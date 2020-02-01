@@ -36,7 +36,18 @@ namespace SUCC
             foreach (var path in paths)
                 _Files.Add(new ReadOnlyDataFile(path));
         }
-        
+
+
+        /// <summary>
+        /// Creates a new <see cref="DistributedData"/> by searching a folder for matching SUCC files.
+        /// </summary>
+        /// <param name="path">The path of the directory to search.</param>
+        /// <param name="searchPattern">The search string to match against the names of files. You do not need to add the ".succ" extension.</param>
+        /// <param name="searchOption">How to search the directory."/></param>
+        /// <returns></returns>
+        public static DistributedData CreateBySearching(string path, string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
+            => CreateBySearching(new DirectoryInfo(path), searchPattern, searchOption);
+
         /// <summary>
         /// Creates a new <see cref="DistributedData"/> by searching a folder for matching SUCC files.
         /// </summary>
