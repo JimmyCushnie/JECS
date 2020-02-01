@@ -44,7 +44,7 @@ namespace SUCC
         /// <param name="searchPattern">The search string to match against the names of files. You do not need to add the ".succ" extension.</param>
         /// <param name="searchOption">How to search the directory."/></param>
         /// <returns></returns>
-        public static DistributedData CreateBySearching(DirectoryInfo directory, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+        public static DistributedData CreateBySearching(DirectoryInfo directory, string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
         {
             searchPattern = Path.ChangeExtension(searchPattern, Utilities.FileExtension);
             
