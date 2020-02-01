@@ -32,7 +32,7 @@ namespace SUCC
         }
 
         /// <summary> All SUCC files have this file extension. </summary>
-        public static readonly string FileExtension = ".succ";
+        public const string FileExtension = ".succ";
 
         /// <summary> detects whether a file path is relative or absolute, and returns the absolute path </summary>
         public static string AbsolutePath(string relativeOrAbsolutePath)
