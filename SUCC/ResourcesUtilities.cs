@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
 
-namespace SUCC
+namespace SUCC.UnityStuff
 {
-    internal static class ResourcesUtilities
+    public static class ResourcesUtilities
     {
         public static string ReadTextFromFile(string filePath)
         {
