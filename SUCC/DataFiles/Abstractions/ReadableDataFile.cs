@@ -106,7 +106,7 @@ namespace SUCC.Abstractions
         /// <summary> Like <see cref="GetNonGeneric(Type, string, object)"/>, but the default value is searched for in the default file text </summary>
         public object GetNonGeneric(Type type, string key)
         {
-            var defaultDefaultValue = GetDefaultValue(type);
+            var defaultDefaultValue = type.GetDefaultValue();
             object defaultValue = DefaultFileCache?.GetNonGeneric(type, key, defaultDefaultValue) ?? defaultDefaultValue;
             return this.GetNonGeneric(type, key, defaultValue);
         }
@@ -140,7 +140,7 @@ namespace SUCC.Abstractions
         /// <summary> Like <see cref="GetAtPathNonGeneric(Type, object, string[])"/>, but the value is searched for in the default file text </summary>
         public object GetAtPathNonGeneric(Type type, params string[] path)
         {
-            var defaultDefaultValue = GetDefaultValue(type);
+            var defaultDefaultValue = type.GetDefaultValue();
             object defaultValue = DefaultFileCache?.GetAtPathNonGeneric(type, defaultDefaultValue, path) ?? defaultDefaultValue;
             return this.GetAtPathNonGeneric(type, defaultValue, path);
         }
@@ -214,17 +214,6 @@ namespace SUCC.Abstractions
             }
 
             return dictionary;
-        }
-
-
-
-
-        private static object GetDefaultValue(Type t)
-        {
-            if (t.IsValueType && Nullable.GetUnderlyingType(t) == null)
-                return Activator.CreateInstance(t);
-            else
-                return null;
         }
     }
 }

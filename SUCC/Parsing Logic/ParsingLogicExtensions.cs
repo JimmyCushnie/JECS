@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 
 namespace SUCC.InternalParsingLogic
@@ -41,5 +42,14 @@ namespace SUCC.InternalParsingLogic
 
         internal static bool GetOrSetIsPrivate(this PropertyInfo p)
             => p.GetMethod.IsPrivate || p.SetMethod.IsPrivate;
+
+
+        internal static object GetDefaultValue(this Type t)
+        {
+            if (t.IsValueType && Nullable.GetUnderlyingType(t) == null)
+                return Activator.CreateInstance(t);
+            else
+                return null;
+        }
     }
 }
