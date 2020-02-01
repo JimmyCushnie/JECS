@@ -1,7 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using SUCC.InternalParsingLogic;
+using System;
 using System.Collections.Generic;
-using SUCC.InternalParsingLogic;
+using System.IO;
 
 namespace SUCC
 {
@@ -17,6 +17,28 @@ namespace SUCC
         /// The internal <see cref="ReadOnlyDataFile"/>s that are searched
         /// </summary>
         public IReadOnlyList<ReadOnlyDataFile> Files => _Files;
+
+        /// <summary>
+        /// All of the top-level keys in all of the files within this <see cref="DistributedData"/>.
+        /// </summary>
+        public IReadOnlyCollection<string> TopLevelKeys
+        {
+            get
+            {
+                if (_TopLevelKeys == null)
+                {
+                    var keys = new HashSet<string>();
+
+                    foreach (var file in Files)
+                        keys.UnionWith(file.TopLevelKeys);
+
+                    _TopLevelKeys = keys;
+                }
+
+                return _TopLevelKeys;
+            }
+        }
+        private IReadOnlyCollection<string> _TopLevelKeys;
 
 
         /// <summary>
