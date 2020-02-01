@@ -7,6 +7,7 @@
 * changed some things about the API, it's possible your code will break sorry
 * fixed some bugs
 * if you supply a `defaultFileText` when creating a `DataFile`, if you use `Get` and you don't provide a default value, the default value will be searched for in the `defaultFileText`
+* added `DistributedData` class
 
 todo update the docs for 1.2
 

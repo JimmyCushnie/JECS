@@ -5,34 +5,58 @@ using SUCC.InternalParsingLogic;
 
 namespace SUCC
 {
+    /// <summary>
+    /// Represents SUCC data spread over multiple files on disk.
+    /// Using this class, you can search all those files at once for a piece of data;
+    /// </summary>
     public class DistributedData
     {
         private readonly List<ReadOnlyDataFile> _Files = new List<ReadOnlyDataFile>();
+
+        /// <summary>
+        /// The internal <see cref="ReadOnlyDataFile"/>s that are searched
+        /// </summary>
         public IReadOnlyList<ReadOnlyDataFile> Files => _Files;
 
 
+        /// <summary>
+        /// Creates a new <see cref="DistributedData"/> from a list of file paths on disk.
+        /// </summary>
+        /// <param name="paths">The paths to the files, same rules as with the <see cref="ReadOnlyDataFile"/> constructor</param>
         public DistributedData(params string[] paths) : this((IReadOnlyList<string>)paths)
         {
         }
+
+        /// <summary>
+        /// Creates a new <see cref="DistributedData"/> from a list of file paths on disk.
+        /// </summary>
+        /// <param name="paths">The paths to the files, same rules as with the <see cref="ReadOnlyDataFile"/> constructor</param>
         public DistributedData(IReadOnlyList<string> paths)
         {
             foreach (var path in paths)
                 _Files.Add(new ReadOnlyDataFile(path));
         }
-
-        public static DistributedData CreateBySearching(DirectoryInfo folder, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
+        
+        /// <summary>
+        /// Creates a new <see cref="DistributedData"/> by searching a folder for matching SUCC files.
+        /// </summary>
+        /// <param name="directory">The directory to search.</param>
+        /// <param name="searchPattern">The search string to match against the names of files. You do not need to add the ".succ" extension.</param>
+        /// <param name="searchOption">How to search the directory."/></param>
+        /// <returns></returns>
+        public static DistributedData CreateBySearching(DirectoryInfo directory, string searchPattern, SearchOption searchOption = SearchOption.AllDirectories)
         {
             searchPattern = Path.ChangeExtension(searchPattern, Utilities.FileExtension);
-
+            
             var paths = new List<string>();
-            foreach (var fileInfo in folder.EnumerateFiles(searchPattern, searchOption))
+            foreach (var fileInfo in directory.EnumerateFiles(searchPattern, searchOption))
                 paths.Add(fileInfo.FullName);
 
             return new DistributedData(paths);
         }
 
 
-
+        /// <summary> Does data exist in any of our files at this top-level key? </summary>
         public bool KeyExists(string key)
         {
             foreach (var file in Files)
@@ -44,7 +68,7 @@ namespace SUCC
             return false;
         }
 
-        /// <summary> whether a key exists in the file at a nested path </summary>
+        /// <summary> Does data exist in any of our files at this nested path? </summary>
         public bool KeyExistsAtPath(params string[] path)
         {
             foreach (var file in Files)
@@ -57,19 +81,22 @@ namespace SUCC
         }
 
 
-        /// <summary> Get some data from the file, or return a default value if the data does not exist </summary>
-        /// <param name="key"> what the data is labeled as within the file </param>
-        /// <param name="defaultValue"> if the key does not exist in the file, this value is returned instead </param>
+        /// <summary> Get some data from our files, or return a default value if the data does not exist. </summary>
+        /// <param name="key"> What the data is labeled as within the file. </param>
+        /// <param name="defaultValue"> If the key does not exist in the file, this value is returned instead. </param>
         public T Get<T>(string key, T defaultValue = default) 
             => (T)GetNonGeneric(typeof(T), key, defaultValue);
 
+        /// <summary> Non-generic version of <see cref="Get{T}(string, T)"/>. You probably want to use <see cref="Get{T}(string, T)"/>. </summary>
+        /// <param name="type"> The type to get the data as. </param>
+        /// <param name="key"> What the data is labeled as within the file. </param>
         public object GetNonGeneric(Type type, string key)
             => GetNonGeneric(type, key, type.GetDefaultValue());
 
-        /// <summary> Non-generic version of Get. You probably want to use Get. </summary>
-        /// <param name="type"> the type to get the data as </param>
-        /// <param name="key"> what the data is labeled as within the file </param>
-        /// <param name="defaultValue"> if the key does not exist in the file, this value is returned instead </param>
+        /// <summary> Non-generic version of <see cref="Get{T}(string, T)"/>. You probably want to use <see cref="Get{T}(string, T)"/>. </summary>
+        /// <param name="type"> The type to get the data as. </param>
+        /// <param name="key"> What the data is labeled as within the file. </param>
+        /// <param name="defaultValue"> If the key does not exist in the file, this value is returned instead. </param>
         public object GetNonGeneric(Type type, string key, object defaultValue)
         {
             if (defaultValue != null && defaultValue.GetType() != type)
@@ -84,18 +111,16 @@ namespace SUCC
             return defaultValue;
         }
 
-        /// <summary> 
-        /// Like Get but works for nested paths instead of just the top level of the file 
-        /// </summary>
+
+        /// <summary> Like <see cref="Get{T}(string, T)"/>, but but works for nested paths instead of just the top level of the files. </summary>
         public T GetAtPath<T>(T defaultValue, params string[] path)
             => (T)GetAtPathNonGeneric(typeof(T), defaultValue, path);
 
+        /// <summary> Like <see cref="GetNonGeneric(Type, string)"/>, but but works for nested paths instead of just the top level of the files. </summary>
         public object GetAtPathNonGeneric(Type type, params string[] path)
             => GetAtPathNonGeneric(type, type.GetDefaultValue(), path);
 
-        /// <summary>
-        /// Non-generic version of GetAtPath. You probably want to use GetAtPath.
-        /// </summary>
+        /// <summary> Like <see cref="GetNonGeneric(Type, string, object)"/>, but but works for nested paths instead of just the top level of the files. </summary>
         public object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path)
         {
             if (defaultValue != null && defaultValue.GetType() != type)
