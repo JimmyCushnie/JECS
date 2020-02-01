@@ -145,5 +145,18 @@ namespace SUCC
 
             return defaultValue;
         }
+
+
+        public bool TryGet<T>(string key, out T value)
+        {
+            if (!KeyExists(key))
+            {
+                value = default;
+                return false;
+            }
+
+            value = Get<T>(key);
+            return true;
+        }
     }
 }

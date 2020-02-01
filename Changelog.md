@@ -8,6 +8,8 @@
 * fixed some bugs
 * if you supply a `defaultFileText` when creating a `DataFile`, if you use `Get` and you don't provide a default value, the default value will be searched for in the `defaultFileText`
 * added `DistributedData` class
+* added `DataFile.TryGet`
+  * todo: document this, add non-generic version, add path based versions
 
 todo update the docs for 1.2
 

@@ -172,6 +172,19 @@ namespace SUCC.Abstractions
         }
 
 
+        public bool TryGet<T>(string key, out T value)
+        {
+            if (!KeyExists(key))
+            {
+                value = default;
+                return false;
+            }
+
+            value = Get<T>(key);
+            return true;
+        }
+
+
         /// <summary> Interpret this file as an object of type T, using that type's fields and properties as top-level keys. </summary>
         public T GetAsObject<T>() => (T)GetAsObjectNonGeneric(typeof(T));
 
