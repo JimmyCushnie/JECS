@@ -1,5 +1,6 @@
 ﻿using SUCC.InternalParsingLogic;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 
@@ -17,29 +18,6 @@ namespace SUCC
         /// The internal <see cref="ReadOnlyDataFile"/>s that are searched
         /// </summary>
         public IReadOnlyList<ReadOnlyDataFile> Files => _Files;
-
-        /// <summary>
-        /// All of the top-level keys in all of the files within this <see cref="DistributedData"/>.
-        /// </summary>
-        public IReadOnlyCollection<string> TopLevelKeys
-        {
-            get
-            {
-                if (_TopLevelKeys == null)
-                {
-                    var keys = new HashSet<string>();
-
-                    foreach (var file in Files)
-                        keys.UnionWith(file.TopLevelKeys);
-
-                    _TopLevelKeys = keys;
-                }
-
-                return _TopLevelKeys;
-            }
-        }
-        private IReadOnlyCollection<string> _TopLevelKeys;
-
 
         /// <summary>
         /// Creates a new <see cref="DistributedData"/> from a list of file paths on disk.
@@ -87,6 +65,52 @@ namespace SUCC
 
             return new DistributedData(paths);
         }
+
+
+        /// <summary>
+        /// All of the top-level keys in all of the files within this <see cref="DistributedData"/>.
+        /// </summary>
+        public IReadOnlyCollection<string> TopLevelKeys
+        {
+            get
+            {
+                if (_TopLevelKeys == null)
+                {
+                    var keys = new HashSet<string>();
+
+                    foreach (var file in Files)
+                        keys.UnionWith(file.TopLevelKeys);
+
+                    _TopLevelKeys = keys;
+                }
+
+                return _TopLevelKeys;
+            }
+        }
+        private IReadOnlyCollection<string> _TopLevelKeys;
+
+        /// <summary>
+        /// The top level keys in this data set, in the order they appear in the files, sorted by the file names.
+        /// Unlike <see cref="TopLevelKeys"/>, this might contain duplicate keys if there are two files with the same key.
+        /// </summary>
+        public IReadOnlyList<string> TopLevelKeysInOrder
+        {
+            get
+            {
+                if (_TopLevelKeysInOrder == null)
+                {
+                    var keys = new List<string>();
+
+                    foreach (var file in Files.OrderBy(file => file.FileName))
+                        keys.AddRange(file.GetTopLevelKeysInOrder());
+
+                    _TopLevelKeysInOrder = keys;
+                }
+
+                return _TopLevelKeysInOrder;
+            }
+        }
+        private IReadOnlyList<string> _TopLevelKeysInOrder;
 
 
         /// <summary> Does data exist in any of our files at this top-level key? </summary>
