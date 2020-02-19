@@ -29,11 +29,14 @@ namespace SUCC
 
         private static string GetDefaultDefaultPath()
         {
+            // https://docs.unity3d.com/ScriptReference/Application-dataPath.html
 #if UNITY_EDITOR
-            string ProjectFolder = Directory.GetParent(Application.dataPath).FullName;
+            string ProjectFolder = new DirectoryInfo(Application.dataPath).Parent.FullName;
             return Path.Combine(ProjectFolder, "Game");
+#elif UNITY_STANDALONE_OSX
+            return new DirectoryInfo(Application.dataPath).Parent.Parent.FullName;
 #else
-            return Directory.GetParent(Application.dataPath).FullName;
+            return new DirectoryInfo(Application.dataPath).Parent.FullName;
 #endif
         }
 
