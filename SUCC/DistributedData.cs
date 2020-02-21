@@ -204,5 +204,17 @@ namespace SUCC
             value = Get<T>(key);
             return true;
         }
+
+        public bool TryGetNonGeneric(Type type, string key, out object value)
+        {
+            if (!KeyExists(key))
+            {
+                value = null;
+                return false;
+            }
+
+            value = GetNonGeneric(type, key);
+            return true;
+        }
     }
 }
