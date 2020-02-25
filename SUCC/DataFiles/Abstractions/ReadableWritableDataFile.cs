@@ -23,6 +23,15 @@ namespace SUCC.Abstractions
         /// <summary> Save the file text to wherever you're storing it </summary>
         protected abstract void SetSavedText(string text);
 
+        /// <summary>
+        /// Reset the file to the default data provided when it was created.
+        /// </summary>
+        public void ResetToDefaultData()
+        {
+            SetSavedText(DefaultFileCache?.GetRawText() ?? string.Empty);
+            ReloadAllData();
+        }
+
         /// <summary> Serializes the data in this object to the file on disk. </summary>
         public void SaveAllData()
         {

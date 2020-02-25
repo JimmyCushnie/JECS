@@ -10,6 +10,7 @@
 * added `DistributedData` class
 * added `DataFile.TryGet`
   * todo: document this, add non-generic version, add path based versions
+* added ReadableWritableDataFile.ResetToDefaultData()
 * fixed default data path on Mac OS (Unity version)
 
 todo update the docs for 1.2
