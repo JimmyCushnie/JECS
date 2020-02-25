@@ -96,7 +96,7 @@ namespace SUCC
 
         private static Dictionary<Type, SerializeMethod> BaseSerializeMethods { get; } = new Dictionary<Type, SerializeMethod>()
         {
-            // integer types
+            // Integer types
             [typeof(int)] = SerializeInt,
             [typeof(long)] = SerializeInt,
             [typeof(short)] = SerializeInt,
@@ -106,14 +106,17 @@ namespace SUCC
             [typeof(byte)] = SerializeInt,
             [typeof(sbyte)] = SerializeInt,
 
-            // floating point types
+            // Floating point types
             [typeof(float)] = SerializeFloat,
             [typeof(double)] = SerializeDouble,
             [typeof(decimal)] = SerializeDecimal,
 
-            [typeof(DateTime)] = SerializeDateTime,
+            // Misc
             [typeof(char)] = SerializeChar,
             [typeof(Type)] = SerializeType,
+
+            [typeof(DateTime)] = SerializeDateTime,
+            [typeof(Version)] = SerializeVersion,
         };
 
         private delegate string StyledSerializeMethod(object thing, FileStyle style);
@@ -142,10 +145,13 @@ namespace SUCC
             [typeof(double)] = ParseDouble,
             [typeof(decimal)] = ParseDecimal,
 
+            // Misc
             [typeof(bool)] = ParseBool,
-            [typeof(DateTime)] = ParseDateTime,
             [typeof(char)] = ParseChar,
             [typeof(Type)] = ParseType,
+
+            [typeof(DateTime)] = ParseDateTime,
+            [typeof(Version)] = ParseVersion,
         };
 
 
@@ -331,17 +337,6 @@ namespace SUCC
             throw new FormatException($"cannot parse text {text} as boolean");
         }
 
-        private static string SerializeDateTime(object value)
-        {
-            DateTime dateTime = (DateTime)value;
-            return dateTime.ToString("yyyy-MM-dd HH:mm:ss");
-        }
-        private static object ParseDateTime(string text)
-        {
-            DateTime.TryParseExact(text, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result);
-            return result;
-        }
-
         private static string SerializeChar(object value)
         {
             return value.ToString();
@@ -390,6 +385,28 @@ namespace SUCC
         private static object ParseEnum(string text, Type type)
         {
             return Enum.Parse(type, text, ignoreCase: true);
+        }
+
+
+        private static string SerializeDateTime(object value)
+        {
+            var dateTime = (DateTime)value;
+            return dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+        private static object ParseDateTime(string text)
+        {
+            DateTime.TryParseExact(text, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result);
+            return result;
+        }
+
+        private static string SerializeVersion(object value)
+        {
+            var version = (Version)value;
+            return version.ToString(4);
+        }
+        private static object ParseVersion(string text)
+        {
+            return Version.Parse(text);
         }
 
         #endregion
