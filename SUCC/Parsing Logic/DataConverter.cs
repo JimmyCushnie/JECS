@@ -37,7 +37,7 @@ namespace SUCC.InternalParsingLogic
         /// <summary>
         /// Parses a string of SUCC into a data structure
         /// </summary>
-        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string input, ReadableDataFile fileRef)
+        internal static (List<Line> topLevelLines, Dictionary<string, KeyNode> topLevelNodes) DataStructureFromSUCC(string input, ReadableDataFile fileRef)
             => DataStructureFromSUCC(input.SplitIntoLines(), fileRef);
 
         /// <summary>
@@ -45,8 +45,8 @@ namespace SUCC.InternalParsingLogic
         /// </summary>
         internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string[] lines, ReadableDataFile fileRef) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
         {
-            // if the file is empty
-            // do this because otherwise new files are created with a newline at the top
+            // If the file is empty
+            // Do this because otherwise new files are created with a newline at the top
             if (lines.Length == 1 && lines[0] == "")
                 return (new List<Line>(), new Dictionary<string, KeyNode>());
 
@@ -54,12 +54,12 @@ namespace SUCC.InternalParsingLogic
             var TopLevelLines = new List<Line>();
             var TopLevelNodes = new Dictionary<string, KeyNode>();
 
-            var NestingNodeStack = new Stack<Node>(); // the top of the stack is the node that new nodes should be children of
+            var NestingNodeStack = new Stack<Node>(); // The top of the stack is the node that new nodes should be children of
             bool DoingMultiLineString = false;
 
-            var file = fileRef as DataFile; // this will be null if fileRef is a ReadOnlyDataFile
+            var file = fileRef as DataFile; // This will be null if fileRef is a ReadOnlyDataFile
 
-            // parse the input line by line
+            // Parse the input line by line
             for (int i = 0; i < lines.Length; i++)
             {
                 var line = lines[i];
@@ -88,9 +88,9 @@ namespace SUCC.InternalParsingLogic
                 {
                     Node node = GetNodeFromLine(line, file);
 
-                    boobies:
+                    addNodeInAppriatePlaceInStack:
 
-                    if (NestingNodeStack.Count == 0) // if this is a top-level node
+                    if (NestingNodeStack.Count == 0) // If this is a top-level node
                     {
                         if (!(node is KeyNode))
                             throw new FormatException($"top level lines must be key nodes. Line {i} does not conform to this: '{line}'");
@@ -98,15 +98,15 @@ namespace SUCC.InternalParsingLogic
                         KeyNode heck = node as KeyNode;
                         TopLevelNodes.Add(heck.Key, heck);
                     }
-                    else // if this is NOT a top-level node
+                    else // If this is NOT a top-level node
                     {
                         int StackTopIndentation = NestingNodeStack.Peek().IndentationLevel;
                         int LineIndentation = line.GetIndentationLevel();
 
-                        if (LineIndentation > StackTopIndentation) // if this should be a child of the stack top
+                        if (LineIndentation > StackTopIndentation) // If this should be a child of the stack top
                         {
                             Node newParent = NestingNodeStack.Peek();
-                            if (newParent.ChildNodes.Count == 0) // if this is the first child of the parent, assign the parent's child type
+                            if (newParent.ChildNodes.Count == 0) // If this is the first child of the parent, assign the parent's child type
                             {
                                 if (node is KeyNode)
                                     newParent.ChildNodeType = NodeChildrenType.key;
@@ -115,21 +115,21 @@ namespace SUCC.InternalParsingLogic
                                 else
                                     throw new Exception("what the fuck?");
                             }
-                            else // if the parent already has children, check for errors with this line
+                            else // If the parent already has children, check for errors with this line
                             {
                                 CheckNewSiblingForErrors(child: node, newParent: newParent);
                             }
 
                             newParent.AddChild(node);
                         }
-                        else // if this should NOT be a child of the stack top
+                        else // If this should NOT be a child of the stack top
                         {
                             NestingNodeStack.Pop();
-                            goto boobies;
+                            goto addNodeInAppriatePlaceInStack;
                         }
                     }
 
-                    if (node.Value == "") // if this is a node with children
+                    if (node.Value == "") // If this is a node with children
                         NestingNodeStack.Push(node);
 
                     if (node.Value == MultiLineStringNode.Terminator) // if this is the start of a multi line string
@@ -139,7 +139,7 @@ namespace SUCC.InternalParsingLogic
                         DoingMultiLineString = true;
                     }
                 }
-                else // line has no data
+                else // Line has no data
                 {
                     Line NoDataLine = new Line(rawText: line);
 

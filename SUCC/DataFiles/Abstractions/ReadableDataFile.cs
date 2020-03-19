@@ -35,8 +35,8 @@ namespace SUCC.Abstractions
                 string succ = GetSavedText();
 
                 var data = DataConverter.DataStructureFromSUCC(succ, this);
-                TopLevelLines = data.Item1;
-                TopLevelNodes = data.Item2;
+                TopLevelLines = data.topLevelLines;
+                TopLevelNodes = data.topLevelNodes;
             }
             catch (Exception e)
             {
