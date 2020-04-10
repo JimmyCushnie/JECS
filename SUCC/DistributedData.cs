@@ -14,7 +14,7 @@ namespace SUCC
     public class DistributedData
     {
         private readonly List<ReadableDataFile> _DataSources = new List<ReadableDataFile>();
-        private IReadOnlyList<ReadableDataFile> DataSources => _DataSources;
+        public IReadOnlyList<ReadableDataFile> DataSources => _DataSources;
 
         /// <summary>
         /// Adds a <see cref="ReadableDataFile"/> as a data source that this <see cref="DistributedData"/> can search through.
