@@ -1,4 +1,5 @@
-﻿using SUCC.InternalParsingLogic;
+﻿using SUCC.Abstractions;
+using SUCC.InternalParsingLogic;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -7,34 +8,30 @@ using System.IO;
 namespace SUCC
 {
     /// <summary>
-    /// Represents SUCC data spread over multiple files on disk.
-    /// Using this class, you can search all those files at once for a piece of data;
+    /// Represents SUCC data spread over multiple files.
+    /// Using this class, you can search all those files at once for a piece of data.
     /// </summary>
     public class DistributedData
     {
-        private readonly List<ReadOnlyDataFile> _Files = new List<ReadOnlyDataFile>();
+        private readonly List<ReadableDataFile> _DataSources = new List<ReadableDataFile>();
+        private IReadOnlyList<ReadableDataFile> DataSources => _DataSources;
 
         /// <summary>
-        /// The internal <see cref="ReadOnlyDataFile"/>s that are searched
+        /// Adds a <see cref="ReadableDataFile"/> as a data source that this <see cref="DistributedData"/> can search through.
         /// </summary>
-        public IReadOnlyList<ReadOnlyDataFile> Files => _Files;
-
-        /// <summary>
-        /// Creates a new <see cref="DistributedData"/> from a list of file paths on disk.
-        /// </summary>
-        /// <param name="paths">The paths to the files, same rules as with the <see cref="ReadOnlyDataFile"/> constructor</param>
-        public DistributedData(params string[] paths) : this((IReadOnlyList<string>)paths)
+        public void AddDataSource(ReadableDataFile source)
         {
+            _DataSources.Add(source);
         }
 
+
+
+
         /// <summary>
-        /// Creates a new <see cref="DistributedData"/> from a list of file paths on disk.
+        /// Creates a new <see cref="DistributedData"/>.
         /// </summary>
-        /// <param name="paths">The paths to the files, same rules as with the <see cref="ReadOnlyDataFile"/> constructor</param>
-        public DistributedData(IEnumerable<string> paths)
+        public DistributedData()
         {
-            foreach (var path in paths)
-                _Files.Add(new ReadOnlyDataFile(path));
         }
 
 
@@ -63,60 +60,44 @@ namespace SUCC
             foreach (var fileInfo in directory.EnumerateFiles(searchPattern, searchOption))
                 paths.Add(fileInfo.FullName);
 
-            return new DistributedData(paths);
+            var data = new DistributedData();
+            data.AddFilesOnDisk(paths);
+            return data;
         }
 
 
         /// <summary>
         /// All of the top-level keys in all of the files within this <see cref="DistributedData"/>.
         /// </summary>
-        public IReadOnlyCollection<string> TopLevelKeys
+        public IReadOnlyCollection<string> GetTopLevelKeys()
         {
-            get
-            {
-                if (_TopLevelKeys == null)
-                {
-                    var keys = new HashSet<string>();
+            var keys = new HashSet<string>();
 
-                    foreach (var file in Files)
-                        keys.UnionWith(file.TopLevelKeys);
+            foreach (var source in DataSources)
+                keys.UnionWith(source.TopLevelKeys);
 
-                    _TopLevelKeys = keys;
-                }
-
-                return _TopLevelKeys;
-            }
+            return keys;
         }
-        private IReadOnlyCollection<string> _TopLevelKeys;
 
         /// <summary>
-        /// The top level keys in this data set, in the order they appear in the files, sorted by the file names.
-        /// Unlike <see cref="TopLevelKeys"/>, this might contain duplicate keys if there are two files with the same key.
+        /// The top level keys in this dataset, in the order they appear in the files, sorted by the file identifier.
+        /// Unlike <see cref="GetTopLevelKeys"/>, this might contain duplicate keys if there are two files with the same key.
         /// </summary>
-        public IReadOnlyList<string> TopLevelKeysInOrder
+        public IReadOnlyList<string> GetTopLevelKeysInOrder()
         {
-            get
-            {
-                if (_TopLevelKeysInOrder == null)
-                {
-                    var keys = new List<string>();
+            var keys = new List<string>();
 
-                    foreach (var file in Files.OrderBy(file => file.FileName))
-                        keys.AddRange(file.GetTopLevelKeysInOrder());
+            foreach (var source in DataSources.OrderBy(source => source.Identifier))
+                keys.AddRange(source.GetTopLevelKeysInOrder());
 
-                    _TopLevelKeysInOrder = keys;
-                }
-
-                return _TopLevelKeysInOrder;
-            }
+            return keys;
         }
-        private IReadOnlyList<string> _TopLevelKeysInOrder;
 
 
         /// <summary> Does data exist in any of our files at this top-level key? </summary>
         public bool KeyExists(string key)
         {
-            foreach (var file in Files)
+            foreach (var file in DataSources)
             {
                 if (file.KeyExists(key))
                     return true;
@@ -128,7 +109,7 @@ namespace SUCC
         /// <summary> Does data exist in any of our files at this nested path? </summary>
         public bool KeyExistsAtPath(params string[] path)
         {
-            foreach (var file in Files)
+            foreach (var file in DataSources)
             {
                 if (file.KeyExistsAtPath(path))
                     return true;
@@ -159,7 +140,7 @@ namespace SUCC
             if (defaultValue != null && defaultValue.GetType() != type)
                 throw new Exception($"{nameof(type)} must match {nameof(defaultValue)}");
 
-            foreach (var file in Files)
+            foreach (var file in DataSources)
             {
                 if (file.KeyExists(key))
                     return file.GetNonGeneric(type, key, defaultValue);
@@ -183,7 +164,7 @@ namespace SUCC
             if (defaultValue != null && defaultValue.GetType() != type)
                 throw new Exception($"{nameof(type)} must match {nameof(defaultValue)}");
 
-            foreach (var file in Files)
+            foreach (var file in DataSources)
             {
                 if (file.KeyExistsAtPath(path))
                     return file.GetAtPathNonGeneric(type, defaultValue, path);

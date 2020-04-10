@@ -11,19 +11,31 @@ namespace SUCC.MemoryFiles
         /// <summary>
         /// Creates an empty DataFile in memory.
         /// </summary>
-        public MemoryDataFile() : this(string.Empty) 
-        { 
+        /// <remarks> why would you do this? </remarks>
+        public MemoryDataFile() : this(string.Empty)
+        {
         }
 
         /// <summary>
         /// Creates a DataFile in memory with some preexisting SUCC content.
         /// </summary>
-        public MemoryDataFile(string rawFileText, string defaultFileText = null) : base(defaultFileText)
+        public MemoryDataFile(string rawFileText) : this(rawFileText, rawFileText)
+        {
+        }
+
+        /// <summary>
+        /// Advanced constructor, with an identifier for the file and default file text.
+        /// </summary>
+        public MemoryDataFile(string rawFileText, string identifier, string defaultFileText = null) : base(defaultFileText)
         {
             MemoryTextData = rawFileText;
+            Identifier = identifier;
             this.ReloadAllData();
         }
 
+
+        /// <inheritdoc/>
+        public override string Identifier { get; }
 
         private string MemoryTextData = "";
 

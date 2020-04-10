@@ -70,7 +70,8 @@ namespace SUCC
             IgnoreNextFileReload = true;
         }
 
-
+        /// <inheritdoc/>
+        public override string Identifier => FilePath;
 
 
 

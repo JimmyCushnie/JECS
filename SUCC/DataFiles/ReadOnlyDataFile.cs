@@ -61,6 +61,8 @@ namespace SUCC
             return String.Empty;
         }
 
+        /// <inheritdoc/>
+        public override string Identifier => FilePath;
 
 
         #region IDataFileOnDisk implementation

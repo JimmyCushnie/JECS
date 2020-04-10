@@ -13,6 +13,11 @@ namespace SUCC.Abstractions
         internal List<Line> TopLevelLines { get; private set; } = new List<Line>();
         internal Dictionary<string, KeyNode> TopLevelNodes { get; private set; } = new Dictionary<string, KeyNode>();
 
+        /// <summary>
+        /// A quasi-unique string, to be used when you need to sort a bunch of DataFiles.
+        /// </summary>
+        public abstract string Identifier { get; }
+
         // When a default value is not supplied, we search for it in this.
         protected MemoryReadOnlyDataFile DefaultFileCache { get; }
 
@@ -35,8 +40,8 @@ namespace SUCC.Abstractions
                 string succ = GetSavedText();
 
                 var data = DataConverter.DataStructureFromSUCC(succ, this);
-                TopLevelLines = data.Item1;
-                TopLevelNodes = data.Item2;
+                TopLevelLines = data.topLevelLines;
+                TopLevelNodes = data.topLevelNodes;
             }
             catch (Exception e)
             {
