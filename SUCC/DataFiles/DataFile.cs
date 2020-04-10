@@ -56,9 +56,12 @@ namespace SUCC
             IgnoreNextFileReload = true;
         }
 
+        /// <inheritdoc/>
+        public override string Identifier => FilePath;
 
 
-        
+
+
 
         #region IDataFileOnDisk implementation
         // this code is copied between DataFile and ReadOnlyDataFile.
