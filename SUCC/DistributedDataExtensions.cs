@@ -12,7 +12,7 @@ namespace SUCC
         public static void AddDataSources(this DistributedData distributedData, params ReadableDataFile[] sources)
             => AddDataSources(distributedData, (IEnumerable<ReadableDataFile>)sources);
 
-        public static void AddDataSources(this DistributedData distributedData, IEnumerable<ReadableDataFile> sources)
+        public static void AddDataSources<T>(this DistributedData distributedData, IEnumerable<T> sources) where T : ReadableDataFile
         {
             foreach (var source in sources)
                 distributedData.AddDataSource(source);
