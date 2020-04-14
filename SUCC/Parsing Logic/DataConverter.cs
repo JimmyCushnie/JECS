@@ -8,42 +8,45 @@ namespace SUCC.InternalParsingLogic
 {
     internal static class DataConverter
     {
+        internal static string GetLineTextIncludingChildLines(Line line)
+            => SuccFromDataStructure(new Line[] { line });
+
         /// <summary>
         /// Turns a data structure into raw SUCC
         /// </summary>
-        internal static string SUCCFromDataStructure(List<Line> lines)
+        internal static string SuccFromDataStructure(IEnumerable<Line> lines)
         {
             var succBuilder = new StringBuilder();
-            recursivelyBuildLines(lines, succBuilder);
-            var succ = succBuilder.ToString().TrimEnd(Utilities.NewLine.ToCharArray()); // remove all newlines at the end of the string
-            return succ;
+            RecursivelyBuildLines(lines, succBuilder);
+            return FinishSuccBuilder(succBuilder);
 
-            void recursivelyBuildLines(IReadOnlyList<Line> Lines, StringBuilder builder)
+
+            void RecursivelyBuildLines(IEnumerable<Line> _lines, StringBuilder builder)
             {
-                for (int i = 0; i < Lines.Count; i++)
+                foreach (var line in _lines)
                 {
-                    builder.Append(Lines[i].RawText);
+                    builder.Append(line.RawText);
                     builder.Append(Utilities.NewLine);
 
-                    if (Lines[i] is Node)
-                    {
-                        var node = Lines[i] as Node;
-                        recursivelyBuildLines(node.ChildLines, builder);
-                    }
+                    if (line is Node node)
+                        RecursivelyBuildLines(node.ChildLines, builder);
                 }
             }
+
+            string FinishSuccBuilder(StringBuilder builder)
+                => builder.ToString().TrimEnd('\n', '\r', ' ');
         }
 
         /// <summary>
         /// Parses a string of SUCC into a data structure
         /// </summary>
-        internal static (List<Line> topLevelLines, Dictionary<string, KeyNode> topLevelNodes) DataStructureFromSUCC(string input, ReadableDataFile fileRef)
-            => DataStructureFromSUCC(input.SplitIntoLines(), fileRef);
+        internal static (List<Line> topLevelLines, Dictionary<string, KeyNode> topLevelNodes) DataStructureFromSucc(string input, ReadableDataFile fileRef)
+            => DataStructureFromSucc(input.SplitIntoLines(), fileRef);
 
         /// <summary>
         /// Parses lines of SUCC into a data structure
         /// </summary>
-        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSUCC(string[] lines, ReadableDataFile fileRef) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
+        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSucc(string[] lines, ReadableDataFile fileRef) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
         {
             // If the file is empty
             // Do this because otherwise new files are created with a newline at the top

@@ -10,7 +10,8 @@
 * added `DistributedData` class, and many extension methods for it
 * added `DataFile.TryGet`
   * todo: document this, add non-generic version, add path based versions
-* added ReadableWritableDataFile.ResetToDefaultData()
+* added `ReadableWritableDataFile.ResetValueToDefault()`
+* added `ReadableWritableDataFile.ResetAllValuesToDefault()`
 * fixed default data path on Mac OS (Unity version)
 * added `ReadableDataFile.Identifier`
   * when creating a `MemoryDataFile`, you can now supply an identifier
