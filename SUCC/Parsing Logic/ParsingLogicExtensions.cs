@@ -44,6 +44,9 @@ namespace SUCC.InternalParsingLogic
             => p.GetMethod.IsPrivate || p.SetMethod.IsPrivate;
 
 
+        /// <summary>
+        /// Like C#'s `default` keyword, but it works on `Type` variables.
+        /// </summary>
         internal static object GetDefaultValue(this Type t)
         {
             if (t.IsValueType && Nullable.GetUnderlyingType(t) == null)
