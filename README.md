@@ -147,7 +147,7 @@ SUCC will check if a value called "weapons" exists in the file. If so, it will r
 
 Much more information about SUCC can be found on the [wiki](https://github.com/JimmyCushnie/SUCC/wiki). If you're new to SUCC, you probably want to see the [Installing](https://github.com/JimmyCushnie/SUCC/wiki/Installing) and [Getting Started](https://github.com/JimmyCushnie/SUCC/wiki/Getting-Started) pages.
 
-## SUCC in non-C# languages
+## SUCC in other languages
 
 Check out [SUCC4J](https://github.com/FalsePattern/Succ4J) by FalsePattern, a full port of SUCC to java!
 
