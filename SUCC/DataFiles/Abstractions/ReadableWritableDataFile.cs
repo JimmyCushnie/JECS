@@ -220,7 +220,7 @@ namespace SUCC.Abstractions
         /// <summary>
         /// Reset the file to the default data provided when it was created.
         /// </summary>
-        public void ResetAllValuesToDefault()
+        public void ResetToDefaultData()
         {
             SetSavedText(DefaultFileCache?.GetRawText() ?? string.Empty);
             ReloadAllData();

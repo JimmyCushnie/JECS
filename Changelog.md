@@ -11,7 +11,7 @@
 * added `DataFile.TryGet`
   * todo: document this, add non-generic version, add path based versions
 * added `ReadableWritableDataFile.ResetValueToDefault()`
-* added `ReadableWritableDataFile.ResetAllValuesToDefault()`
+* added `ReadableWritableDataFile.ResetToDefaultData()`
 * fixed default data path on Mac OS (Unity version)
 * added `ReadableDataFile.Identifier`
   * when creating a `MemoryDataFile`, you can now supply an identifier
