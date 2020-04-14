@@ -55,7 +55,7 @@ namespace SUCC.Abstractions
         public string GetRawText()
             => DataConverter.SuccFromDataStructure(TopLevelLines);
 
-        /// <summary> gets the data as it appears in file, as an array of strings (one for each line) </summary>
+        /// <summary> Gets the data as it appears in file, as an array of strings (one for each line) </summary>
         public string[] GetRawLines()
             => GetRawText().SplitIntoLines();
 

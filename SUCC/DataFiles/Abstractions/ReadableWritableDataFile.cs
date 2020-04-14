@@ -1,5 +1,6 @@
 ﻿using SUCC.InternalParsingLogic;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace SUCC.Abstractions
@@ -239,7 +240,7 @@ namespace SUCC.Abstractions
             }
 
             var defaultNode = DefaultFileCache.TopLevelNodes[key];
-            string defaultValueSucc = Utilities.NewLine + DataConverter.GetLineTextIncludingChildLines(defaultNode) + Utilities.NewLine;
+            string defaultValueSucc = DataConverter.GetLineTextIncludingChildLines(defaultNode);
 
             string fileText;
 
@@ -248,13 +249,18 @@ namespace SUCC.Abstractions
                 var node = TopLevelNodes[key];
                 node.ClearChildren();
 
-                // The previous line text should only occur once in the file, as SUCC files cannot have duplicate top-level keys
-                string previousLine = Utilities.NewLine + node.RawText + Utilities.NewLine;
-                fileText = this.GetRawText().Replace(previousLine, defaultValueSucc);
+                string previousLineTarget = node.RawText;
+
+                var lines = this.GetRawLines().ToList();
+                int index = lines.IndexOf(previousLineTarget);
+                lines[index] = defaultValueSucc;
+
+                fileText = String.Join(Utilities.NewLine, lines);
             }
             else
             {
                 fileText = this.GetRawText();
+                fileText += Utilities.NewLine;
                 fileText += defaultValueSucc;
             }
 
