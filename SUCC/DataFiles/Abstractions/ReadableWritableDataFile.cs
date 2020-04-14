@@ -23,23 +23,14 @@ namespace SUCC.Abstractions
         /// <summary> Save the file text to wherever you're storing it </summary>
         protected abstract void SetSavedText(string text);
 
-        /// <summary>
-        /// Reset the file to the default data provided when it was created.
-        /// </summary>
-        public void ResetToDefaultData()
-        {
-            SetSavedText(DefaultFileCache?.GetRawText() ?? string.Empty);
-            ReloadAllData();
-        }
-
         /// <summary> Serializes the data in this object to the file on disk. </summary>
         public void SaveAllData()
         {
-            string SUCC = GetRawText();
-            string ExistingSUCC = GetSavedText();
+            string newSUCC = GetRawText();
+            string existingSUCC = GetSavedText();
 
-            if (SUCC != ExistingSUCC)
-                SetSavedText(SUCC);
+            if (newSUCC != existingSUCC)
+                SetSavedText(newSUCC);
         }
 
         /// <summary> Get some data from the file, saving a new value if the data does not exist </summary>
@@ -222,6 +213,53 @@ namespace SUCC.Abstractions
 
             if (AutoSave)
                 SaveAllData();
+        }
+
+
+
+        /// <summary>
+        /// Reset the file to the default data provided when it was created.
+        /// </summary>
+        public void ResetAllValuesToDefault()
+        {
+            SetSavedText(DefaultFileCache?.GetRawText() ?? string.Empty);
+            ReloadAllData();
+        }
+
+        /// <summary>
+        /// Reset a value within the file to the default data provided when it was created.
+        /// </summary>
+        // Todo: make a version of this with nested paths
+        public void ResetValueToDefault(string key)
+        {
+            if (!DefaultFileCache.KeyExists(key))
+            {
+                this.DeleteKey(key);
+                return;
+            }
+
+            var defaultNode = DefaultFileCache.TopLevelNodes[key];
+            string defaultValueSucc = Utilities.NewLine + DataConverter.GetLineTextIncludingChildLines(defaultNode) + Utilities.NewLine;
+
+            string fileText;
+
+            if (this.KeyExists(key))
+            {
+                var node = TopLevelNodes[key];
+                node.ClearChildren();
+
+                // The previous line text should only occur once in the file, as SUCC files cannot have duplicate top-level keys
+                string previousLine = Utilities.NewLine + node.RawText + Utilities.NewLine;
+                fileText = this.GetRawText().Replace(previousLine, defaultValueSucc);
+            }
+            else
+            {
+                fileText = this.GetRawText();
+                fileText += defaultValueSucc;
+            }
+
+            this.SetSavedText(fileText);
+            this.ReloadAllData();
         }
     }
 }

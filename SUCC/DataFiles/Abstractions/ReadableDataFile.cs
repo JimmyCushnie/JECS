@@ -18,7 +18,9 @@ namespace SUCC.Abstractions
         /// </summary>
         public abstract string Identifier { get; }
 
-        // When a default value is not supplied, we search for it in this.
+        /// <summary>
+        /// When a default value is not supplied in Get, we search for it in this.
+        /// </summary>
         protected MemoryReadOnlyDataFile DefaultFileCache { get; }
 
         public ReadableDataFile(string defaultFileText = null)
@@ -39,7 +41,7 @@ namespace SUCC.Abstractions
             {
                 string succ = GetSavedText();
 
-                var data = DataConverter.DataStructureFromSUCC(succ, this);
+                var data = DataConverter.DataStructureFromSucc(succ, this);
                 TopLevelLines = data.topLevelLines;
                 TopLevelNodes = data.topLevelNodes;
             }
@@ -49,15 +51,15 @@ namespace SUCC.Abstractions
             }
         }
 
-        /// <summary> gets the data as it appears in file </summary>
+        /// <summary> Gets the data as it appears in file </summary>
         public string GetRawText()
-            => DataConverter.SUCCFromDataStructure(TopLevelLines);
+            => DataConverter.SuccFromDataStructure(TopLevelLines);
 
         /// <summary> gets the data as it appears in file, as an array of strings (one for each line) </summary>
         public string[] GetRawLines()
             => GetRawText().SplitIntoLines();
 
-        /// <summary> returns all top level keys in the file, in the order they appear in the file. </summary>
+        /// <summary> Returns all top level keys in the file, in the order they appear in the file. </summary>
         public string[] GetTopLevelKeysInOrder()
         {
             var keys = new string[TopLevelNodes.Count];
@@ -74,15 +76,15 @@ namespace SUCC.Abstractions
             return keys;
         }
 
-        /// <summary> this is faster than GetTopLevelKeysInOrder() but the keys may not be in the order they appear in the file </summary>
+        /// <summary> This is faster than GetTopLevelKeysInOrder() but the keys may not be in the order they appear in the file </summary>
         public IReadOnlyCollection<string> TopLevelKeys
             => TopLevelNodes.Keys;
 
-        /// <summary> whether a top-level key exists in the file </summary>
+        /// <summary> Whether a top-level key exists in the file </summary>
         public bool KeyExists(string key)
             => TopLevelNodes.ContainsKey(key);
 
-        /// <summary> whether a key exists in the file at a nested path </summary>
+        /// <summary> Whether a key exists in the file at a nested path </summary>
         public bool KeyExistsAtPath(params string[] path)
         {
             if (path.Length < 1)
