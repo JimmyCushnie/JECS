@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/JimmyCushnie/SUCC/master/Succ_Logo_nosubtitle.png" width = 480>
 
-Sexy and Utilitarian C# Configuration  
+Sexy and Utilitarian Code Configuration  
 Created by Jimmy Cushnie
 
 ---
