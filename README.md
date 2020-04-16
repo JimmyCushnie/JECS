@@ -147,8 +147,10 @@ SUCC will check if a value called "weapons" exists in the file. If so, it will r
 
 Much more information about SUCC can be found on the [wiki](https://github.com/JimmyCushnie/SUCC/wiki). If you're new to SUCC, you probably want to see the [Installing](https://github.com/JimmyCushnie/SUCC/wiki/Installing) and [Getting Started](https://github.com/JimmyCushnie/SUCC/wiki/Getting-Started) pages.
 
-## SUCC in other languages
+## Related Projects
 
 Check out [SUCC4J](https://github.com/FalsePattern/Succ4J) by FalsePattern, a full port of SUCC to java!
 
 There are also ongoing projects to port SUCC to [Rust](https://github.com/DoctorVWA/rust-succ) and [node.js](https://github.com/DoctorVWA/node-succ).
+
+[Sublime SUCC](https://github.com/pipe01/Sublime-SUCC) by pipe01 is provides syntax highlighting for SUCC files in Sublime Text 3.
