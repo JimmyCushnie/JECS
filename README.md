@@ -153,4 +153,4 @@ Check out [SUCC4J](https://github.com/FalsePattern/Succ4J) by FalsePattern, a fu
 
 There are also ongoing projects to port SUCC to [Rust](https://github.com/DoctorVWA/rust-succ) and [node.js](https://github.com/DoctorVWA/node-succ).
 
-[Sublime SUCC](https://github.com/pipe01/Sublime-SUCC) by pipe01 is provides syntax highlighting for SUCC files in Sublime Text 3.
+[Sublime SUCC](https://github.com/pipe01/Sublime-SUCC) by pipe01 provides syntax highlighting for SUCC files in Sublime Text 3.
