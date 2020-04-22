@@ -1,7 +1,7 @@
 ﻿using SUCC.Abstractions;
 using System;
 
-namespace SUCC.InternalParsingLogic
+namespace SUCC.ParsingLogic
 {
     /// <summary>
     /// Represents a line of text in a SUCC file that contains data addressed by key.

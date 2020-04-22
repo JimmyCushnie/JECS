@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace SUCC.InternalParsingLogic
+namespace SUCC.ParsingLogic
 {
     internal static class ParsingLogicExtensions
     {

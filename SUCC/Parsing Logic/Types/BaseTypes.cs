@@ -1,4 +1,4 @@
-﻿using SUCC.InternalParsingLogic;
+﻿using SUCC.ParsingLogic;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

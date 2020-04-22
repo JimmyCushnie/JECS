@@ -1,4 +1,4 @@
-﻿using SUCC.InternalParsingLogic;
+﻿using SUCC.ParsingLogic;
 using System;
 using System.IO;
 using System.Linq;

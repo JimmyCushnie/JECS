@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace SUCC.InternalParsingLogic
+namespace SUCC.ParsingLogic
 {
     internal static class ComplexTypes
     {
