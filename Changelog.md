@@ -15,6 +15,7 @@
 * fixed default data path on Mac OS (Unity version)
 * added `ReadableDataFile.Identifier`
   * when creating a `MemoryDataFile`, you can now supply an identifier
+* You can now override the serialization rules for types in assemblies you don't control (#15)
 
 todo update the docs for 1.2
 
