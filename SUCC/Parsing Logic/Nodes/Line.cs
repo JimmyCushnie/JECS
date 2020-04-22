@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SUCC.InternalParsingLogic
+namespace SUCC.ParsingLogic
 {
     /// <summary>
     /// Represents a single line of text in a SUCC file.

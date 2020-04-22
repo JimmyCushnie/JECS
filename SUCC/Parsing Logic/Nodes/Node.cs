@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SUCC.InternalParsingLogic
+namespace SUCC.ParsingLogic
 {
     internal enum NodeChildrenType { none, list, key, multiLineString }
 

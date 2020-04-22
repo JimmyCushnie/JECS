@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace SUCC.InternalParsingLogic
+namespace SUCC.ParsingLogic
 {
     internal static class ComplexTypes
     {
@@ -60,7 +60,8 @@ namespace SUCC.InternalParsingLogic
             {
                 if (f.IsInitOnly || f.IsLiteral) continue;
                 if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
-                if (f.IsPrivate && !Attribute.IsDefined(f, typeof(DoSaveAttribute))) continue;
+                if (ComplexTypeOverrides.IsNeverSaved(f)) continue;
+                if (f.IsPrivate && !Attribute.IsDefined(f, typeof(DoSaveAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(f)) continue;
 
                 validFields.Add(f);
             }
@@ -77,7 +78,8 @@ namespace SUCC.InternalParsingLogic
             {
                 if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
                 if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
-                if (p.GetOrSetIsPrivate() && !Attribute.IsDefined(p, typeof(DoSaveAttribute))) continue;
+                if (ComplexTypeOverrides.IsNeverSaved(p)) continue;
+                if (p.GetOrSetIsPrivate() && !Attribute.IsDefined(p, typeof(DoSaveAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(p)) continue;
 
                 validProperties.Add(p);
             }

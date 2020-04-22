@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SUCC.InternalParsingLogic
+namespace SUCC.ParsingLogic
 {
     internal static class DataConverter
     {

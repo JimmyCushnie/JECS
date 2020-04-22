@@ -1,5 +1,5 @@
 ﻿using SUCC.Abstractions;
-using SUCC.InternalParsingLogic;
+using SUCC.ParsingLogic;
 using System;
 using System.Linq;
 using System.Collections.Generic;

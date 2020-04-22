@@ -1,6 +1,6 @@
 ﻿using SUCC.Abstractions;
 
-namespace SUCC.InternalParsingLogic
+namespace SUCC.ParsingLogic
 {
     /// <summary>
     /// Represents a line of text in a SUCC file that contains part of a multi-line string.
