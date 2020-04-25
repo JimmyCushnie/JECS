@@ -36,15 +36,12 @@ namespace SUCC
 
             if (!Utilities.SuccFileExists(path))
             {
+                Directory.CreateDirectory(new FileInfo(path).Directory.FullName);
+
                 if (defaultFileText == null)
-                {
-                    Directory.CreateDirectory(new FileInfo(path).Directory.FullName);
                     File.Create(path).Close(); // create empty file on disk
-                }
                 else
-                {
                     File.WriteAllText(path, defaultFileText);
-                }
             }
 
             this.ReloadAllData();
