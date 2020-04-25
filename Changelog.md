@@ -16,6 +16,7 @@
 * added `ReadableDataFile.Identifier`
   * when creating a `MemoryDataFile`, you can now supply an identifier
 * You can now override the serialization rules for types in assemblies you don't control (#15)
+* fixed exception when creating a new DataFile with default text in a non-existent directory
 
 todo update the docs for 1.2
 
