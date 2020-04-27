@@ -12,16 +12,10 @@ namespace SUCC.ParsingLogic
             if (!string.IsNullOrEmpty(node.Value))
                 node.Value = "";
 
-            foreach (var f in GetValidFields(type))
+            foreach (var m in type.GetValidMembers())
             {
-                var child = node.GetChildAddressedByName(f.Name);
-                NodeManager.SetNodeData(child, f.GetValue(item), f.FieldType, style);
-            }
-
-            foreach (var p in GetValidProperties(type))
-            {
-                var child = node.GetChildAddressedByName(p.Name);
-                NodeManager.SetNodeData(child, p.GetValue(item), p.PropertyType, style);
+                var child = node.GetChildAddressedByName(m.Name);
+                NodeManager.SetNodeData(child, m.GetValue(item), m.MemberType, style);
             }
         }
 
@@ -29,62 +23,39 @@ namespace SUCC.ParsingLogic
         {
             object returnThis = Activator.CreateInstance(type);
 
-            foreach (var f in GetValidFields(type))
+            foreach (var m in type.GetValidMembers())
             {
-                if (!node.ContainsChildNode(f.Name)) continue;
+                if (!node.ContainsChildNode(m.Name)) continue;
 
-                var child = node.GetChildAddressedByName(f.Name);
-                object data = NodeManager.GetNodeData(child, f.FieldType);
-                f.SetValue(returnThis, data);
-            }
-
-            foreach (var p in GetValidProperties(type))
-            {
-                if (!node.ContainsChildNode(p.Name)) continue;
-
-                var child = node.GetChildAddressedByName(p.Name);
-                object data = NodeManager.GetNodeData(child, p.PropertyType);
-                p.SetValue(returnThis, data);
+                var child = node.GetChildAddressedByName(m.Name);
+                object data = NodeManager.GetNodeData(child, m.MemberType);
+                m.SetValue(returnThis, data);
             }
 
             return returnThis;
         }
 
-
-        internal static List<FieldInfo> GetValidFields(this Type type)
+        internal static IEnumerable<ClassMember> GetValidMembers(this Type type)
         {
-            var validFields = new List<FieldInfo>();
-
-            var allFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            foreach (var f in allFields)
+            foreach (var f in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
                 if (f.IsInitOnly || f.IsLiteral) continue;
                 if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
                 if (ComplexTypeOverrides.IsNeverSaved(f)) continue;
                 if (f.IsPrivate && !Attribute.IsDefined(f, typeof(DoSaveAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(f)) continue;
 
-                validFields.Add(f);
+                yield return f;
             }
 
-            return validFields;
-        }
-
-        internal static List<PropertyInfo> GetValidProperties(this Type type)
-        {
-            var validProperties = new List<PropertyInfo>();
-
-            var allProperties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            foreach (var p in allProperties)
+            foreach (var p in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
                 if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
                 if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
                 if (ComplexTypeOverrides.IsNeverSaved(p)) continue;
                 if (p.GetOrSetIsPrivate() && !Attribute.IsDefined(p, typeof(DoSaveAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(p)) continue;
 
-                validProperties.Add(p);
+                yield return p;
             }
-
-            return validProperties;
         }
     }
 }

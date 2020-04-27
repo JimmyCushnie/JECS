@@ -163,11 +163,8 @@ namespace SUCC.Abstractions
 
             try
             {
-                foreach (var f in ComplexTypes.GetValidFields(type))
-                    SetNonGeneric(f.FieldType, f.Name, f.GetValue(savethis));
-
-                foreach (var p in ComplexTypes.GetValidProperties(type))
-                    SetNonGeneric(p.PropertyType, p.Name, p.GetValue(savethis));
+                foreach (var f in type.GetValidMembers())
+                    SetNonGeneric(f.MemberType, f.Name, f.GetValue(savethis));
             }
             finally
             {
