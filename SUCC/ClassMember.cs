@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace SUCC
 {
-    internal class ClassMember
+    internal sealed class ClassMember
     {
         public string Name { get; }
         public Type MemberType { get; }
