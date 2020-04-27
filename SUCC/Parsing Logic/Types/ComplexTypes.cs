@@ -37,6 +37,8 @@ namespace SUCC.ParsingLogic
 
         internal static IEnumerable<ClassMember> GetValidMembers(this Type type)
         {
+            var members = new List<ClassMember>();
+
             foreach (var f in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
                 if (f.IsInitOnly || f.IsLiteral) continue;
@@ -44,7 +46,7 @@ namespace SUCC.ParsingLogic
                 if (ComplexTypeOverrides.IsNeverSaved(f)) continue;
                 if (f.IsPrivate && !Attribute.IsDefined(f, typeof(DoSaveAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(f)) continue;
 
-                yield return f;
+                members.Add(f);
             }
 
             foreach (var p in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
@@ -54,8 +56,21 @@ namespace SUCC.ParsingLogic
                 if (ComplexTypeOverrides.IsNeverSaved(p)) continue;
                 if (p.GetOrSetIsPrivate() && !Attribute.IsDefined(p, typeof(DoSaveAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(p)) continue;
 
-                yield return p;
+                members.Add(p);
             }
+
+            for (int i = 0; i < members.Count; i++)
+            {
+                var m = members[i];
+
+                var attr = m.Member.GetCustomAttribute<DoSaveAttribute>();
+                if (attr?.Name != null)
+                {
+                    members[i] = m.WithName(attr.Name);
+                }
+            }
+
+            return members;
         }
     }
 }
