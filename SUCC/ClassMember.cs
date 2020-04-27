@@ -13,7 +13,7 @@ namespace SUCC
         {
             this.Member = member;
             this.MemberType = memberType;
-            this.Name = name ?? memberType.Name;
+            this.Name = name ?? member.Name;
         }
 
         public object GetValue(object obj)
