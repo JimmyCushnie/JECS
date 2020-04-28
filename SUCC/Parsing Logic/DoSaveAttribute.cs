@@ -8,6 +8,9 @@ namespace SUCC
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
     public class DoSaveAttribute : Attribute
     {
+        /// <summary>
+        /// Optional: save this member with a custom name.
+        /// </summary>
         public string SaveAs { get; set; }
     }
 }
