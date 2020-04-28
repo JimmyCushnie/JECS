@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace SUCC
+namespace SUCC.ParsingLogic
 {
     internal sealed class ClassMember
     {
