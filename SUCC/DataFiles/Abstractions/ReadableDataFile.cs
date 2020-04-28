@@ -201,10 +201,10 @@ namespace SUCC.Abstractions
         {
             object returnThis = Activator.CreateInstance(type);
 
-            foreach (var f in type.GetValidMembers())
+            foreach (var m in type.GetValidMembers())
             {
-                var value = GetNonGeneric(f.MemberType, f.Name, f.GetValue(returnThis));
-                f.SetValue(returnThis, value);
+                var value = GetNonGeneric(m.MemberType, m.Name, m.GetValue(returnThis));
+                m.SetValue(returnThis, value);
             }
 
             return returnThis;
