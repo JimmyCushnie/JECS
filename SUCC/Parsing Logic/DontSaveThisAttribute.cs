@@ -6,5 +6,7 @@ namespace SUCC
     /// Public fields and properties with this attribute will NOT be saved and loaded by SUCC.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
-    public class DontSaveAttribute : Attribute { }
+    public class DontSaveThisAttribute : Attribute 
+    { 
+    }
 }

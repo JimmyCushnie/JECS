@@ -5,8 +5,8 @@ namespace SUCC.Tests
     public class ComplexType
     {
         public int Integer;
-        [DoSave] private string String;
-        [DoSave] public bool Boolean { get; private set; }
+        [SaveThis] private string String;
+        [SaveThis] public bool Boolean { get; private set; }
 
         // parameterless constructor required for reflection
         public ComplexType() { }

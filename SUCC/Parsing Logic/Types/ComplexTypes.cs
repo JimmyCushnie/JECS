@@ -42,9 +42,9 @@ namespace SUCC.ParsingLogic
             foreach (var f in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
                 if (f.IsInitOnly || f.IsLiteral) continue;
-                if (Attribute.IsDefined(f, typeof(DontSaveAttribute))) continue;
+                if (Attribute.IsDefined(f, typeof(DontSaveThisAttribute))) continue;
                 if (ComplexTypeOverrides.IsNeverSaved(f)) continue;
-                if (f.IsPrivate && !Attribute.IsDefined(f, typeof(DoSaveAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(f)) continue;
+                if (f.IsPrivate && !Attribute.IsDefined(f, typeof(SaveThisAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(f)) continue;
 
                 members.Add(f);
             }
@@ -52,9 +52,9 @@ namespace SUCC.ParsingLogic
             foreach (var p in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
                 if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
-                if (Attribute.IsDefined(p, typeof(DontSaveAttribute))) continue;
+                if (Attribute.IsDefined(p, typeof(DontSaveThisAttribute))) continue;
                 if (ComplexTypeOverrides.IsNeverSaved(p)) continue;
-                if (p.GetOrSetIsPrivate() && !Attribute.IsDefined(p, typeof(DoSaveAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(p)) continue;
+                if (p.GetOrSetIsPrivate() && !Attribute.IsDefined(p, typeof(SaveThisAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(p)) continue;
 
                 members.Add(p);
             }
@@ -63,7 +63,7 @@ namespace SUCC.ParsingLogic
             {
                 var m = members[i];
 
-                var attr = m.Member.GetCustomAttribute<DoSaveAttribute>();
+                var attr = m.Member.GetCustomAttribute<SaveThisAttribute>();
                 if (attr?.SaveAs != null)
                 {
                     members[i] = m.WithName(attr.SaveAs);
