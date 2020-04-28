@@ -201,16 +201,10 @@ namespace SUCC.Abstractions
         {
             object returnThis = Activator.CreateInstance(type);
 
-            foreach (var f in ComplexTypes.GetValidFields(type))
+            foreach (var m in type.GetValidMembers())
             {
-                var value = GetNonGeneric(f.FieldType, f.Name, f.GetValue(returnThis));
-                f.SetValue(returnThis, value);
-            }
-
-            foreach (var p in ComplexTypes.GetValidProperties(type))
-            {
-                var value = GetNonGeneric(p.PropertyType, p.Name, p.GetValue(returnThis));
-                p.SetValue(returnThis, value);
+                var value = GetNonGeneric(m.MemberType, m.Name, m.GetValue(returnThis));
+                m.SetValue(returnThis, value);
             }
 
             return returnThis;

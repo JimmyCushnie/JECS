@@ -149,8 +149,16 @@ Much more information about SUCC can be found on the [wiki](https://github.com/J
 
 ## Related Projects
 
+#### In C#
+
+[InterSUCC](https://github.com/JimmyCushnie/InterSUCC) is an extension for SUCC that lets you create SUCC DataFiles which implement an interface type. Getting and setting the properties of those interfaces gets and sets the values in the DataFiles.
+
+#### SUCC in Other Languages
+
 Check out [SUCC4J](https://github.com/FalsePattern/Succ4J) by FalsePattern, a full port of SUCC to java!
 
 There are also ongoing projects to port SUCC to [Rust](https://github.com/DoctorVWA/rust-succ) and [node.js](https://github.com/DoctorVWA/node-succ).
+
+#### SUCC Utilities
 
 [Sublime SUCC](https://github.com/pipe01/Sublime-SUCC) by pipe01 provides syntax highlighting for SUCC files in Sublime Text 3.

@@ -6,7 +6,7 @@ namespace SUCC.ParsingLogic
 {
     /// <summary>
     /// Allows you to set the serialization rules for types in assemblies you don't control.
-    /// For types that you can edit, you should use <see cref="DontSaveAttribute"/> and <see cref="DoSaveAttribute"/>.
+    /// For types that you can edit, you should use <see cref="DontSaveThisAttribute"/> and <see cref="SaveThisAttribute"/>.
     /// </summary>
     public static class ComplexTypeOverrides
     {
