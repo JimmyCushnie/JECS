@@ -8,15 +8,6 @@ namespace SUCC
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
     public class DoSaveAttribute : Attribute
     {
-        public string Name { get; }
-
-        public DoSaveAttribute()
-        {
-        }
-
-        public DoSaveAttribute(string name)
-        {
-            this.Name = name ?? throw new ArgumentNullException(nameof(name));
-        }
+        public string SaveAs { get; set; }
     }
 }

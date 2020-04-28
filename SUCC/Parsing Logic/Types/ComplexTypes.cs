@@ -64,9 +64,9 @@ namespace SUCC.ParsingLogic
                 var m = members[i];
 
                 var attr = m.Member.GetCustomAttribute<DoSaveAttribute>();
-                if (attr?.Name != null)
+                if (attr?.SaveAs != null)
                 {
-                    members[i] = m.WithName(attr.Name);
+                    members[i] = m.WithName(attr.SaveAs);
                 }
             }
 
