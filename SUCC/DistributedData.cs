@@ -43,7 +43,10 @@ namespace SUCC
         /// <param name="searchOption">How to search the directory."/></param>
         /// <returns></returns>
         public static DistributedData CreateBySearching(string path, string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
-            => CreateBySearching(new DirectoryInfo(path), searchPattern, searchOption);
+        {
+            path = Utilities.AbsolutePath(path);
+            return CreateBySearching(new DirectoryInfo(path), searchPattern, searchOption);
+        }
 
         /// <summary>
         /// Creates a new <see cref="DistributedData"/> by searching a folder for matching SUCC files.
