@@ -68,8 +68,8 @@ namespace SUCC.Abstractions
         /// <param name="value"> the value to save </param>
         public void SetNonGeneric(Type type, string key, object value)
         {
-            if (value != null && value.GetType() != type)
-                throw new InvalidCastException($"{value} is not of type {type}!");
+            if (value != null && !type.IsAssignableFrom(value.GetType()))
+                throw new InvalidCastException($"Expected type {type}, but the object is of type {value.GetType()}");
 
             if (!KeyExists(key))
             {
@@ -110,8 +110,8 @@ namespace SUCC.Abstractions
         /// <summary> Non-generic version of SetAtPath. You probably want to use SetAtPath. </summary>
         public void SetAtPathNonGeneric(Type type, object value, params string[] path)
         {
-            if (value != null && value.GetType() != type)
-                throw new InvalidCastException($"{nameof(value)} is not of type {type}!");
+            if (value != null && !type.IsAssignableFrom(value.GetType()))
+                throw new InvalidCastException($"{nameof(type)} must be assignable from the type of {nameof(value)}");
 
             if (path.Length < 1)
                 throw new ArgumentException($"{nameof(path)} must have a length greater than 0");
