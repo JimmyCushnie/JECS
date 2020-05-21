@@ -163,8 +163,8 @@ namespace SUCC.Abstractions
         /// </summary>
         public virtual object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path)
         {
-            if (defaultValue != null && defaultValue.GetType() != type)
-                throw new Exception($"{nameof(defaultValue)} is not of type {type}!");
+            if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))
+                throw new InvalidCastException($"Expected type {type}, but the object is of type {defaultValue.GetType()}");
 
             if (!KeyExistsAtPath(path))
                 return defaultValue;

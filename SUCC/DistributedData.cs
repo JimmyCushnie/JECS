@@ -140,8 +140,8 @@ namespace SUCC
         /// <param name="defaultValue"> If the key does not exist in the file, this value is returned instead. </param>
         public object GetNonGeneric(Type type, string key, object defaultValue)
         {
-            if (defaultValue != null && defaultValue.GetType() != type)
-                throw new Exception($"{nameof(type)} must match {nameof(defaultValue)}");
+            if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))
+                throw new InvalidCastException($"{nameof(type)} must be assignable from the type of {nameof(defaultValue)}");
 
             foreach (var file in DataSources)
             {
@@ -164,8 +164,8 @@ namespace SUCC
         /// <summary> Like <see cref="GetNonGeneric(Type, string, object)"/>, but but works for nested paths instead of just the top level of the files. </summary>
         public object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path)
         {
-            if (defaultValue != null && defaultValue.GetType() != type)
-                throw new Exception($"{nameof(type)} must match {nameof(defaultValue)}");
+            if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))
+                throw new InvalidCastException($"{nameof(type)} must be assignable from the type of {nameof(defaultValue)}");
 
             foreach (var file in DataSources)
             {

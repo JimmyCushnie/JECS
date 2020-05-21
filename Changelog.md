@@ -18,6 +18,7 @@
 * You can now override the serialization rules for types in assemblies you don't control (#15)
 * Renamed `[DoSave]` and `[DontSave]` to `[SaveThis]` and `[DontSaveThis]`
 * `[SaveThis]` can now be used to save members with a custom name (#27 -- thanks, pipe01!)
+* Improved type handling: non-generic methods now work properly when the given value is of a type derived from the given type
 * general code cleanup
 * fixed exception when creating a new DataFile with default text in a non-existent directory
 
