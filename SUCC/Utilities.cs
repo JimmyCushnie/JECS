@@ -37,21 +37,32 @@ namespace SUCC
         /// <summary> detects whether a file path is relative or absolute, and returns the absolute path </summary>
         public static string AbsolutePath(string relativeOrAbsolutePath)
         {
-            if (Path.IsPathRooted(relativeOrAbsolutePath)) return relativeOrAbsolutePath;
-            else if (DefaultPath == null)
-                throw new InvalidOperationException($"You can't use relative paths unless you've set a DefaultPath. Path {relativeOrAbsolutePath} was not absolute");
+            if (Path.IsPathRooted(relativeOrAbsolutePath)) 
+                return relativeOrAbsolutePath;
+
+            if (DefaultPath == null)
+                throw new InvalidOperationException($"You can't use relative paths unless you've set a {nameof(DefaultPath)}. Path {relativeOrAbsolutePath} was not absolute.");
 
             return Path.Combine(DefaultPath, relativeOrAbsolutePath);
+        }
+
+        /// <summary> Takes a path and turns it into the path of a SUCC file, with extension. </summary>
+        public static string AbsoluteSuccPath(string relativeOrAbsolutePath)
+        {
+            var path = AbsolutePath(relativeOrAbsolutePath);
+            if (Path.HasExtension(path) && Path.GetExtension(path).Equals(FileExtension, StringComparison.OrdinalIgnoreCase))
+                return path;
+
+            return path + FileExtension;
         }
 
         /// <summary> Does a SUCC file exist at the path? </summary>
         public static bool SuccFileExists(string relativeOrAbsolutePath)
         {
-            var path = AbsolutePath(relativeOrAbsolutePath);
-            path = Path.ChangeExtension(path, FileExtension);
-
+            var path = AbsoluteSuccPath(relativeOrAbsolutePath);
             return File.Exists(path);
         }
+
 
         internal static bool IsValidKey(string potentialKey) => IsValidKey(potentialKey, out _);
         internal static bool IsValidKey(string potentialKey, out string whyNot)

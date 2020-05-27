@@ -16,8 +16,7 @@ namespace SUCC
         /// <param name="defaultFileText"> If there isn't already a file at the path, one can be created from the text supplied here. </param>
         public DataFile(string path, string defaultFileText = null) : base(defaultFileText)
         {
-            path = Utilities.AbsolutePath(path);
-            path = Path.ChangeExtension(path, Utilities.FileExtension);
+            path = Utilities.AbsoluteSuccPath(path);
             this.FilePath = path;
 
             if (!Utilities.SuccFileExists(path))
