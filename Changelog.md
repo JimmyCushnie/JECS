@@ -20,6 +20,7 @@
 * `[SaveThis]` can now be used to save members with a custom name (#27 -- thanks, pipe01!)
 * Improved type handling: non-generic methods now work properly when the given value is of a type derived from the given type
 * general code cleanup
+* Official support for .NET Core 3.1
 * fixed exception when creating a new DataFile with default text in a non-existent directory
 
 todo update the docs for 1.2
