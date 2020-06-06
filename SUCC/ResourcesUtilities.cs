@@ -8,18 +8,11 @@ namespace SUCC.UnityStuff
         public static string ReadTextFromFile(string filePath)
         {
             var textAsset = Resources.Load<TextAsset>(filePath);
-
-            string text = string.Empty;
-
             if (textAsset == null)
-            {
-                Debug.LogWarning($"The specified file path ({filePath}) is invalid. Your DataFile will be created with empty default text.");
-            }
-            else
-            {
-                text = textAsset.text;
-                Resources.UnloadAsset(textAsset);
-            }
+                throw new Exception("The default file you specified doesn't exist in Resources :(");
+
+            var text = textAsset.text;
+            Resources.UnloadAsset(textAsset);
 
             return text;
         }
