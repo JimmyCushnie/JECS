@@ -236,22 +236,28 @@ namespace SUCC
 
         private static string SerializeInt(object value)
         {
-            return value.ToString();
+            var i = (int)value;
+            return i.ToString(NumberFormatInfo.InvariantInfo);
         }
 
-        // this lets us use decimal places instead of scientific notation. Yes, it's horrible.
-        // see https://docs.microsoft.com/en-us/dotnet/api/system.single.tostring?view=netframework-4.7.2#System_Single_ToString_System_String_
+        // This lets us use decimal places instead of scientific notation. Yes, it's horrible.
+        // See https://docs.microsoft.com/en-us/dotnet/api/system.single.tostring?view=netframework-4.7.2#System_Single_ToString_System_String_
         private const string DoublePrecision = "0.#####################################################################################################################################################################################################################################################################################################################################";
 
         private static string SerializeFloat(object value)
         {
             var f = (float)value;
 
-            if (float.IsPositiveInfinity(f)) return "infinity";
-            if (float.IsNegativeInfinity(f)) return "-infinity";
-            if (float.IsNaN(f)) return "nan";
+            if (float.IsPositiveInfinity(f)) 
+                return "infinity";
 
-            return f.ToString(DoublePrecision);
+            if (float.IsNegativeInfinity(f)) 
+                return "-infinity";
+
+            if (float.IsNaN(f)) 
+                return "nan";
+
+            return f.ToString(DoublePrecision, NumberFormatInfo.InvariantInfo);
         }
         private static string SerializeDouble(object value)
         {
@@ -261,22 +267,23 @@ namespace SUCC
             if (double.IsNegativeInfinity(d)) return "-infinity";
             if (double.IsNaN(d)) return "nan";
 
-            return d.ToString(DoublePrecision);
+            return d.ToString(DoublePrecision, NumberFormatInfo.InvariantInfo);
         }
         private static string SerializeDecimal(object value)
         {
-            return value.ToString();
+            var d = (decimal)value;
+            return d.ToString(NumberFormatInfo.InvariantInfo);
         }
 
-        // all the annoying variations of the "number" object... I really wish they'd implement an IParsable interface or something
-        private static object ParseInt(string text)     => int.Parse(text);
-        private static object ParseLong(string text)    => long.Parse(text);
-        private static object ParseShort(string text)   => short.Parse(text);
-        private static object ParseUint(string text)    => uint.Parse(text);
-        private static object ParseUlong(string text)   => ulong.Parse(text);
-        private static object ParseUshort(string text)  => ushort.Parse(text);
-        private static object ParseByte(string text)    => byte.Parse(text);
-        private static object ParseSbyte(string text)   => sbyte.Parse(text);
+        // All the annoying variations of the "number" object... I really wish they'd implement an IParsable interface or something
+        private static object ParseInt(string text)     => int.Parse(text, NumberFormatInfo.InvariantInfo);
+        private static object ParseLong(string text)    => long.Parse(text, NumberFormatInfo.InvariantInfo);
+        private static object ParseShort(string text)   => short.Parse(text, NumberFormatInfo.InvariantInfo);
+        private static object ParseUint(string text)    => uint.Parse(text, NumberFormatInfo.InvariantInfo);
+        private static object ParseUlong(string text)   => ulong.Parse(text, NumberFormatInfo.InvariantInfo);
+        private static object ParseUshort(string text)  => ushort.Parse(text, NumberFormatInfo.InvariantInfo);
+        private static object ParseByte(string text)    => byte.Parse(text, NumberFormatInfo.InvariantInfo);
+        private static object ParseSbyte(string text)   => sbyte.Parse(text, NumberFormatInfo.InvariantInfo);
 
         private static object ParseFloat(string text)   => ParseFloatWithRationalSupport(text, float.Parse,       (float a, float b) => a / b);
         private static object ParseDouble(string text)  => ParseFloatWithRationalSupport(text, double.Parse,    (double a, double b) => a / b);
@@ -284,7 +291,7 @@ namespace SUCC
 
         private static T ParseFloatWithRationalSupport<T>(string text, Func<string, IFormatProvider, T> parseMethod, Func<T, T, T> divideMethod)
         {
-            // we only really needed to support one /, but honestly supporting infinity of them is easier.
+            // We only really needed to support one /, but honestly supporting infinity of them is easier.
             if (text.Contains('/'))
             {
                 var numbers = text.Split('/').Select(parse).ToArray();

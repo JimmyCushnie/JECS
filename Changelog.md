@@ -24,6 +24,7 @@
 * Official support for .NET Core 3.1
 * fixed exception when creating a new DataFile with default text in a non-existent directory
 * fixed improper file names when attempting to create a DataFile with `.` in the path
+* Fixed numbers with decimal places using `,` instead of `.` on systems set to European standards
 
 todo update the docs for 1.2
 
