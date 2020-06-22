@@ -98,13 +98,13 @@ namespace SUCC
         {
             // Integer types
             [typeof(int)] = SerializeInt,
-            [typeof(long)] = SerializeInt,
-            [typeof(short)] = SerializeInt,
-            [typeof(uint)] = SerializeInt,
-            [typeof(ulong)] = SerializeInt,
-            [typeof(ushort)] = SerializeInt,
-            [typeof(byte)] = SerializeInt,
-            [typeof(sbyte)] = SerializeInt,
+            [typeof(long)] = SerializeLong,
+            [typeof(short)] = SerializeShort,
+            [typeof(uint)] = SerializeUint,
+            [typeof(ulong)] = SerializeUlong,
+            [typeof(ushort)] = SerializeUshort,
+            [typeof(byte)] = SerializeByte,
+            [typeof(sbyte)] = SerializeSbyte,
 
             // Floating point types
             [typeof(float)] = SerializeFloat,
@@ -234,11 +234,14 @@ namespace SUCC
             return text;
         }
 
-        private static string SerializeInt(object value)
-        {
-            var i = (int)value;
-            return i.ToString(NumberFormatInfo.InvariantInfo);
-        }
+        private static string SerializeInt(object value)    => ((int)value).ToString(NumberFormatInfo.InvariantInfo);
+        private static string SerializeLong(object value)   => ((long)value).ToString(NumberFormatInfo.InvariantInfo);
+        private static string SerializeShort(object value)  => ((short)value).ToString(NumberFormatInfo.InvariantInfo);
+        private static string SerializeUint(object value)   => ((uint)value).ToString(NumberFormatInfo.InvariantInfo);
+        private static string SerializeUlong(object value)  => ((ulong)value).ToString(NumberFormatInfo.InvariantInfo);
+        private static string SerializeUshort(object value) => ((ushort)value).ToString(NumberFormatInfo.InvariantInfo);
+        private static string SerializeByte(object value)   => ((byte)value).ToString(NumberFormatInfo.InvariantInfo);
+        private static string SerializeSbyte(object value)  => ((sbyte)value).ToString(NumberFormatInfo.InvariantInfo);
 
         // This lets us use decimal places instead of scientific notation. Yes, it's horrible.
         // See https://docs.microsoft.com/en-us/dotnet/api/system.single.tostring?view=netframework-4.7.2#System_Single_ToString_System_String_
@@ -275,7 +278,6 @@ namespace SUCC
             return d.ToString(NumberFormatInfo.InvariantInfo);
         }
 
-        // All the annoying variations of the "number" object... I really wish they'd implement an IParsable interface or something
         private static object ParseInt(string text)     => int.Parse(text, NumberFormatInfo.InvariantInfo);
         private static object ParseLong(string text)    => long.Parse(text, NumberFormatInfo.InvariantInfo);
         private static object ParseShort(string text)   => short.Parse(text, NumberFormatInfo.InvariantInfo);
