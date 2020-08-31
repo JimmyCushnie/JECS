@@ -188,10 +188,11 @@ namespace SUCC
             text = text.Replace("\t", "    "); // SUCC files cannot contain tabs. Prevent saving strings with tabs in them.
 
             if (
-                style.AlwaysQuoteStrings ||
-                text[0] == ' ' || text[text.Length - 1] == ' ' ||
-                text.IsQuoted() ||
-                text == Utilities.NullIndicator
+                style.AlwaysQuoteStrings 
+                || text[0] == ' '
+                || text[text.Length - 1] == ' '
+                || text.IsQuoted()
+                || text == Utilities.NullIndicator
                 )
                 text = text.Quote();
 
@@ -208,7 +209,7 @@ namespace SUCC
             return text;
         }
 
-        // support for multi-line strings
+        // Support for multi-line strings
         internal static void SetStringSpecialCase(Node node, string value, FileStyle style)
         {
             if (value != null && value.ContainsNewLine())
@@ -221,7 +222,12 @@ namespace SUCC
                 for (int i = 0; i < lines.Length; i++)
                 {
                     var newnode = node.GetChildAddresedByStringLineNumber(i);
-                    newnode.Value = BaseTypes.SerializeString(lines[i], style);
+                    string lineValue = BaseTypes.SerializeString(lines[i], style);
+
+                    if (lineValue.EndsWith(MultiLineStringNode.NoLineBreakIndicator))
+                        lineValue = lineValue.Quote();
+
+                    newnode.Value = lineValue;
                 }
 
                 node.GetChildAddresedByStringLineNumber(lines.Length).MakeTerminator();
@@ -233,23 +239,35 @@ namespace SUCC
                 node.Value = BaseTypes.SerializeString(value, style);
             }
         }
-        internal static string ParseSpecialStringCase(Node node)
+        internal static string ParseSpecialStringCase(Node parentNode)
         {
             string text = string.Empty;
 
-            for (int i = 0; i < node.ChildNodes.Count; i++)
+            for (int i = 0; i < parentNode.ChildNodes.Count; i++)
             {
-                var line = node.ChildNodes[i] as MultiLineStringNode;
+                var lineNode = parentNode.ChildNodes[i] as MultiLineStringNode;
 
-                if (i == node.ChildNodes.Count - 1)
+                if (i == parentNode.ChildNodes.Count - 1)
                 {
-                    if (line.IsTerminator) break;
-                    else throw new FormatException($"error parsing multi line string: the final child was not a terminator. Line so far was '{text}'");
+                    if (lineNode.IsTerminator) 
+                        break;
+                    else 
+                        throw new FormatException($"Error parsing multi line string: the final child was not a terminator. Line so far was '{text}'");
                 }
 
-                text += (string)ParseString(line.Value);
-                if (i != node.ChildNodes.Count - 2)
+                text += (string)ParseString(lineNode.Value);
+
+                if (AddLineBreak())
                     text += Utilities.NewLine;
+
+
+                bool AddLineBreak()
+                {
+                    if (i == parentNode.ChildNodes.Count - 2) // Is the line before the terminator
+                        return false;
+
+                    return !lineNode.IgnoreLineBreak;       // Ends with the '\' non-breaking character         
+                }
             }
 
             return text;
