@@ -7,11 +7,14 @@
 * changed some things about the API, it's possible your code will break sorry
 * fixed some bugs
 * if you supply a `defaultFileText` when creating a `DataFile`, if you use `Get` and you don't provide a default value, the default value will be searched for in the `defaultFileText`
+* base types can now be loaded when they are written in the file using complex type rules (#26)
+* multi-line strings can now be written in a file with line breaks while ignoring those line breaks when parsed. (#25)
 * added `DistributedData` class, and many extension methods for it
 * added `DataFile.TryGet`
   * todo: document this, add non-generic version, add path based versions
 * added `ReadableWritableDataFile.ResetValueToDefault()`
 * added `ReadableWritableDataFile.ResetToDefaultData()`
+* added `BaseTypes.TryParseBaseType`
 * fixed default data path on Mac OS (Unity version)
 * added `ReadableDataFile.Identifier`
   * when creating a `MemoryDataFile`, you can now supply an identifier

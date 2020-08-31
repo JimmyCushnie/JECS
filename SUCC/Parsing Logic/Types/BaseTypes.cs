@@ -12,44 +12,65 @@ namespace SUCC
     /// </summary>
     public static class BaseTypes
     {
-        internal static string SerializeBaseType<T>(T thing, FileStyle style) => SerializeBaseType(thing, typeof(T), style);
-        internal static string SerializeBaseType(object thing, Type type, FileStyle style)
+        internal static string SerializeBaseType<T>(T data, FileStyle style) => SerializeBaseType(data, typeof(T), style);
+        internal static string SerializeBaseType(object data, Type type, FileStyle style)
         {
             if (BaseSerializeMethods.TryGetValue(type, out var method))
-                return method(thing);
+                return method(data);
 
             if (BaseStyledSerializeMethods.TryGetValue(type, out var stylemethod))
-                return stylemethod(thing, style);
+                return stylemethod(data, style);
 
             if (type.IsEnum)
-                return SerializeEnum(thing, style);
+                return SerializeEnum(data, style);
 
             throw new Exception($"Cannot serialize base type {type} - are you sure it is a base type?");
         }
 
-        internal static void SetBaseTypeNode(Node node, object thing, Type type, FileStyle style)
-        {
-            node.CapChildCount(0);
-            node.ChildNodeType = NodeChildrenType.none;
-            node.Value = SerializeBaseType(thing, type, style);
-        }
 
         /// <summary> Turn some text into data, if that data is of a base type. </summary>
         public static T ParseBaseType<T>(string text) => (T)ParseBaseType(text, typeof(T));
-        /// <summary> Non-generic version of ParseBaseType </summary>
+
+        /// <summary> Non-generic version of <see cref="ParseBaseType{T}(string)"/> </summary>
         public static object ParseBaseType(string text, Type type)
         {
+            if (TryParseBaseType(text, type, out var result))
+                return result;
+
+            throw new Exception($"Failed to parse text '{text}' as base type {type}");
+        }
+
+        /// <summary> Attempt to turn some text into data, if that data is of a base type. </summary>
+        public static bool TryParseBaseType<T>(string text, out T result)
+        {
+            bool success = TryParseBaseType(text, typeof(T), out object _result);
+            result = (T)_result;
+            return success;
+        }
+
+        /// <summary> Non-generic version of <see cref="TryParseBaseType{T}(string, out T)"/> </summary>
+        public static bool TryParseBaseType(string text, Type type, out object result)
+        {
+            if (!IsBaseType(type))
+                throw new Exception($"Cannot parse: {type} is not a base type");
+
+
             try
             {
-                if (BaseParseMethods.TryGetValue(type, out var method))
-                    return method(text);
-
                 if (type.IsEnum)
-                    return ParseEnum(text, type);
-            }
-            catch { throw new Exception($"Error parsing text {text} as type {type}"); }
+                {
+                    result = ParseEnum(text, type);
+                    return true;
+                }
 
-            throw new Exception($"Cannot parse base type {type} - are you sure it is a base type?");
+                result = BaseParseMethods[type].Invoke(text);
+                return true;
+            }
+            catch
+            {
+                result = null;
+                return false;
+            }
         }
 
 
@@ -63,11 +84,11 @@ namespace SUCC
         }
 
         /// <summary> Turns an object into text </summary>
-        public delegate string SerializeMethod<T>(T thing);
+        public delegate string SerializeMethod<T>(T data);
         /// <summary> Turns text into an object </summary>
         public delegate T ParseMethod<T>(string text);
 
-        private delegate string SerializeMethod(object thing);
+        private delegate string SerializeMethod(object data);
         private delegate object ParseMethod(string text);
 
         /// <summary> Add a base type to SUCC serialization. It is recommended that you call this method in a static constructor. </summary>
@@ -119,7 +140,7 @@ namespace SUCC
             [typeof(Version)] = SerializeVersion,
         };
 
-        private delegate string StyledSerializeMethod(object thing, FileStyle style);
+        private delegate string StyledSerializeMethod(object data, FileStyle style);
         private static Dictionary<Type, StyledSerializeMethod> BaseStyledSerializeMethods { get; } = new Dictionary<Type, StyledSerializeMethod>()
         {
             [typeof(string)] = SerializeString,
@@ -167,10 +188,11 @@ namespace SUCC
             text = text.Replace("\t", "    "); // SUCC files cannot contain tabs. Prevent saving strings with tabs in them.
 
             if (
-                style.AlwaysQuoteStrings ||
-                text[0] == ' ' || text[text.Length - 1] == ' ' ||
-                text.IsQuoted() ||
-                text == Utilities.NullIndicator
+                style.AlwaysQuoteStrings 
+                || text[0] == ' '
+                || text[text.Length - 1] == ' '
+                || text.IsQuoted()
+                || text == Utilities.NullIndicator
                 )
                 text = text.Quote();
 
@@ -187,7 +209,7 @@ namespace SUCC
             return text;
         }
 
-        // support for multi-line strings
+        // Support for multi-line strings
         internal static void SetStringSpecialCase(Node node, string value, FileStyle style)
         {
             if (value != null && value.ContainsNewLine())
@@ -200,7 +222,12 @@ namespace SUCC
                 for (int i = 0; i < lines.Length; i++)
                 {
                     var newnode = node.GetChildAddresedByStringLineNumber(i);
-                    newnode.Value = BaseTypes.SerializeString(lines[i], style);
+                    string lineValue = BaseTypes.SerializeString(lines[i], style);
+
+                    if (lineValue.EndsWith(MultiLineStringNode.NoLineBreakIndicator))
+                        lineValue = lineValue.Quote();
+
+                    newnode.Value = lineValue;
                 }
 
                 node.GetChildAddresedByStringLineNumber(lines.Length).MakeTerminator();
@@ -212,23 +239,35 @@ namespace SUCC
                 node.Value = BaseTypes.SerializeString(value, style);
             }
         }
-        internal static string ParseSpecialStringCase(Node node)
+        internal static string ParseSpecialStringCase(Node parentNode)
         {
             string text = string.Empty;
 
-            for (int i = 0; i < node.ChildNodes.Count; i++)
+            for (int i = 0; i < parentNode.ChildNodes.Count; i++)
             {
-                var line = node.ChildNodes[i] as MultiLineStringNode;
+                var lineNode = parentNode.ChildNodes[i] as MultiLineStringNode;
 
-                if (i == node.ChildNodes.Count - 1)
+                if (i == parentNode.ChildNodes.Count - 1)
                 {
-                    if (line.IsTerminator) break;
-                    else throw new FormatException($"error parsing multi line string: the final child was not a terminator. Line so far was '{text}'");
+                    if (lineNode.IsTerminator) 
+                        break;
+                    else 
+                        throw new FormatException($"Error parsing multi line string: the final child was not a terminator. Line so far was '{text}'");
                 }
 
-                text += (string)ParseString(line.Value);
-                if (i != node.ChildNodes.Count - 2)
+                text += (string)ParseString(lineNode.Value);
+
+                if (AddLineBreak())
                     text += Utilities.NewLine;
+
+
+                bool AddLineBreak()
+                {
+                    if (i == parentNode.ChildNodes.Count - 2) // Is the line before the terminator
+                        return false;
+
+                    return !lineNode.IgnoreLineBreak;       // Ends with the '\' non-breaking character         
+                }
             }
 
             return text;

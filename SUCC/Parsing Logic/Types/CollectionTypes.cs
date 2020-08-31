@@ -26,17 +26,22 @@ namespace SUCC.ParsingLogic
 
         internal static object TryGetCollection(Node node, Type collectionType)
         {
-            object data = null;
+            if (collectionType.IsArray) 
+                return RetrieveArray(node, collectionType);
 
-            if (collectionType.IsArray) data = RetrieveArray(node, collectionType);
-            else if (collectionType.IsList()) data = RetrieveList(node, collectionType);
-            else if (collectionType.IsHashSet()) data = RetrieveHashSet(node, collectionType);
-            else if (collectionType.IsDictionary()) data = RetrieveDictionary(node, collectionType);
+            if (collectionType.IsList())
+                return RetrieveList(node, collectionType);
 
-            else if (node.ChildNodeType == NodeChildrenType.list)
+            if (collectionType.IsHashSet())
+                return RetrieveHashSet(node, collectionType);
+
+            if (collectionType.IsDictionary())
+                return RetrieveDictionary(node, collectionType);
+
+            if (node.ChildNodeType == NodeChildrenType.list)
                 throw new FormatException($"{collectionType} is not a supported collection type");
 
-            return data;
+            return null;
         }
 
         private static bool IsList(this Type type)

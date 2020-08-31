@@ -38,7 +38,7 @@ namespace SUCC.ParsingLogic
                 BaseTypes.SetStringSpecialCase(node, dataAsString, style);
 
             else if (BaseTypes.IsBaseType(type))
-                BaseTypes.SetBaseTypeNode(node, data, type, style);
+                SetBaseTypeNode(node, data, type, style);
 
             else if (CollectionTypes.TrySetCollection(node, data, type, style))
                 return;
@@ -51,10 +51,12 @@ namespace SUCC.ParsingLogic
         internal static object GetNodeData(Node node, Type type)
         {
             if (node.Value == Utilities.NullIndicator)
-            {
                 return null;
-            }
 
+
+            // Ensures that the type's static constructor has been run before we try to load it.
+            // A convenient place to add base type rules is in the type's static constructor, so
+            // this ensures the base type rules are registered before they are needed.
             System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
 
             try
@@ -63,10 +65,9 @@ namespace SUCC.ParsingLogic
                     return BaseTypes.ParseSpecialStringCase(node);
 
                 if (BaseTypes.IsBaseType(type))
-                    return BaseTypes.ParseBaseType(node.Value, type);
+                    return RetrieveBaseTypeNode(node, type);
 
                 var collection = CollectionTypes.TryGetCollection(node, type);
-
                 if (collection != null) 
                     return collection;
 
@@ -79,6 +80,29 @@ namespace SUCC.ParsingLogic
             {
                 throw new Exception($"Error getting data of type {type} from node: {e.InnerException}");
             }
+        }
+
+
+        private static void SetBaseTypeNode(Node node, object data, Type type, FileStyle style)
+        {
+            node.ClearChildren(NodeChildrenType.none);
+            node.Value = BaseTypes.SerializeBaseType(data, type, style);
+        }
+
+        private static object RetrieveBaseTypeNode(Node node, Type type)
+        {
+            // Base types are unique in that they CAN be serialized as a single line, and indeed that is how SUCC will always save them.
+            // However, you CAN manually write a file that uses complex type rules for a base type, and thanks to the logic in this method,
+            // it will still work.
+            // See https://github.com/JimmyCushnie/SUCC/issues/26
+
+            if (node.ChildNodes.Count > 0)
+                return ComplexTypes.RetrieveComplexType(node, type);
+
+            if (BaseTypes.TryParseBaseType(node.Value, type, out var result))
+                return result;
+
+            return ComplexTypeShortcuts.GetFromShortcut(node.Value, type);
         }
     }
 }

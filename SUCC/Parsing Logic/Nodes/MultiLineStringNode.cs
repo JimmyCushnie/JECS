@@ -19,13 +19,15 @@ namespace SUCC.ParsingLogic
             set => SetDataText(value);
         }
 
+
         public static readonly string Terminator = "\"\"\"";
 
         public bool IsTerminator => Value == Terminator;
         public void MakeTerminator() => Value = Terminator;
 
 
-        //private void NO()
-        //    => throw new InvalidOperationException("You can't do that on a multi-line string node!");
+        public static readonly string NoLineBreakIndicator = @"\";
+
+        public bool IgnoreLineBreak => Value.EndsWith(NoLineBreakIndicator);
     }
 }
