@@ -29,8 +29,7 @@ namespace SUCC
 
         internal static void SetBaseTypeNode(Node node, object thing, Type type, FileStyle style)
         {
-            node.CapChildCount(0);
-            node.ChildNodeType = NodeChildrenType.none;
+            node.ClearChildren(NodeChildrenType.none);
             node.Value = SerializeBaseType(thing, type, style);
         }
 
