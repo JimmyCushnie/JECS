@@ -350,11 +350,114 @@ namespace SUCC
                 => parseMethod.Invoke(floatText.ToLower().Trim(), LowercaseParser);
         }
 
+        private static T ParseFloatWithOperatorSupport<T>(string text, FancyFloatLogic<T> typeOperatorLogic)
+        {
+            return ProcessAddition(text);
+
+
+            T ProcessAddition(string textWithAdditioners)
+            {
+                T addyResult;
+                if (textWithAdditioners.Contains('+'))
+                {
+                    var subtractyBois = textWithAdditioners.Split('+').Select(ProcessSubtraction).ToArray();
+                    addyResult = subtractyBois[0];
+
+                    for (int i = 1; i < subtractyBois.Length; i++)
+                        addyResult = typeOperatorLogic.addMethod.Invoke(addyResult, subtractyBois[i]);
+                }
+                else
+                {
+                    addyResult = ProcessSubtraction(textWithAdditioners);
+                }
+
+                return addyResult;
+
+
+                T ProcessSubtraction(string textWithSubtractors)
+                {
+                    T subtractyResult;
+                    if (textWithSubtractors.Contains('-'))
+                    {
+                        var subtractyBois = textWithSubtractors.Split('-').Select(ProcessDivision).ToArray();
+                        subtractyResult = subtractyBois[0];
+
+                        for (int i = 1; i < subtractyBois.Length; i++)
+                            subtractyResult = typeOperatorLogic.subtractMethod.Invoke(subtractyResult, subtractyBois[i]);
+                    }
+                    else
+                    {
+                        subtractyResult = ProcessDivision(textWithSubtractors);
+                    }
+
+                    return subtractyResult;
+
+
+                    T ProcessDivision(string textWithDivisors)
+                    {
+                        T divideyResult;
+                        if (textWithDivisors.Contains('/'))
+                        {
+                            var divideyBois = textWithDivisors.Split('/').Select(parse).ToArray();
+                            divideyResult = divideyBois[0];
+
+                            for (int i = 1; i < divideyBois.Length; i++)
+                                divideyResult = typeOperatorLogic.divideMethod.Invoke(divideyResult, divideyBois[i]);
+                        }
+                        else
+                        {
+                            divideyResult = parse(textWithDivisors);
+                        }
+
+                        return divideyResult;
+
+
+                        T parse(string floatText)
+                            => typeOperatorLogic.parseMethod.Invoke(floatText.ToLower().Trim(), LowercaseParser);
+                    }
+                }
+            } 
+        }
+
         private static readonly NumberFormatInfo LowercaseParser = new NumberFormatInfo()
         {
             PositiveInfinitySymbol = "infinity",
             NegativeInfinitySymbol = "-infinity",
             NaNSymbol = "nan"
+        };
+
+        private class FancyFloatLogic<T>
+        {
+            public Func<string, IFormatProvider, T> parseMethod;
+
+            public Func<T, T, T> divideMethod;
+            public Func<T, T, T> addMethod;
+            public Func<T, T, T> subtractMethod;
+        }
+
+        private static readonly FancyFloatLogic<float> FloatLogic = new FancyFloatLogic<float>()
+        {
+            parseMethod = float.Parse,
+
+            divideMethod = (float a, float b) => a / b,
+            addMethod = (float a, float b) => a + b,
+            subtractMethod = (float a, float b) => a - b,
+        };
+        private static readonly FancyFloatLogic<double> DoubleLogic = new FancyFloatLogic<double>()
+        {
+            parseMethod = double.Parse,
+
+            divideMethod = (double a, double b) => a / b,
+            addMethod = (double a, double b) => a + b,
+            subtractMethod = (double a, double b) => a - b,
+        };
+        private static readonly FancyFloatLogic<decimal> DecimalLogic = new FancyFloatLogic<decimal>()
+        {
+            parseMethod = decimal.Parse,
+
+            divideMethod = (decimal a, decimal b) => a / b,
+            addMethod = (decimal a, decimal b) => a + b,
+            subtractMethod = (decimal a, decimal b) => a - b,
         };
 
 
