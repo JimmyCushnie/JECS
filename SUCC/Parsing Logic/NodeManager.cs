@@ -54,6 +54,9 @@ namespace SUCC.ParsingLogic
                 return null;
 
 
+            // Ensures that the type's static constructor has been run before we try to load it.
+            // A convenient place to add base type rules is in the type's static constructor, so
+            // this ensures the base type rules are registered before they are needed.
             System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
 
             try
