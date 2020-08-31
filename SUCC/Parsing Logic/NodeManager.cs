@@ -51,9 +51,8 @@ namespace SUCC.ParsingLogic
         internal static object GetNodeData(Node node, Type type)
         {
             if (node.Value == Utilities.NullIndicator)
-            {
                 return null;
-            }
+
 
             System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
 
