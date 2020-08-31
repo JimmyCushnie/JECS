@@ -12,25 +12,25 @@ namespace SUCC
     /// </summary>
     public static class BaseTypes
     {
-        internal static string SerializeBaseType<T>(T thing, FileStyle style) => SerializeBaseType(thing, typeof(T), style);
-        internal static string SerializeBaseType(object thing, Type type, FileStyle style)
+        internal static string SerializeBaseType<T>(T data, FileStyle style) => SerializeBaseType(data, typeof(T), style);
+        internal static string SerializeBaseType(object data, Type type, FileStyle style)
         {
             if (BaseSerializeMethods.TryGetValue(type, out var method))
-                return method(thing);
+                return method(data);
 
             if (BaseStyledSerializeMethods.TryGetValue(type, out var stylemethod))
-                return stylemethod(thing, style);
+                return stylemethod(data, style);
 
             if (type.IsEnum)
-                return SerializeEnum(thing, style);
+                return SerializeEnum(data, style);
 
             throw new Exception($"Cannot serialize base type {type} - are you sure it is a base type?");
         }
 
-        internal static void SetBaseTypeNode(Node node, object thing, Type type, FileStyle style)
+        internal static void SetBaseTypeNode(Node node, object data, Type type, FileStyle style)
         {
             node.ClearChildren(NodeChildrenType.none);
-            node.Value = SerializeBaseType(thing, type, style);
+            node.Value = SerializeBaseType(data, type, style);
         }
 
         /// <summary> Turn some text into data, if that data is of a base type. </summary>
@@ -62,11 +62,11 @@ namespace SUCC
         }
 
         /// <summary> Turns an object into text </summary>
-        public delegate string SerializeMethod<T>(T thing);
+        public delegate string SerializeMethod<T>(T data);
         /// <summary> Turns text into an object </summary>
         public delegate T ParseMethod<T>(string text);
 
-        private delegate string SerializeMethod(object thing);
+        private delegate string SerializeMethod(object data);
         private delegate object ParseMethod(string text);
 
         /// <summary> Add a base type to SUCC serialization. It is recommended that you call this method in a static constructor. </summary>
@@ -118,7 +118,7 @@ namespace SUCC
             [typeof(Version)] = SerializeVersion,
         };
 
-        private delegate string StyledSerializeMethod(object thing, FileStyle style);
+        private delegate string StyledSerializeMethod(object data, FileStyle style);
         private static Dictionary<Type, StyledSerializeMethod> BaseStyledSerializeMethods { get; } = new Dictionary<Type, StyledSerializeMethod>()
         {
             [typeof(string)] = SerializeString,
