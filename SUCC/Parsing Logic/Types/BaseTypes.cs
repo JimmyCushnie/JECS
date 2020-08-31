@@ -27,28 +27,50 @@ namespace SUCC
             throw new Exception($"Cannot serialize base type {type} - are you sure it is a base type?");
         }
 
-        internal static void SetBaseTypeNode(Node node, object data, Type type, FileStyle style)
-        {
-            node.ClearChildren(NodeChildrenType.none);
-            node.Value = SerializeBaseType(data, type, style);
-        }
 
         /// <summary> Turn some text into data, if that data is of a base type. </summary>
         public static T ParseBaseType<T>(string text) => (T)ParseBaseType(text, typeof(T));
-        /// <summary> Non-generic version of ParseBaseType </summary>
+
+        /// <summary> Non-generic version of <see cref="ParseBaseType{T}(string)"/> </summary>
         public static object ParseBaseType(string text, Type type)
         {
+            if (TryParseBaseType(text, type, out var result))
+                return result;
+
+            throw new Exception($"Failed to parse text '{text}' as base type {type}");
+        }
+
+        /// <summary> Attempt to turn some text into data, if that data is of a base type. </summary>
+        public static bool TryParseBaseType<T>(string text, out T result)
+        {
+            bool success = TryParseBaseType(text, typeof(T), out object _result);
+            result = (T)_result;
+            return success;
+        }
+
+        /// <summary> Non-generic version of <see cref="TryParseBaseType{T}(string, out T)"/> </summary>
+        public static bool TryParseBaseType(string text, Type type, out object result)
+        {
+            if (!IsBaseType(type))
+                throw new Exception($"Cannot parse: {type} is not a base type");
+
+
             try
             {
-                if (BaseParseMethods.TryGetValue(type, out var method))
-                    return method(text);
-
                 if (type.IsEnum)
-                    return ParseEnum(text, type);
-            }
-            catch { throw new Exception($"Error parsing text {text} as type {type}"); }
+                {
+                    result = ParseEnum(text, type);
+                    return true;
+                }
 
-            throw new Exception($"Cannot parse base type {type} - are you sure it is a base type?");
+                result = BaseParseMethods[type].Invoke(text);
+                return true;
+            }
+            catch
+            {
+                result = null;
+                return false;
+            }
         }
 
 

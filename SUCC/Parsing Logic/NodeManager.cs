@@ -38,7 +38,7 @@ namespace SUCC.ParsingLogic
                 BaseTypes.SetStringSpecialCase(node, dataAsString, style);
 
             else if (BaseTypes.IsBaseType(type))
-                BaseTypes.SetBaseTypeNode(node, data, type, style);
+                SetBaseTypeNode(node, data, type, style);
 
             else if (CollectionTypes.TrySetCollection(node, data, type, style))
                 return;
@@ -81,6 +81,13 @@ namespace SUCC.ParsingLogic
             {
                 throw new Exception($"Error getting data of type {type} from node: {e.InnerException}");
             }
+        }
+
+
+        private static void SetBaseTypeNode(Node node, object data, Type type, FileStyle style)
+        {
+            node.ClearChildren(NodeChildrenType.none);
+            node.Value = BaseTypes.SerializeBaseType(data, type, style);
         }
     }
 }
