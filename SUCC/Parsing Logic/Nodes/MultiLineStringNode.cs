@@ -27,7 +27,5 @@ namespace SUCC.ParsingLogic
 
 
         public static readonly string NoLineBreakIndicator = @"\";
-
-        public bool IgnoreLineBreak => Value.EndsWith(NoLineBreakIndicator);
     }
 }

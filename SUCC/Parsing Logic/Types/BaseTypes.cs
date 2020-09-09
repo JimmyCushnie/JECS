@@ -266,7 +266,7 @@ namespace SUCC
                     if (i == parentNode.ChildNodes.Count - 2) // Is the line before the terminator
                         return false;
 
-                    return !lineNode.IgnoreLineBreak;       // Ends with the '\' non-breaking character         
+                    return !lineNode.Value.EndsWith(MultiLineStringNode.NoLineBreakIndicator);       
                 }
             }
 
