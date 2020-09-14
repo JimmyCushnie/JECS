@@ -71,7 +71,7 @@ namespace SUCC.ParsingLogic
                 if (collection != null) 
                     return collection;
 
-                if (!String.IsNullOrEmpty(node.Value))
+                if (!node.Value.IsNullOrEmpty())
                     return ComplexTypeShortcuts.GetFromShortcut(node.Value, type);
 
                 return ComplexTypes.RetrieveComplexType(node, type);

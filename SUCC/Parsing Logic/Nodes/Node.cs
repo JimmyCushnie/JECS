@@ -106,7 +106,7 @@ namespace SUCC.ParsingLogic
 
         private void EnsureProperChildType(NodeChildrenType expectedType)
         {
-            if (expectedType != NodeChildrenType.multiLineString && !string.IsNullOrEmpty(this.Value))
+            if (expectedType != NodeChildrenType.multiLineString && !this.Value.IsNullOrEmpty())
                 throw new Exception($"node has a value ({Value}), which means it can't have children");
 
             if (ChildNodeType != expectedType)

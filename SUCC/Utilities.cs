@@ -69,7 +69,7 @@ namespace SUCC
         {
             whyNot = null;
 
-            if (string.IsNullOrEmpty(potentialKey))
+            if (potentialKey.IsNullOrEmpty())
                 whyNot = "SUCC keys must contain at least one character";
             else if (potentialKey[0] == '-')
                 whyNot = "SUCC keys may not begin with the character '-'";
