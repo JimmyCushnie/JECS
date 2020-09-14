@@ -34,6 +34,9 @@ namespace SUCC.ParsingLogic
         internal static bool IsWhitespace(this string s)
             => s.Trim().Length == 0;
 
+        internal static bool IsNullOrEmpty(this string s)
+            => String.IsNullOrEmpty(s);
+
 
         // this is just to enable params
         internal static object Invoke(this MethodInfo method, object obj, params object[] parameters)

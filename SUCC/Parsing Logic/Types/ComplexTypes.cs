@@ -8,8 +8,8 @@ namespace SUCC.ParsingLogic
     {
         internal static void SetComplexNode(Node node, object item, Type type, FileStyle style)
         {
-            // clear the shortcut if there is any
-            if (!string.IsNullOrEmpty(node.Value))
+            // Clear the shortcut if there is any
+            if (!node.Value.IsNullOrEmpty())
                 node.Value = "";
 
             foreach (var m in type.GetValidMembers())
