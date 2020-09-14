@@ -394,10 +394,11 @@ namespace SUCC
             return text[0];
         }
 
+
         private static string SerializeType(object value)
         {
             Type t = (Type)value;
-            return t.FullName;
+            return TypeStrings.GetCsharpTypeName(t);
         }
 
         private static Dictionary<string, Type> TypeCache { get; } = new Dictionary<string, Type>();
@@ -406,19 +407,11 @@ namespace SUCC
             if (TypeCache.TryGetValue(typeName, out Type type))
                 return type;
 
-            foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                type = ass.GetType(typeName);
-
-                if (type != null)
-                {
-                    TypeCache.Add(typeName, type);
-                    return type;
-                }
-            }
-
-            throw new FormatException($"cannot parse text {typeName} as System.Type");
+            type = TypeStrings.ParseCsharpTypeName(typeName);
+            TypeCache.Add(typeName, type);
+            return type;
         }
+
 
         private static string SerializeEnum(object value, FileStyle style)
         {
