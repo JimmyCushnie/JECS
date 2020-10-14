@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 
 namespace SUCC
@@ -138,6 +139,8 @@ namespace SUCC
 
             [typeof(DateTime)] = SerializeDateTime,
             [typeof(Version)] = SerializeVersion,
+
+            [typeof(IPAddress)] = SerializeIPAddress,
         };
 
         private delegate string StyledSerializeMethod(object data, FileStyle style);
@@ -173,6 +176,8 @@ namespace SUCC
 
             [typeof(DateTime)] = ParseDateTime,
             [typeof(Version)] = ParseVersion,
+
+            [typeof(IPAddress)] = ParseIPAddress,
         };
 
 
@@ -448,6 +453,16 @@ namespace SUCC
         private static object ParseVersion(string text)
         {
             return Version.Parse(text);
+        }
+
+        private static string SerializeIPAddress(object value)
+        {
+            var ip = (IPAddress)value;
+            return ip.ToString();
+        }
+        private static object ParseIPAddress(string text)
+        {
+            return IPAddress.Parse(text);
         }
 
         #endregion

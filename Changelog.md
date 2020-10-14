@@ -29,6 +29,7 @@
 * fixed improper file names when attempting to create a DataFile with `.` in the path
 * Fixed numbers with decimal places using `,` instead of `.` on systems set to European standards
 * Saving and loading Type variables is much nicer with generic types
+* `System.Net.IPAddress` has been added as a built-in base type
 
 todo update the docs for 1.2
 
