@@ -265,7 +265,7 @@ namespace SUCC
                     if (isLineBeforeTerminator)
                         text += lineNode.Value;
                     else
-                        text += lineNode.Value.Remove(text.Length - MultiLineStringNode.NoLineBreakIndicator.Length);
+                        text += lineNode.Value.Remove(lineNode.Value.Length - MultiLineStringNode.NoLineBreakIndicator.Length);
                 }
                 else
                 {
