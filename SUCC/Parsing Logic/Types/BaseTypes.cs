@@ -205,11 +205,8 @@ namespace SUCC
         }
         private static object ParseString(string text)
         {
-            if (
-                text.Length > 1 
-                && text[0] == '"' && text[text.Length - 1] == '"'
-                )
-                text = text.Substring(1, text.Length - 2);
+            if (text.IsQuoted())
+                return text.UnQuote();
 
             return text;
         }
@@ -260,18 +257,22 @@ namespace SUCC
                         throw new FormatException($"Error parsing multi line string: the final child was not a terminator. Line so far was '{text}'");
                 }
 
-                text += (string)ParseString(lineNode.Value);
+                bool escapeLineBreak = lineNode.Value.EndsWith(MultiLineStringNode.NoLineBreakIndicator);
+                bool isLineBeforeTerminator = i == parentNode.ChildNodes.Count - 2;
 
-                if (AddLineBreak())
-                    text += Utilities.NewLine;
-
-
-                bool AddLineBreak()
+                if (escapeLineBreak)
                 {
-                    if (i == parentNode.ChildNodes.Count - 2) // Is the line before the terminator
-                        return false;
+                    if (isLineBeforeTerminator)
+                        text += lineNode.Value;
+                    else
+                        text += lineNode.Value.Remove(text.Length - MultiLineStringNode.NoLineBreakIndicator.Length);
+                }
+                else
+                {
+                    text += (string)ParseString(lineNode.Value);
 
-                    return !lineNode.Value.EndsWith(MultiLineStringNode.NoLineBreakIndicator);       
+                    if (!isLineBeforeTerminator)
+                        text += Utilities.NewLine;
                 }
             }
 
