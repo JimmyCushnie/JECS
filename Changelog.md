@@ -30,6 +30,8 @@
 * Fixed numbers with decimal places using `,` instead of `.` on systems set to European standards
 * Saving and loading Type variables is much nicer with generic types
 * `System.Net.IPAddress` has been added as a built-in base type
+* `System.Version` has been added as a built-in base type
+* New and better system for adding custom base types; removed the kind of shitty old system
 
 todo update the docs for 1.2
 

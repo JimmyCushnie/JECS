@@ -60,7 +60,7 @@ namespace SUCC.ParsingLogic
                 {
                     if (i < paramStrings.Length)
                     {
-                        constructorParams[i] = BaseTypes.ParseBaseType(paramStrings[i].Trim(), parameters[i].ParameterType);
+                        constructorParams[i] = BaseTypesManager.ParseBaseType(paramStrings[i].Trim(), parameters[i].ParameterType);
                     }
                     else // optional parameter support
                     {
@@ -96,7 +96,7 @@ namespace SUCC.ParsingLogic
                     {
                         if (i < paramStrings.Length)
                         {
-                            methodParams[i] = BaseTypes.ParseBaseType(paramStrings[i].Trim(), parameters[i].ParameterType);
+                            methodParams[i] = BaseTypesManager.ParseBaseType(paramStrings[i].Trim(), parameters[i].ParameterType);
                         }
                         else // optional parameter support
                         {

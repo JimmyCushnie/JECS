@@ -35,7 +35,7 @@ namespace SUCC.ParsingLogic
             // of the file for something temporary.
             string dataAsString = data as string;
             if (type == typeof(string) && (dataAsString.ContainsNewLine() || node.ChildNodes.Count > 0))
-                BaseTypesManager.SetStringSpecialCase(node, dataAsString, style);
+                MultiLineStringSpecialCaseHandler.SetStringSpecialCase(node, dataAsString, style);
 
             else if (BaseTypesManager.IsBaseType(type))
                 SetBaseTypeNode(node, data, type, style);
@@ -62,7 +62,7 @@ namespace SUCC.ParsingLogic
             try
             {
                 if (type == typeof(string) && node.Value == MultiLineStringNode.Terminator && node.ChildLines.Count > 0)
-                    return BaseTypesManager.ParseSpecialStringCase(node);
+                    return MultiLineStringSpecialCaseHandler.ParseSpecialStringCase(node);
 
                 if (BaseTypesManager.IsBaseType(type))
                     return RetrieveBaseTypeNode(node, type);

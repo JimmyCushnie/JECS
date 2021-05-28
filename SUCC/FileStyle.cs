@@ -20,7 +20,6 @@ namespace SUCC
         /// </summary>
         public FileStyle()
         {
-
         }
 
 
@@ -45,9 +44,6 @@ namespace SUCC
         /// </summary>
         public EnumStyle EnumStyle { get; set; } = EnumStyle.name;
 
-        int _IndentationInterval = 4;
-        int _SpacesAfterColon = 1;
-        int _SpacesAfterDash = 1;
 
         /// <summary>
         /// The number of spaces used to indent a child line under its parent. Must be at least 1.
@@ -63,6 +59,7 @@ namespace SUCC
                     _IndentationInterval = value;
             }
         }
+        int _IndentationInterval = 4;
 
         /// <summary>
         /// The number of spaces between the colon and the value in a key node. Must be at least 0.
@@ -78,6 +75,7 @@ namespace SUCC
                     _SpacesAfterColon = value;
             }
         }
+        int _SpacesAfterColon = 1;
 
         /// <summary>
         /// The number of spaces between the dash and the value in a list node. Must be at least 0.
@@ -93,6 +91,7 @@ namespace SUCC
                     _SpacesAfterDash = value;
             }
         }
+        int _SpacesAfterDash = 1;
     }
 
     /// <summary>
@@ -100,13 +99,13 @@ namespace SUCC
     /// </summary>
     public enum BoolStyle
     {
-        /// <summary> save true as "true" and false as "false" </summary>
+        /// <summary> Save true as "true" and false as "false" </summary>
         true_false,
-        /// <summary> save true as "on" and false as "off" </summary>
+        /// <summary> Save true as "on" and false as "off" </summary>
         on_off,
-        /// <summary> save true as "yes" and false as "no" </summary>
+        /// <summary> Save true as "yes" and false as "no" </summary>
         yes_no,
-        /// <summary> save true as "y" and false as "n" </summary>
+        /// <summary> Save true as "y" and false as "n" </summary>
         y_n,
     }
 
