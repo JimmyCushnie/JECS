@@ -11,7 +11,7 @@ namespace SUCC
     /// <summary>
     /// Manages SUCC's database of Base Types. https://github.com/JimmyCushnie/SUCC/wiki/Base-Types
     /// </summary>
-    public static class BaseTypes
+    public static class BaseTypesManager
     {
         internal static string SerializeBaseType<T>(T data, FileStyle style) => SerializeBaseType(data, typeof(T), style);
         internal static string SerializeBaseType(object data, Type type, FileStyle style)
@@ -224,7 +224,7 @@ namespace SUCC
                 for (int i = 0; i < lines.Length; i++)
                 {
                     var newnode = node.GetChildAddresedByStringLineNumber(i);
-                    string lineValue = BaseTypes.SerializeString(lines[i], style);
+                    string lineValue = BaseTypesManager.SerializeString(lines[i], style);
 
                     if (lineValue.EndsWith(MultiLineStringNode.NoLineBreakIndicator))
                         lineValue = lineValue.Quote();
@@ -238,7 +238,7 @@ namespace SUCC
             else
             {
                 node.ClearChildren();
-                node.Value = BaseTypes.SerializeString(value, style);
+                node.Value = BaseTypesManager.SerializeString(value, style);
             }
         }
         internal static string ParseSpecialStringCase(Node parentNode)

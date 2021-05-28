@@ -21,7 +21,7 @@ namespace SUCC.ParsingLogic
                 node.Value = String.Empty;
             }
 
-            // ensure the type is initialized. This is especially important if it's added as
+            // Ensure the type is initialized. This is especially important if it's added as
             // a base type in the type's static constructor.
             System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
 
@@ -35,9 +35,9 @@ namespace SUCC.ParsingLogic
             // of the file for something temporary.
             string dataAsString = data as string;
             if (type == typeof(string) && (dataAsString.ContainsNewLine() || node.ChildNodes.Count > 0))
-                BaseTypes.SetStringSpecialCase(node, dataAsString, style);
+                BaseTypesManager.SetStringSpecialCase(node, dataAsString, style);
 
-            else if (BaseTypes.IsBaseType(type))
+            else if (BaseTypesManager.IsBaseType(type))
                 SetBaseTypeNode(node, data, type, style);
 
             else if (CollectionTypes.TrySetCollection(node, data, type, style))
@@ -62,9 +62,9 @@ namespace SUCC.ParsingLogic
             try
             {
                 if (type == typeof(string) && node.Value == MultiLineStringNode.Terminator && node.ChildLines.Count > 0)
-                    return BaseTypes.ParseSpecialStringCase(node);
+                    return BaseTypesManager.ParseSpecialStringCase(node);
 
-                if (BaseTypes.IsBaseType(type))
+                if (BaseTypesManager.IsBaseType(type))
                     return RetrieveBaseTypeNode(node, type);
 
                 var collection = CollectionTypes.TryGetCollection(node, type);
@@ -86,7 +86,7 @@ namespace SUCC.ParsingLogic
         private static void SetBaseTypeNode(Node node, object data, Type type, FileStyle style)
         {
             node.ClearChildren(NodeChildrenType.none);
-            node.Value = BaseTypes.SerializeBaseType(data, type, style);
+            node.Value = BaseTypesManager.SerializeBaseType(data, type, style);
         }
 
         private static object RetrieveBaseTypeNode(Node node, Type type)
@@ -99,7 +99,7 @@ namespace SUCC.ParsingLogic
             if (node.ChildNodes.Count > 0)
                 return ComplexTypes.RetrieveComplexType(node, type);
 
-            if (BaseTypes.TryParseBaseType(node.Value, type, out var result))
+            if (BaseTypesManager.TryParseBaseType(node.Value, type, out var result))
                 return result;
 
             return ComplexTypeShortcuts.GetFromShortcut(node.Value, type);

@@ -178,7 +178,7 @@ namespace SUCC.Abstractions
         /// <remarks> TKey must be a Base Type </remarks>
         public void SaveAsDictionary<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
         {
-            if (!BaseTypes.IsBaseType(typeof(TKey)))
+            if (!BaseTypesManager.IsBaseType(typeof(TKey)))
                 throw new Exception("When using GetAsDictionary, TKey must be a base type");
 
             bool _autosave = AutoSave;
@@ -189,7 +189,7 @@ namespace SUCC.Abstractions
                 var CurrentKeys = new List<string>(capacity: dictionary.Count);
                 foreach (var key in dictionary.Keys)
                 {
-                    var keyText = BaseTypes.SerializeBaseType(key, Style);
+                    var keyText = BaseTypesManager.SerializeBaseType(key, Style);
                     if (!Utilities.IsValidKey(keyText, out string whyNot))
                         throw new Exception($"can't save file as this dictionary. A key ({keyText}) is not valid: {whyNot}");
 

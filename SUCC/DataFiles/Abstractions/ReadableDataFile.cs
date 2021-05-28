@@ -214,7 +214,7 @@ namespace SUCC.Abstractions
         /// <remarks> TKey must be a Base Type </remarks>
         public Dictionary<TKey, TValue> GetAsDictionary<TKey, TValue>()
         {
-            if (!BaseTypes.IsBaseType(typeof(TKey)))
+            if (!BaseTypesManager.IsBaseType(typeof(TKey)))
                 throw new Exception("When using GetAsDictionary, TKey must be a base type");
 
             var keys = this.TopLevelKeys;
@@ -222,7 +222,7 @@ namespace SUCC.Abstractions
 
             foreach (var keyText in keys)
             {
-                TKey key = BaseTypes.ParseBaseType<TKey>(keyText);
+                TKey key = BaseTypesManager.ParseBaseType<TKey>(keyText);
                 TValue value = NodeManager.GetNodeData<TValue>(TopLevelNodes[keyText]);
                 dictionary.Add(key, value);
             }
