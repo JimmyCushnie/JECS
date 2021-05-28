@@ -31,6 +31,7 @@
 * Saving and loading Type variables is much nicer with generic types
 * `System.Net.IPAddress` has been added as a built-in base type
 * `System.Version` has been added as a built-in base type
+* Added `FileInfo` and `DirectoryInfo` as built-in base types
 * New and better system for adding custom base types; removed the kind of shitty old system
 
 todo update the docs for 1.2
