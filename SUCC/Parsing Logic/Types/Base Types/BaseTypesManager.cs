@@ -25,6 +25,11 @@ namespace SUCC.ParsingLogic
 
             foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
             {
+                // Not sure why, but these particular assemblies cause weird errors. I get them when running SUCC in Unity.
+                // Microsoft.CodeAnalysis is unlikely to ever add custom SUCC base type rules so I feel safe skipping them
+                if (ass.FullName.StartsWith("Microsoft.CodeAnalysis"))
+                    continue;
+
                 LoadBaseTypeLogicsIn(ass);
             }
         }
