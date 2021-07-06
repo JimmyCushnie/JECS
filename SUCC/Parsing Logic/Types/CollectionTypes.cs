@@ -177,7 +177,7 @@ namespace SUCC.ParsingLogic
         private static MethodInfo SetDictionaryG = GetMethod(nameof(SetDictionaryNodeGeneric));
         private static void SetDictionaryNodeGeneric<TKey, TValue>(Node node, Dictionary<TKey, TValue> dictionary, FileStyle style, bool forceArrayMode = false)
         {
-            bool keyIsBase = BaseTypes.IsBaseType(typeof(TKey));
+            bool keyIsBase = BaseTypesManager.IsBaseType(typeof(TKey));
 
             if (keyIsBase && !forceArrayMode && !style.AlwaysArrayDictionaries)
             {
@@ -190,7 +190,7 @@ namespace SUCC.ParsingLogic
                 {
                     var value = dictionary[key];
 
-                    string keyAsText = BaseTypes.SerializeBaseType<TKey>(key, style);
+                    string keyAsText = BaseTypesManager.SerializeBaseType<TKey>(key, style);
 
                     if (!Utilities.IsValidKey(keyAsText))
                     {
@@ -233,7 +233,7 @@ namespace SUCC.ParsingLogic
         private static MethodInfo RetrieveDictionaryG = GetMethod(nameof(RetrieveDictionaryGeneric));
         private static Dictionary<TKey, TValue> RetrieveDictionaryGeneric<TKey, TValue>(Node node)
         {
-            bool keyIsBase = BaseTypes.IsBaseType(typeof(TKey));
+            bool keyIsBase = BaseTypesManager.IsBaseType(typeof(TKey));
 
             var dictionary = new Dictionary<TKey, TValue>(capacity: node.ChildNodes.Count);
 
@@ -242,7 +242,7 @@ namespace SUCC.ParsingLogic
                 foreach (var child in node.ChildNodes)
                 {
                     string childKey = (child as KeyNode).Key;
-                    var key = BaseTypes.ParseBaseType<TKey>(childKey);
+                    var key = BaseTypesManager.ParseBaseType<TKey>(childKey);
                     var value = NodeManager.GetNodeData<TValue>(child);
                     dictionary.Add(key, value);
                 }

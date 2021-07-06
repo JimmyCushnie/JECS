@@ -3,8 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace SUCC
+namespace SUCC.BuiltInBaseTypeRules
 {
+    internal class BaseTypeLogic_Type : BaseTypeLogic<Type>
+    {
+        // Parsing types is pretty slow, so we cache the results
+        private static Dictionary<string, Type> TypeCache { get; } = new Dictionary<string, Type>();
+        public override Type ParseItem(string text)
+        {
+            if (TypeCache.TryGetValue(text, out Type type))
+                return type;
+
+            type = TypeStrings.ParseCsharpTypeName(text);
+            TypeCache.Add(text, type);
+            return type;
+        }
+
+        // Todo: should get my two-way dictionary class in here so the caching can work for serialization as well
+        public override string SerializeItem(Type value)
+        {
+            return TypeStrings.GetCsharpTypeName(value);
+        }
+    }
+
+
     /// <summary>
     /// Turn C# type variables into and out of strings that look like C# code.
     /// </summary>
