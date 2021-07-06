@@ -1,10 +1,5 @@
-﻿using SUCC.BuiltInBaseTypeRules;
-using SUCC.ParsingLogic;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Net;
 using System.Reflection;
 
 namespace SUCC.ParsingLogic
@@ -30,17 +25,22 @@ namespace SUCC.ParsingLogic
 
             foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
             {
-                foreach (var type in ass.GetTypes())
+                LoadBaseTypeLogicsIn(ass);
+            }
+        }
+
+        public static void LoadBaseTypeLogicsIn(Assembly ass)
+        {
+            foreach (var type in ass.GetTypes())
+            {
+                if (typeof(BaseTypeLogic).IsAssignableFrom(type) && !type.IsAbstract && !type.IsGenericType && !type.IsGenericTypeDefinition)
                 {
-                    if (typeof(BaseTypeLogic).IsAssignableFrom(type) && !type.IsAbstract && !type.IsGenericType && !type.IsGenericTypeDefinition)
-                    {
-                        var logic = Activator.CreateInstance(type) as BaseTypeLogic;
+                    var logic = Activator.CreateInstance(type) as BaseTypeLogic;
 
-                        if (RegisteredBaseTypeLogics.ContainsKey(logic.ApplicableType))
-                            throw new Exception($"Can't load base type logics, duplicate logics for type {logic.ApplicableType}");
+                    if (RegisteredBaseTypeLogics.ContainsKey(logic.ApplicableType))
+                        throw new Exception($"Can't load base type logics, duplicate logics for type {logic.ApplicableType}");
 
-                        RegisteredBaseTypeLogics.Add(logic.ApplicableType, logic);
-                    }
+                    RegisteredBaseTypeLogics.Add(logic.ApplicableType, logic);
                 }
             }
         }
@@ -58,8 +58,8 @@ namespace SUCC.ParsingLogic
         }
 
 
-        internal static string SerializeBaseType<T>(T data, FileStyle style) => SerializeBaseType(data, typeof(T), style);
-        internal static string SerializeBaseType(object data, Type type, FileStyle style)
+        public static string SerializeBaseType<T>(T data, FileStyle style) => SerializeBaseType(data, typeof(T), style);
+        public static string SerializeBaseType(object data, Type type, FileStyle style)
         {
             if (RegisteredBaseTypeLogics.TryGetValue(type, out var baseTypeLogic))
                 return baseTypeLogic.SerializeObject(data, style);
@@ -71,8 +71,8 @@ namespace SUCC.ParsingLogic
         }
 
 
-        internal static T ParseBaseType<T>(string text) => (T)ParseBaseType(text, typeof(T));
-        internal static object ParseBaseType(string text, Type type)
+        public static T ParseBaseType<T>(string text) => (T)ParseBaseType(text, typeof(T));
+        public static object ParseBaseType(string text, Type type)
         {
             if (TryParseBaseType(text, type, out var result))
                 return result;
@@ -80,13 +80,13 @@ namespace SUCC.ParsingLogic
             throw new Exception($"Failed to parse text '{text}' as base type {type}");
         }
 
-        internal static bool TryParseBaseType<T>(string text, out T result)
+        public static bool TryParseBaseType<T>(string text, out T result)
         {
             bool success = TryParseBaseType(text, typeof(T), out object _result);
             result = (T)_result;
             return success;
         }
-        internal static bool TryParseBaseType(string text, Type type, out object result)
+        public static bool TryParseBaseType(string text, Type type, out object result)
         {
             if (!IsBaseType(type))
                 throw new Exception($"Cannot parse: {type} is not a base type");
