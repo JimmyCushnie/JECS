@@ -9,7 +9,7 @@ namespace SUCC.UnityStuff
         {
             var textAsset = Resources.Load<TextAsset>(filePath);
             if (textAsset == null)
-                throw new Exception("The default file you specified doesn't exist in Resources :(");
+                throw new FileNotFoundException("The default file you specified doesn't exist in Resources :(");
 
             var text = textAsset.text;
             Resources.UnloadAsset(textAsset);
