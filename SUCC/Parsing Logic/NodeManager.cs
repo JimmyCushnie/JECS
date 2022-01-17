@@ -78,7 +78,7 @@ namespace SUCC.ParsingLogic
             }
             catch (Exception e)
             {
-                throw new Exception($"Error getting data of type {type} from node: {e.InnerException}");
+                throw new Exception($"Error getting data of type {type} from node", e);
             }
         }
 

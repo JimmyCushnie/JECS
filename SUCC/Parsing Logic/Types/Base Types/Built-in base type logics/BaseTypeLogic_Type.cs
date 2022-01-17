@@ -116,7 +116,7 @@ namespace SUCC.BuiltInBaseTypeRules
             }
 
             if (typeStack.Count != 1)
-                throw new Exception("Aw fuck, looks like the type name had some non-matching brackets");
+                throw new Exception("Oh no, looks like the type name had some non-matching brackets");
 
             return typeStack.Pop().TurnIntoType();
         }
