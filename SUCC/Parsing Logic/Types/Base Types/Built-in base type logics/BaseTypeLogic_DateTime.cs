@@ -18,7 +18,7 @@ namespace SUCC.BuiltInBaseTypeRules
             if (DateTime.TryParseExact(text, SuccDateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result))
                 return result;
 
-            throw new Exception("Invalid shit!!");
+            throw new Exception("Invalid DateTime format!!");
         }
     }
 }

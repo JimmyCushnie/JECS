@@ -72,7 +72,7 @@ namespace SUCC.ParsingLogic
                 if (DoingMultiLineString)
                 {
                     if (NestingNodeStack.Peek().ChildNodeType != NodeChildrenType.multiLineString)
-                        throw new Exception("oh fuck, we were supposed to be doing a multi-line string but the top of the node stack isn't a multi-line string node!");
+                        throw new Exception("oh no, we were supposed to be doing a multi-line string but the top of the node stack isn't a multi-line string node!");
 
                     var newboi = new MultiLineStringNode(rawText: line, file);
 
@@ -116,7 +116,7 @@ namespace SUCC.ParsingLogic
                                 else if (node is ListNode)
                                     newParent.ChildNodeType = NodeChildrenType.list;
                                 else
-                                    throw new Exception("what the fuck?");
+                                    throw new Exception("what the heck?");
                             }
                             else // If the parent already has children, check for errors with this line
                             {
