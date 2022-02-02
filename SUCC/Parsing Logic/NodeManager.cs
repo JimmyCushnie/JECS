@@ -59,27 +59,29 @@ namespace SUCC.ParsingLogic
             // this ensures the base type rules are registered before they are needed.
             System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
 
-            try
-            {
-                if (type == typeof(string) && node.Value == MultiLineStringNode.Terminator && node.ChildLines.Count > 0)
-                    return MultiLineStringSpecialCaseHandler.ParseSpecialStringCase(node);
+            if (type == typeof(string) && node.Value == MultiLineStringNode.Terminator && node.ChildLines.Count > 0)
+                return MultiLineStringSpecialCaseHandler.ParseSpecialStringCase(node);
 
-                if (BaseTypesManager.IsBaseType(type))
+            if (BaseTypesManager.IsBaseType(type))
+            {
+                try
+                {
                     return RetrieveBaseTypeNode(node, type);
-
-                var collection = CollectionTypes.TryGetCollection(node, type);
-                if (collection != null) 
-                    return collection;
-
-                if (!node.Value.IsNullOrEmpty())
-                    return ComplexTypeShortcuts.GetFromShortcut(node.Value, type);
-
-                return ComplexTypes.RetrieveComplexType(node, type);
+                }
+                catch
+                {
+                    throw new CannotRetrieveDataFromNodeException(node, type);
+                }
             }
-            catch (Exception e)
-            {
-                throw new Exception($"Error getting data of type {type} from node", e);
-            }
+
+            var collection = CollectionTypes.TryGetCollection(node, type);
+            if (collection != null) 
+                return collection;
+
+            if (!node.Value.IsNullOrEmpty())
+                return ComplexTypeShortcuts.GetFromShortcut(node.Value, type);
+
+            return ComplexTypes.RetrieveComplexType(node, type);
         }
 
 
@@ -96,7 +98,7 @@ namespace SUCC.ParsingLogic
             // it will still work.
             // See https://github.com/JimmyCushnie/SUCC/issues/26
 
-            if (node.ChildNodes.Count > 0)
+            if (node.ChildNodeType == NodeChildrenType.key && node.ChildNodes.Count > 0)
                 return ComplexTypes.RetrieveComplexType(node, type);
 
             if (BaseTypesManager.TryParseBaseType(node.Value, type, out var result))
