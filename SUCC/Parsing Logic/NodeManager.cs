@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SUCC.ParsingLogic.CollectionTypes;
+using System;
 
 namespace SUCC.ParsingLogic
 {
@@ -40,8 +41,8 @@ namespace SUCC.ParsingLogic
             else if (BaseTypesManager.IsBaseType(type))
                 SetBaseTypeNode(node, data, type, style);
 
-            else if (CollectionTypes.TrySetCollection(node, data, type, style))
-                return;
+            else if (CollectionTypesManager.IsSupportedType(type))
+                CollectionTypesManager.SetCollectionNode(node, data, type, style);
 
             else
                 ComplexTypes.SetComplexNode(node, data, type, style);
@@ -59,7 +60,7 @@ namespace SUCC.ParsingLogic
             // this ensures the base type rules are registered before they are needed.
             System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
 
-            if (type == typeof(string) && node.Value == MultiLineStringNode.Terminator && node.ChildLines.Count > 0)
+            if (type == typeof(string) && node.Value == MultiLineStringNode.Terminator && node.ChildNodeType == NodeChildrenType.multiLineString && node.ChildLines.Count > 0)
                 return MultiLineStringSpecialCaseHandler.ParseSpecialStringCase(node);
 
             if (BaseTypesManager.IsBaseType(type))
@@ -68,15 +69,23 @@ namespace SUCC.ParsingLogic
                 {
                     return RetrieveBaseTypeNode(node, type);
                 }
-                catch
+                catch // Pokemon exception: gotta catch em all! I am a good programmer.
                 {
                     throw new CannotRetrieveDataFromNodeException(node, type);
                 }
             }
 
-            var collection = CollectionTypes.TryGetCollection(node, type);
-            if (collection != null) 
-                return collection;
+            if (CollectionTypesManager.IsSupportedType(type))
+            {
+                try
+                {
+                    return CollectionTypesManager.RetrieveCollection(node, type);
+                }
+                catch
+                {
+                    throw new CannotRetrieveDataFromNodeException(node, type);
+                }
+            }
 
             if (!node.Value.IsNullOrEmpty())
                 return ComplexTypeShortcuts.GetFromShortcut(node.Value, type);
