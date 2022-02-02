@@ -20,24 +20,32 @@ namespace SUCC.ParsingLogic
         public IReadOnlyList<Line> ChildLines => _ChildLines;
         public IReadOnlyList<Node> ChildNodes => _ChildNodes;
 
+
+        // This is so the line number of the node can be counted for parsing error messages.
+        public readonly ReadableDataFile File;
+
         // This is here so that nodes can access the style of their file. For nodes part of a ReadOnlyDataFile, it is null.
         // We reference a DataFile rather than a FileStyle because if a user changes the Style of the File, that change is automatically seen by all its nodes.
-        public readonly ReadableWritableDataFile File;
+        private readonly ReadableWritableDataFile FileStyleRef;
+
 
         protected FileStyle Style
-            => File?.Style ?? throw new NullReferenceException("Tried to get the style of a node without a file.");
+            => FileStyleRef?.Style ?? throw new NullReferenceException($"Tried to get the style of a node not part of a {nameof(ReadableWritableDataFile)}");
 
         /// <summary> This constructor used when loading lines from file </summary>
-        public Node(string rawText, ReadableWritableDataFile file) : base(rawText)
+        public Node(string rawText, ReadableDataFile file) : base(rawText)
         {
-            this.File = file;
+            this.File = file ?? throw new ArgumentNullException("Nodes must belong to a file");
+            this.FileStyleRef = file as ReadableWritableDataFile;
         }
 
         /// <summary> This constructor used when creating new lines to add to the file </summary>
-        public Node(int indentation, ReadableWritableDataFile file)
+        public Node(int indentation, ReadableDataFile file)
         {
+            this.File = file ?? throw new ArgumentNullException("Nodes must belong to a file");
+            this.FileStyleRef = file as ReadableWritableDataFile;
+
             this.IndentationLevel = indentation;
-            this.File = file;
             this.UnappliedStyle = true;
         }
 

@@ -46,7 +46,7 @@ namespace SUCC.ParsingLogic
         /// <summary>
         /// Parses lines of SUCC into a data structure
         /// </summary>
-        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSucc(string[] lines, ReadableDataFile fileRef) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
+        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSucc(string[] lines, ReadableDataFile file) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
         {
             // If the file is empty
             // Do this because otherwise new files are created with a newline at the top
@@ -59,8 +59,6 @@ namespace SUCC.ParsingLogic
 
             var NestingNodeStack = new Stack<Node>(); // The top of the stack is the node that new nodes should be children of
             bool DoingMultiLineString = false;
-
-            var file = fileRef as DataFile; // This will be null if fileRef is a ReadOnlyDataFile
 
             // Parse the input line by line
             for (int i = 0; i < lines.Length; i++)
@@ -164,7 +162,7 @@ namespace SUCC.ParsingLogic
             return line.Length != 0 && line[0] != '#';
         }
 
-        private static Node GetNodeFromLine(string line, DataFile file)
+        private static Node GetNodeFromLine(string line, ReadableDataFile file)
         {
             var DataType = GetDataLineType(line);
             Node node = null;
