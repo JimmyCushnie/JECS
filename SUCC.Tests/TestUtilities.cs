@@ -15,5 +15,16 @@ namespace SUCC.Tests
 
             Assert.AreEqual(SAVED_VALUE, loadedValue);
         }
+
+
+        public static void PerformParsingErrorTest<TData>(string validFileStructure_invalidData)
+        {
+            var file = new MemoryReadOnlyDataFile(validFileStructure_invalidData);
+
+            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
+            {
+                file.Get<TData>("data");
+            });
+        }
     }
 }

@@ -10,80 +10,68 @@ namespace SUCC.Tests
         [TestMethod]
         public void InvalidFileData_InvalidComplexTypeData_InvalidShortcut()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidComplexTypeData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<ComplexType>("ComplexType1");
-            });
+            const string fileText = @"
+data: this is an invalid shortcut lol
+";
+            TestUtilities.PerformParsingErrorTest<ComplexType>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidComplexTypeData_ConstructorShortcutWithInvalidData()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidComplexTypeData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<ComplexType>("ComplexType2");
-            });
+            const string fileText = @"
+data: (0, test, cum)
+";
+            TestUtilities.PerformParsingErrorTest<ComplexType>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidComplexTypeData_MethodShortcutWithInvalidData()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidComplexTypeData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<ComplexType>("ComplexType3");
-            });
+            const string fileText = @"
+data: MethodShortcut(cum, test, false)
+";
+            TestUtilities.PerformParsingErrorTest<ComplexType>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidComplexTypeData_InvalidDataInChildren()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidComplexTypeData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<ComplexType>("ComplexType4");
-            });
+            const string fileText = @"
+data:
+    Integer: 69
+    String: sex
+    Boolean: invalid
+";
+            TestUtilities.PerformParsingErrorTest<ComplexType>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidComplexTypeData_ChildrenAreListNodes()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidComplexTypeData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<ComplexType>("ComplexType5");
-            });
+            const string fileText = @"
+data:
+    - lol
+    - it's a list lol
+";
+            TestUtilities.PerformParsingErrorTest<ComplexType>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidComplexTypeData_ChildrenAreMultiLineString()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidComplexTypeData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<ComplexType>("ComplexType6");
-            });
+            const string fileText = @"
+data: """"""
+    this is a string haha
+    indeed, it's a multi-line string!
+    """"""
+";
+            TestUtilities.PerformParsingErrorTest<ComplexType>(fileText);
         }
 
 
         const string ValidFileStructure_InvalidComplexTypeData = @"
 
-ComplexType1: this is an invalid shortcut lol
-ComplexType2: (0, test, cum)
-ComplexType3: MethodShortcut(cum, test, false)
-
-ComplexType4:
-    Integer: 69
-    String: sex
-    Boolean: invalid
 
 ComplexType5:
     - lol

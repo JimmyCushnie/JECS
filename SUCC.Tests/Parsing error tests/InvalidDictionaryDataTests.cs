@@ -10,86 +10,61 @@ namespace SUCC.Tests
         [TestMethod]
         public void InvalidFileData_InvalidDictionaryData_NodeHasValue()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidDictionaryData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<Dictionary<string, int>>("Dictionary1");
-            });
+            const string fileText = @"
+data: lol this isn't a dictionary
+";
+            TestUtilities.PerformParsingErrorTest<Dictionary<string, int>>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidDictionaryData_HasWrongListForChildren()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidDictionaryData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<Dictionary<string, int>>("Dictionary2");
-            });
+            const string fileText = @"
+data:
+    - 0
+    - 1
+    - 69
+";
+            TestUtilities.PerformParsingErrorTest<Dictionary<string, int>>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidDictionaryData_OneInvalidValue()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidDictionaryData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<Dictionary<string, int>>("Dictionary3");
-            });
+            const string fileText = @"
+data:
+    key: 12
+    key2: 35
+    key3: sex
+";
+            TestUtilities.PerformParsingErrorTest<Dictionary<string, int>>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidDictionaryData_OneInvalidKey()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidDictionaryData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<Dictionary<int, string>>("Dictionary4");
-            });
+            const string fileText = @"
+data:
+    12: value
+    25: value2
+    sex: value3
+";
+            TestUtilities.PerformParsingErrorTest<Dictionary<int, string>>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidDictionaryData_InvalidArrayDictionary()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidDictionaryData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<Dictionary<int, string>>("Dictionary5");
-            });
-        }
-
-
-        const string ValidFileStructure_InvalidDictionaryData = @"
-
-Dictionary1: lol this isn't a dictionary
-
-Dictionary2:
-    - 0
-    - 1
-    - 69
-
-Dictionary3:
-    key: 12
-    key2: 35
-    key3: sex
-
-Dictionary4:
-    12: value
-    25: value2
-    sex: value3
-
-Dictionary5:
+            const string fileText = @"
+data:
     -
         key: sex
         value: 420
     -
         key: balls
         value: ass
-
 ";
+            TestUtilities.PerformParsingErrorTest<Dictionary<string, int>>(fileText);
+        }
     }
 }

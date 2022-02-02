@@ -9,35 +9,21 @@ namespace SUCC.Tests
         [TestMethod]
         public void InvalidFileData_InvalidBaseType_InvalidNodeValue()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidIntData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<int>("IntValue");
-            });
+            const string fileText = @"
+data: notanint
+";
+            TestUtilities.PerformParsingErrorTest<int>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidBaseType_BadSpecialStringCase()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidIntData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<int>("IntValue2");
-            });
-        }
-
-        const string ValidFileStructure_InvalidIntData = @"
-
-IntValue: notanint
-
-IntValue2: """"""
+            const string fileText = @"
+data: """"""
     lmao it's a string
     """"""
-
-# this file also has a comment because why not
-
 ";
+            TestUtilities.PerformParsingErrorTest<int>(fileText);
+        }
     }
 }

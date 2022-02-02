@@ -9,69 +9,48 @@ namespace SUCC.Tests
         [TestMethod]
         public void InvalidFileData_InvalidArrayData_NodeHasValue()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidArrayData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<int[]>("IntList1");
-            });
+            const string fileText = @"
+data: lol this isn't an int array
+";
+            TestUtilities.PerformParsingErrorTest<int[]>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidArrayData_InvalidListItemNode()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidArrayData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<int[]>("IntList2");
-            });
+            const string fileText = @"
+data:
+    - 0
+    - 1
+    - cum
+    - 69
+";
+            TestUtilities.PerformParsingErrorTest<int[]>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidArrayData_InvalidNestedCollection()
         {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidArrayData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<int[]>("IntList3");
-            });
-        }
-
-        [TestMethod]
-        public void InvalidFileData_InvalidArrayData_InvalidKeyChildren()
-        {
-            var file = new MemoryReadOnlyDataFile(ValidFileStructure_InvalidArrayData);
-
-            Assert.ThrowsException<CannotRetrieveDataFromNodeException>(() =>
-            {
-                file.Get<int[]>("IntList3");
-            });
-        }
-
-
-        const string ValidFileStructure_InvalidArrayData = @"
-
-IntList1: lol this isn't an int list
-
-IntList2:
-    - 0
-    - 1
-    - cum
-    - 69
-
-IntList3:
+            const string fileText = @"
+data:
     - 22
     - 121
     -
         - 55
         - 6969
     - 11
-
-IntList4:
-    child: node
-
 ";
+            TestUtilities.PerformParsingErrorTest<int[]>(fileText);
+        }
+
+        [TestMethod]
+        public void InvalidFileData_InvalidArrayData_InvalidKeyChildren()
+        {
+            const string fileText = @"
+data:
+    child: node
+";
+            TestUtilities.PerformParsingErrorTest<int[]>(fileText);
+        }
     }
 }
