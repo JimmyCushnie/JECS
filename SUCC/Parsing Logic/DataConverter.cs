@@ -94,18 +94,26 @@ namespace SUCC.ParsingLogic
                     if (nestingNodeStack.Count == 0) // If this is a top-level node
                     {
                         if (!(node is KeyNode))
-                            throw new InvalidFileStructureException(dataFile, lineNumber, $"top level lines must be key nodes");
+                            throw new InvalidFileStructureException(dataFile, lineNumber, "top level lines must be key nodes");
 
                         topLevelLines.Add(node);
                         KeyNode heck = node as KeyNode;
-                        topLevelNodes.Add(heck.Key, heck);
+
+                        try
+                        {
+                            topLevelNodes.Add(heck.Key, heck);
+                        }
+                        catch (ArgumentException)
+                        {
+                            throw new InvalidFileStructureException(dataFile, lineNumber, $"multiple top level keys called '{heck.Key}'");
+                        }
                     }
                     else // If this is NOT a top-level node
                     {
-                        int StackTopIndentation = nestingNodeStack.Peek().IndentationLevel;
-                        int LineIndentation = line.GetIndentationLevel();
+                        int stackTopIndentation = nestingNodeStack.Peek().IndentationLevel;
+                        int lineIndentation = line.GetIndentationLevel();
 
-                        if (LineIndentation > StackTopIndentation) // If this should be a child of the stack top
+                        if (lineIndentation > stackTopIndentation) // If this should be a child of the stack top
                         {
                             Node newParent = nestingNodeStack.Peek();
                             if (newParent.ChildNodes.Count == 0) // If this is the first child of the parent, assign the parent's child type
@@ -122,7 +130,14 @@ namespace SUCC.ParsingLogic
                                 CheckNewSiblingForErrors(child: node, newParent: newParent, dataFile, lineNumber);
                             }
 
-                            newParent.AddChild(node);
+                            try
+                            {
+                                newParent.AddChild(node);
+                            }
+                            catch (ArgumentException)
+                            {
+                                throw new InvalidFileStructureException(dataFile, lineNumber, $"multiple sibling keys called '{(node as KeyNode).Key}' (indentation level {lineIndentation})");
+                            }
                         }
                         else // If this should NOT be a child of the stack top
                         {

@@ -142,12 +142,14 @@ namespace SUCC.ParsingLogic
 
         public void AddChild(Line newLine)
         {
-            _ChildLines.Add(newLine);
+            if (this.ChildNodeType == NodeChildrenType.key && newLine is KeyNode keyNode && this.ContainsChildNode(keyNode.Key))
+                throw new ArgumentException($"Tried to add duplicate key node child with key '{keyNode.Key}'");
 
-            Node newNode = newLine as Node;
 
-            if (newNode != null) 
+            if (newLine is Node newNode)
                 _ChildNodes.Add(newNode);
+
+            _ChildLines.Add(newLine);
         }
 
         public void RemoveChild(string key)
