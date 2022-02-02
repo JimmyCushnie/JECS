@@ -39,18 +39,11 @@ namespace SUCC.Abstractions
         /// <summary> Reloads the data stored on disk into this object. </summary>
         public void ReloadAllData()
         {
-            try
-            {
-                string succ = GetSavedText();
+            string succ = GetSavedText();
+            var data = DataConverter.DataStructureFromSucc(succ, this);
 
-                var data = DataConverter.DataStructureFromSucc(succ, this);
-                TopLevelLines = data.topLevelLines;
-                TopLevelNodes = data.topLevelNodes;
-            }
-            catch (Exception e)
-            {
-                throw new Exception($"error parsing data from file: {e.Message}");
-            }
+            TopLevelLines = data.topLevelLines;
+            TopLevelNodes = data.topLevelNodes;
         }
 
         /// <summary> Gets the data as it appears in file </summary>
