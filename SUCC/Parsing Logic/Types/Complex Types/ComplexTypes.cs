@@ -22,11 +22,15 @@ namespace SUCC.ParsingLogic
 
         internal static object RetrieveComplexType(Node node, Type type)
         {
+            if (node.ChildNodes.Count > 0 && node.ChildNodeType != NodeChildrenType.key)
+                throw new FormatException("Non-shortcut complex type nodes must have key children");
+
             object returnThis = Activator.CreateInstance(type);
 
             foreach (var m in type.GetValidMembers())
             {
-                if (!node.ContainsChildNode(m.Name)) continue;
+                if (!node.ContainsChildNode(m.Name)) 
+                    continue;
 
                 var child = node.GetChildAddressedByName(m.Name);
                 object data = NodeManager.GetNodeData(child, m.MemberType);
