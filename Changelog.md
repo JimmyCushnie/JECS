@@ -33,6 +33,8 @@
 * `System.Version` has been added as a built-in base type
 * Added `FileInfo` and `DirectoryInfo` as built-in base types
 * New and better system for adding custom base types; removed the kind of shitty old system
+* Error messages are now all PG-13
+* Improved performance when working with generic collections (i.e. `List<T>`) by caching the runtime-compiled generic methods
 
 todo update the docs for 1.2
 

@@ -88,10 +88,10 @@ namespace SUCC.ParsingLogic
         {
             Type elementType = listType.GetGenericArguments()[0];
 
-            SetListNodeG.MakeGenericMethod(elementType)
+            SetListNode_.GetBoundGenericMethod(elementType)
                 .Invoke(null, node, list, style);
         }
-        private static MethodInfo SetListNodeG = GetMethod(nameof(SetListNodeGeneric));
+        private static GenericMethodHelper SetListNode_ = new GenericMethodHelper(GetMethod(nameof(SetListNodeGeneric)));
         private static void SetListNodeGeneric<T>(Node node, List<T> list, FileStyle style)
         {
             node.CapChildCount(list.Count);
@@ -104,10 +104,10 @@ namespace SUCC.ParsingLogic
         {
             Type elementType = listType.GetGenericArguments()[0];
 
-            return RetrieveListG.MakeGenericMethod(elementType)
+            return RetrieveList_.GetBoundGenericMethod(elementType)
                 .Invoke(null, node);
         }
-        private static MethodInfo RetrieveListG = GetMethod(nameof(RetrieveListGeneric));
+        private static GenericMethodHelper RetrieveList_ = new GenericMethodHelper(GetMethod(nameof(RetrieveListGeneric)));
         private static List<T> RetrieveListGeneric<T>(Node node)
         {
             var list = new List<T>(capacity: node.ChildNodes.Count);
@@ -127,10 +127,10 @@ namespace SUCC.ParsingLogic
         {
             Type elementType = hashsetType.GetGenericArguments()[0];
 
-            SetHashSetNodeG.MakeGenericMethod(elementType)
+            SetHashSetNode_.GetBoundGenericMethod(elementType)
                 .Invoke(null, node, hashset, style);
         }
-        private static MethodInfo SetHashSetNodeG = GetMethod(nameof(SetHashSetNodeGeneric));
+        private static GenericMethodHelper SetHashSetNode_ = new GenericMethodHelper(GetMethod(nameof(SetHashSetNodeGeneric)));
         private static void SetHashSetNodeGeneric<T>(Node node, HashSet<T> hashset, FileStyle style)
         {
             node.CapChildCount(hashset.Count);
@@ -147,10 +147,10 @@ namespace SUCC.ParsingLogic
         {
             Type elementType = hashsetType.GetGenericArguments()[0];
 
-            return RetrieveHashSetG.MakeGenericMethod(elementType)
+            return RetrieveHashSet_.GetBoundGenericMethod(elementType)
                 .Invoke(null, node);
         }
-        private static MethodInfo RetrieveHashSetG = GetMethod(nameof(RetrieveHashSetGeneric));
+        private static GenericMethodHelper RetrieveHashSet_ = new GenericMethodHelper(GetMethod(nameof(RetrieveHashSetGeneric)));
         private static HashSet<T> RetrieveHashSetGeneric<T>(Node node)
         {
             var hashset = new HashSet<T>(); // todo: use the capacity constructor once unity can use .Net 4.7.2 - i.e. new HashSet<T>(capacity: node.ChildNodes.Count)
@@ -171,10 +171,10 @@ namespace SUCC.ParsingLogic
             Type keyType = dictionaryType.GetGenericArguments()[0];
             Type valueType = dictionaryType.GetGenericArguments()[1];
 
-            SetDictionaryG.MakeGenericMethod(keyType, valueType)
+            SetDictionary_.GetBoundGenericMethod(keyType, valueType)
                 .Invoke(null, node, dictionary, style, forceArrayMode);
         }
-        private static MethodInfo SetDictionaryG = GetMethod(nameof(SetDictionaryNodeGeneric));
+        private static GenericMethodHelper_2 SetDictionary_ = new GenericMethodHelper_2(GetMethod(nameof(SetDictionaryNodeGeneric)));
         private static void SetDictionaryNodeGeneric<TKey, TValue>(Node node, Dictionary<TKey, TValue> dictionary, FileStyle style, bool forceArrayMode = false)
         {
             bool keyIsBase = BaseTypesManager.IsBaseType(typeof(TKey));
@@ -227,10 +227,10 @@ namespace SUCC.ParsingLogic
             Type keyType = dictionaryType.GetGenericArguments()[0];
             Type valueType = dictionaryType.GetGenericArguments()[1];
 
-            return RetrieveDictionaryG.MakeGenericMethod(keyType, valueType)
+            return RetrieveDictionary_.GetBoundGenericMethod(keyType, valueType)
                 .Invoke(null, node);
         }
-        private static MethodInfo RetrieveDictionaryG = GetMethod(nameof(RetrieveDictionaryGeneric));
+        private static GenericMethodHelper_2 RetrieveDictionary_ = new GenericMethodHelper_2(GetMethod(nameof(RetrieveDictionaryGeneric)));
         private static Dictionary<TKey, TValue> RetrieveDictionaryGeneric<TKey, TValue>(Node node)
         {
             bool keyIsBase = BaseTypesManager.IsBaseType(typeof(TKey));
