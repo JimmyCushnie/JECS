@@ -64,33 +64,34 @@ namespace SUCC.ParsingLogic
                 return MultiLineStringSpecialCaseHandler.ParseSpecialStringCase(node);
 
             if (BaseTypesManager.IsBaseType(type))
-            {
-                try
-                {
-                    return RetrieveBaseTypeNode(node, type);
-                }
-                catch // Pokemon exception: gotta catch em all! I am a good programmer.
-                {
-                    throw new CannotRetrieveDataFromNodeException(node, type);
-                }
-            }
+                return RetrieveDataWithErrorChecking(() => RetrieveBaseTypeNode(node, type));
 
             if (CollectionTypesManager.IsSupportedType(type))
+                return RetrieveDataWithErrorChecking(() => CollectionTypesManager.RetrieveCollection(node, type));
+
+            if (!node.Value.IsNullOrEmpty())
+                return ComplexTypeShortcuts.GetFromShortcut(node.Value, type);
+
+            return ComplexTypes.RetrieveComplexType(node, type);
+
+
+            object RetrieveDataWithErrorChecking(Func<object> retrieveDataFunction)
             {
                 try
                 {
-                    return CollectionTypesManager.RetrieveCollection(node, type);
+                    return retrieveDataFunction.Invoke();
+                }
+                catch (CannotRetrieveDataFromNodeException deeperException)
+                {
+                    // If there's a parsing error deeper in the tree, we want to throw *that* error, so the user gets a line
+                    // number appropriate to the actual error.
+                    throw deeperException;
                 }
                 catch
                 {
                     throw new CannotRetrieveDataFromNodeException(node, type);
                 }
             }
-
-            if (!node.Value.IsNullOrEmpty())
-                return ComplexTypeShortcuts.GetFromShortcut(node.Value, type);
-
-            return ComplexTypes.RetrieveComplexType(node, type);
         }
 
 
