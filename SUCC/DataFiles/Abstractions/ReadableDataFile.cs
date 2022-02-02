@@ -18,6 +18,8 @@ namespace SUCC.Abstractions
         /// </summary>
         public abstract string Identifier { get; }
 
+        public override string ToString() => Identifier;
+
         /// <summary>
         /// When a default value is not supplied in Get, we search for it in this.
         /// </summary>
