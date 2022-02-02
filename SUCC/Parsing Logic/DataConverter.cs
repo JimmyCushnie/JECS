@@ -46,7 +46,7 @@ namespace SUCC.ParsingLogic
         /// <summary>
         /// Parses lines of SUCC into a data structure
         /// </summary>
-        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSucc(string[] lines, ReadableDataFile file) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
+        internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSucc(string[] lines, ReadableDataFile dataFile) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
         {
             // If the file is empty
             // Do this because otherwise new files are created with a newline at the top
@@ -54,32 +54,32 @@ namespace SUCC.ParsingLogic
                 return (new List<Line>(), new Dictionary<string, KeyNode>());
 
 
-            var TopLevelLines = new List<Line>();
-            var TopLevelNodes = new Dictionary<string, KeyNode>();
+            var topLevelLines = new List<Line>();
+            var topLevelNodes = new Dictionary<string, KeyNode>();
 
-            var NestingNodeStack = new Stack<Node>(); // The top of the stack is the node that new nodes should be children of
-            bool DoingMultiLineString = false;
+            var nestingNodeStack = new Stack<Node>(); // The top of the stack is the node that new nodes should be children of
+            bool doingMultiLineString = false;
 
             // Parse the input line by line
-            for (int i = 0; i < lines.Length; i++)
+            for (int lineNumber = 0; lineNumber < lines.Length; lineNumber++)
             {
-                var line = lines[i];
+                var line = lines[lineNumber];
                 if (line.Contains('\t'))
                     throw new FormatException("a SUCC file cannot contain tabs. Please use spaces instead.");
 
-                if (DoingMultiLineString)
+                if (doingMultiLineString)
                 {
-                    if (NestingNodeStack.Peek().ChildNodeType != NodeChildrenType.multiLineString)
+                    if (nestingNodeStack.Peek().ChildNodeType != NodeChildrenType.multiLineString)
                         throw new Exception("oh no, we were supposed to be doing a multi-line string but the top of the node stack isn't a multi-line string node!");
 
-                    var newboi = new MultiLineStringNode(rawText: line, file);
+                    var newboi = new MultiLineStringNode(rawText: line, dataFile);
 
-                    NestingNodeStack.Peek().AddChild(newboi);
+                    nestingNodeStack.Peek().AddChild(newboi);
 
                     if (newboi.IsTerminator)
                     {
-                        DoingMultiLineString = false;
-                        NestingNodeStack.Pop();
+                        doingMultiLineString = false;
+                        nestingNodeStack.Pop();
                     }
 
                     continue;
@@ -87,26 +87,27 @@ namespace SUCC.ParsingLogic
 
                 if (LineHasData(line))
                 {
-                    Node node = GetNodeFromLine(line, file);
+                    Node node = GetNodeFromLine(line, dataFile, lineNumber);
 
                     addNodeInAppriatePlaceInStack:
 
-                    if (NestingNodeStack.Count == 0) // If this is a top-level node
+                    if (nestingNodeStack.Count == 0) // If this is a top-level node
                     {
                         if (!(node is KeyNode))
-                            throw new FormatException($"top level lines must be key nodes. Line {i} does not conform to this: '{line}'");
-                        TopLevelLines.Add(node);
+                            throw new InvalidFileStructureException(dataFile, lineNumber, $"top level lines must be key nodes");
+
+                        topLevelLines.Add(node);
                         KeyNode heck = node as KeyNode;
-                        TopLevelNodes.Add(heck.Key, heck);
+                        topLevelNodes.Add(heck.Key, heck);
                     }
                     else // If this is NOT a top-level node
                     {
-                        int StackTopIndentation = NestingNodeStack.Peek().IndentationLevel;
+                        int StackTopIndentation = nestingNodeStack.Peek().IndentationLevel;
                         int LineIndentation = line.GetIndentationLevel();
 
                         if (LineIndentation > StackTopIndentation) // If this should be a child of the stack top
                         {
-                            Node newParent = NestingNodeStack.Peek();
+                            Node newParent = nestingNodeStack.Peek();
                             if (newParent.ChildNodes.Count == 0) // If this is the first child of the parent, assign the parent's child type
                             {
                                 if (node is KeyNode)
@@ -118,40 +119,40 @@ namespace SUCC.ParsingLogic
                             }
                             else // If the parent already has children, check for errors with this line
                             {
-                                CheckNewSiblingForErrors(child: node, newParent: newParent);
+                                CheckNewSiblingForErrors(child: node, newParent: newParent, dataFile, lineNumber);
                             }
 
                             newParent.AddChild(node);
                         }
                         else // If this should NOT be a child of the stack top
                         {
-                            NestingNodeStack.Pop();
+                            nestingNodeStack.Pop();
                             goto addNodeInAppriatePlaceInStack;
                         }
                     }
 
                     if (node.Value == "") // If this is a node with children
-                        NestingNodeStack.Push(node);
+                        nestingNodeStack.Push(node);
 
                     if (node.Value == MultiLineStringNode.Terminator) // if this is the start of a multi line string
                     {
-                        NestingNodeStack.Push(node);
+                        nestingNodeStack.Push(node);
                         node.ChildNodeType = NodeChildrenType.multiLineString;
-                        DoingMultiLineString = true;
+                        doingMultiLineString = true;
                     }
                 }
                 else // Line has no data
                 {
                     Line NoDataLine = new Line(rawText: line);
 
-                    if (NestingNodeStack.Count == 0)
-                        TopLevelLines.Add(NoDataLine);
+                    if (nestingNodeStack.Count == 0)
+                        topLevelLines.Add(NoDataLine);
                     else
-                        NestingNodeStack.Peek().AddChild(NoDataLine);
+                        nestingNodeStack.Peek().AddChild(NoDataLine);
                 }
             }
 
-            return (TopLevelLines, TopLevelNodes);
+            return (topLevelLines, topLevelNodes);
         }
 
 
@@ -162,38 +163,34 @@ namespace SUCC.ParsingLogic
             return line.Length != 0 && line[0] != '#';
         }
 
-        private static Node GetNodeFromLine(string line, ReadableDataFile file)
+        private static Node GetNodeFromLine(string line, ReadableDataFile file, int lineNumber)
         {
-            var DataType = GetDataLineType(line);
-            Node node = null;
-            switch (DataType)
+            var dataType = GetDataLineType(line);
+            switch (dataType)
             {
                 case DataLineType.key:
-                    node = new KeyNode(rawText: line, file);
-                    break;
+                    return new KeyNode(rawText: line, file);
+                    
                 case DataLineType.list:
-                    node = new ListNode(rawText: line, file);
-                    break;
+                    return new ListNode(rawText: line, file);
 
                 default:
-                    throw new FormatException($"format error on line: {line}");
+                    throw new InvalidFileStructureException(file, lineNumber, "format error");
             }
-
-            return node;
         }
 
-        private static void CheckNewSiblingForErrors(Node child, Node newParent)
+        private static void CheckNewSiblingForErrors(Node child, Node newParent, ReadableDataFile dataFile, int lineNumber)
         {
             Node sibling = newParent.ChildNodes[0];
             if (child.IndentationLevel != sibling.IndentationLevel) // if there is a mismatch between the new node's indentation and its sibling's
-                throw new FormatException($"Line did not have the same indentation as its assumed sibling. Line was '{child.RawText}'; sibling was '{sibling.RawText}'");
+                throw new InvalidFileStructureException(dataFile, lineNumber, "Line did not have the same indentation as its assumed sibling");
 
             if (  // if there is a mismatch between the new node's type and its sibling's
                    newParent.ChildNodeType == NodeChildrenType.key && !(child is KeyNode)
                 || newParent.ChildNodeType == NodeChildrenType.list && !(child is ListNode)
                 || newParent.ChildNodeType == NodeChildrenType.multiLineString
                 || newParent.ChildNodeType == NodeChildrenType.none)
-                throw new FormatException($"Line did not match the child type of its parent. Line was '{child.RawText}'; parent was '{newParent.RawText}'");
+                throw new InvalidFileStructureException(dataFile, lineNumber, $"Line did not match the child type of its parent");
         }
 
         private enum DataLineType { none, key, list }
