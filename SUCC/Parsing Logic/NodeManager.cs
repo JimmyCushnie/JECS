@@ -70,9 +70,9 @@ namespace SUCC.ParsingLogic
                 return RetrieveDataWithErrorChecking(() => CollectionTypesManager.RetrieveCollection(node, type));
 
             if (!node.Value.IsNullOrEmpty())
-                return ComplexTypeShortcuts.GetFromShortcut(node.Value, type);
+                return RetrieveDataWithErrorChecking(() => ComplexTypeShortcuts.GetFromShortcut(node.Value, type));
 
-            return ComplexTypes.RetrieveComplexType(node, type);
+            return RetrieveDataWithErrorChecking(() => ComplexTypes.RetrieveComplexType(node, type));
 
 
             object RetrieveDataWithErrorChecking(Func<object> retrieveDataFunction)
