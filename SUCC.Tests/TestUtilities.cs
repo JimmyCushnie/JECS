@@ -26,5 +26,14 @@ namespace SUCC.Tests
                 file.Get<TData>("data");
             });
         }
+
+
+        public static void PerformInvalidFileStructureTest(string invalidFileStructure)
+        {
+            Assert.ThrowsException<InvalidFileStructureException>(() =>
+            {
+                var file = new MemoryReadOnlyDataFile(invalidFileStructure);
+            });
+        }
     }
 }
