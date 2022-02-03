@@ -1,6 +1,6 @@
 ﻿using SUCC.Abstractions;
+using System;
 using System.IO;
-using System.Linq;
 
 namespace SUCC.MemoryFiles
 {
@@ -20,7 +20,7 @@ namespace SUCC.MemoryFiles
         /// <summary>
         /// Creates a ReadOnlyDataFile in memory with some preexisting SUCC content.
         /// </summary>
-        public MemoryReadOnlyDataFile(string rawFileText) : this(rawFileText, rawFileText)
+        public MemoryReadOnlyDataFile(string rawFileText) : this(rawFileText, "MemoryReadOnlyDataFile_" + Guid.NewGuid())
         {
         }
 

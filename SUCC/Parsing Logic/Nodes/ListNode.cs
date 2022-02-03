@@ -8,8 +8,8 @@ namespace SUCC.ParsingLogic
     /// </summary>
     internal class ListNode : Node
     {
-        public ListNode(string rawText, ReadableWritableDataFile file) : base(rawText, file) { }
-        public ListNode(int indentation, ReadableWritableDataFile file) : base(indentation, file)
+        public ListNode(string rawText, ReadableDataFile file) : base(rawText, file) { }
+        public ListNode(int indentation, ReadableDataFile file) : base(indentation, file)
         {
             RawText += "-";
         }
