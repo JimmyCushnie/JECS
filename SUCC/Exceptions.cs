@@ -19,17 +19,17 @@ namespace SUCC
     public class InvalidFileStructureException : ExceptionalSUCC
     {
         ReadableDataFile DataFile { get; }
-        int LineNumber { get; }
+        int LineIndex { get; }
 
-        internal InvalidFileStructureException(ReadableDataFile dataFile, int lineNumber, string message) : base(message)
+        internal InvalidFileStructureException(ReadableDataFile dataFile, int lineIndex, string message) : base(message)
         {
             DataFile = dataFile;
-            LineNumber = lineNumber;
+            LineIndex = lineIndex;
         }
 
         public override string ToString()
         {
-            return $"Invalid file structure on line {LineNumber} of {DataFile}: {Message}";
+            return $"Invalid file structure on line {LineIndex + 1} of {DataFile}: {Message}";
         }
     }
 

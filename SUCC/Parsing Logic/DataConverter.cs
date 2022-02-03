@@ -63,9 +63,9 @@ namespace SUCC.ParsingLogic
             int multiLineStringIndentationLevel = -1;
 
             // Parse the input line by line
-            for (int lineNumber = 0; lineNumber < lines.Length; lineNumber++)
+            for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
             {
-                var line = lines[lineNumber];
+                var line = lines[lineIndex];
                 if (line.Contains('\t'))
                     throw new FormatException("a SUCC file cannot contain tabs. Please use spaces instead.");
 
@@ -85,12 +85,12 @@ namespace SUCC.ParsingLogic
                         multiLineStringIndentationLevel = newboi.IndentationLevel;
 
                         if (multiLineStringIndentationLevel <= parentNode.IndentationLevel)
-                            throw new InvalidFileStructureException(dataFile, lineNumber, "multi-line string lines must have an indentation level greater than their parent");
+                            throw new InvalidFileStructureException(dataFile, lineIndex, "multi-line string lines must have an indentation level greater than their parent");
                     }
                     else
                     {
                         if (newboi.IndentationLevel != multiLineStringIndentationLevel)
-                            throw new InvalidFileStructureException(dataFile, lineNumber, "multi-line string lines must all have the same indentation level");
+                            throw new InvalidFileStructureException(dataFile, lineIndex, "multi-line string lines must all have the same indentation level");
                     }
 
                     parentNode.AddChild(newboi);
@@ -108,14 +108,14 @@ namespace SUCC.ParsingLogic
 
                 if (LineHasData(line))
                 {
-                    Node node = GetNodeFromLine(line, dataFile, lineNumber);
+                    Node node = GetNodeFromLine(line, dataFile, lineIndex);
 
                     addNodeInAppriatePlaceInStack:
 
                     if (nestingNodeStack.Count == 0) // If this is a top-level node
                     {
                         if (!(node is KeyNode))
-                            throw new InvalidFileStructureException(dataFile, lineNumber, "top level lines must be key nodes");
+                            throw new InvalidFileStructureException(dataFile, lineIndex, "top level lines must be key nodes");
 
                         topLevelLines.Add(node);
                         KeyNode heck = node as KeyNode;
@@ -126,7 +126,7 @@ namespace SUCC.ParsingLogic
                         }
                         catch (ArgumentException)
                         {
-                            throw new InvalidFileStructureException(dataFile, lineNumber, $"multiple top level keys called '{heck.Key}'");
+                            throw new InvalidFileStructureException(dataFile, lineIndex, $"multiple top level keys called '{heck.Key}'");
                         }
                     }
                     else // If this is NOT a top-level node
@@ -148,7 +148,7 @@ namespace SUCC.ParsingLogic
                             }
                             else // If the parent already has children, check for errors with this line
                             {
-                                CheckNewSiblingForErrors(child: node, newParent: newParent, dataFile, lineNumber);
+                                CheckNewSiblingForErrors(child: node, newParent: newParent, dataFile, lineIndex);
                             }
 
                             try
@@ -157,7 +157,7 @@ namespace SUCC.ParsingLogic
                             }
                             catch (ArgumentException)
                             {
-                                throw new InvalidFileStructureException(dataFile, lineNumber, $"multiple sibling keys called '{(node as KeyNode).Key}' (indentation level {lineIndentation})");
+                                throw new InvalidFileStructureException(dataFile, lineIndex, $"multiple sibling keys called '{(node as KeyNode).Key}' (indentation level {lineIndentation})");
                             }
                         }
                         else // If this should NOT be a child of the stack top
