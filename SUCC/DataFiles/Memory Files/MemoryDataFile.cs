@@ -1,4 +1,5 @@
 ﻿using SUCC.Abstractions;
+using System;
 using System.IO;
 
 namespace SUCC.MemoryFiles
@@ -19,7 +20,7 @@ namespace SUCC.MemoryFiles
         /// <summary>
         /// Creates a DataFile in memory with some preexisting SUCC content.
         /// </summary>
-        public MemoryDataFile(string rawFileText) : this(rawFileText, rawFileText)
+        public MemoryDataFile(string rawFileText) : this(rawFileText, "MemoryDataFile_" + Guid.NewGuid())
         {
         }
 

@@ -7,8 +7,8 @@ namespace SUCC.ParsingLogic
     /// </summary>
     internal class MultiLineStringNode : Node
     {
-        public MultiLineStringNode(string rawText, ReadableWritableDataFile file) : base(rawText, file) { }
-        public MultiLineStringNode(int indentation, ReadableWritableDataFile file) : base(indentation, file)
+        public MultiLineStringNode(string rawText, ReadableDataFile file) : base(rawText, file) { }
+        public MultiLineStringNode(int indentation, ReadableDataFile file) : base(indentation, file)
         {
             this.UnappliedStyle = false; // currently, no styles apply to MultiLineStringNodes
         }

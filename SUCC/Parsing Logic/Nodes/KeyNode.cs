@@ -8,8 +8,8 @@ namespace SUCC.ParsingLogic
     /// </summary>
     internal class KeyNode : Node
     {
-        public KeyNode(string rawText, ReadableWritableDataFile file) : base(rawText, file) { }
-        public KeyNode(int indentation, string key, ReadableWritableDataFile file) : base(indentation, file)
+        public KeyNode(string rawText, ReadableDataFile file) : base(rawText, file) { }
+        public KeyNode(int indentation, string key, ReadableDataFile file) : base(indentation, file)
         {
             if (!Utilities.IsValidKey(key, out string whyNot))
                 throw new FormatException(whyNot);
