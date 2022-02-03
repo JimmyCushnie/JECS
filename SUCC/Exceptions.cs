@@ -9,8 +9,6 @@ namespace SUCC
     /// </summary>
     public abstract class ExceptionalSUCC : System.Exception
     {
-        internal ExceptionalSUCC() { }
-        internal ExceptionalSUCC(string message) : base(message) { }
     }
 
     /// <summary>
@@ -19,18 +17,17 @@ namespace SUCC
     public class InvalidFileStructureException : ExceptionalSUCC
     {
         ReadableDataFile DataFile { get; }
-        int LineIndex { get; }
+        int LineIndex { get; } // Note that this is the line INDEX -- to get the line NUMBER we need to add one (fucking off by one errors)
+        string Details { get; }
 
-        internal InvalidFileStructureException(ReadableDataFile dataFile, int lineIndex, string message) : base(message)
+        internal InvalidFileStructureException(ReadableDataFile dataFile, int lineIndex, string details)
         {
             DataFile = dataFile;
             LineIndex = lineIndex;
+            Details = details;
         }
 
-        public override string ToString()
-        {
-            return $"Invalid file structure on line {LineIndex + 1} of {DataFile}: {Message}";
-        }
+        public override string Message => $"Invalid file structure on line {LineIndex + 1} of {DataFile}: {Details}";
     }
 
     /// <summary>
@@ -47,23 +44,26 @@ namespace SUCC
             ExpectedDataType = expectedDataType;
         }
 
-        public override string ToString()
+        public override string Message
         {
-            int lineNumber = ErroneousNode.GetLineNumber();
-            var file = ErroneousNode.File;
+            get
+            {
+                int lineNumber = ErroneousNode.GetLineNumber();
+                var file = ErroneousNode.File;
 
-            string startOfErrorMessage = $"Invalid file data on line {lineNumber} of {file}. Expected data of type {ExpectedDataType}, but couldn't interpret data as that type";
+                string startOfErrorMessage = $"Invalid file data on line {lineNumber} of {file}. Expected data of type {ExpectedDataType}, but couldn't interpret data as that type";
 
-            bool nodeHasChildren = ErroneousNode.ChildNodes.Count == 0;
-            bool nodeHasValue = !ErroneousNode.Value.IsNullOrEmpty();
+                bool nodeHasChildren = ErroneousNode.ChildNodes.Count > 0;
+                bool nodeHasValue = !ErroneousNode.Value.IsNullOrEmpty();
 
-            if (nodeHasChildren)
-                return startOfErrorMessage + $" (node has {ErroneousNode.ChildNodes.Count} children)";
+                if (nodeHasChildren)
+                    return startOfErrorMessage + $" (node has {ErroneousNode.ChildNodes.Count} children)";
 
-            if (nodeHasValue)
-                return startOfErrorMessage + $": {ErroneousNode.Value}";
+                if (nodeHasValue)
+                    return startOfErrorMessage + $": {ErroneousNode.Value}";
 
-            return startOfErrorMessage + ".";
+                return startOfErrorMessage + ".";
+            }
         }
     }
 }
