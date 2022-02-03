@@ -58,7 +58,9 @@ namespace SUCC.ParsingLogic
             var topLevelNodes = new Dictionary<string, KeyNode>();
 
             var nestingNodeStack = new Stack<Node>(); // The top of the stack is the node that new nodes should be children of
+
             bool doingMultiLineString = false;
+            int multiLineStringIndentationLevel = -1;
 
             // Parse the input line by line
             for (int lineNumber = 0; lineNumber < lines.Length; lineNumber++)
@@ -69,16 +71,35 @@ namespace SUCC.ParsingLogic
 
                 if (doingMultiLineString)
                 {
-                    if (nestingNodeStack.Peek().ChildNodeType != NodeChildrenType.multiLineString)
+                    var parentNode = nestingNodeStack.Peek();
+
+                    if (parentNode.ChildNodeType != NodeChildrenType.multiLineString)
                         throw new Exception("oh no, we were supposed to be doing a multi-line string but the top of the node stack isn't a multi-line string node!");
 
                     var newboi = new MultiLineStringNode(rawText: line, dataFile);
 
-                    nestingNodeStack.Peek().AddChild(newboi);
+                    if (parentNode.ChildNodes.Count == 0)
+                    {
+                        // If this is the first line of the multi-line string, it determines the indentation level.
+                        // However, that indentation level must be greater than the parent's.
+                        multiLineStringIndentationLevel = newboi.IndentationLevel;
+
+                        if (multiLineStringIndentationLevel <= parentNode.IndentationLevel)
+                            throw new InvalidFileStructureException(dataFile, lineNumber, "multi-line string lines must have an indentation level greater than their parent");
+                    }
+                    else
+                    {
+                        if (newboi.IndentationLevel != multiLineStringIndentationLevel)
+                            throw new InvalidFileStructureException(dataFile, lineNumber, "multi-line string lines must all have the same indentation level");
+                    }
+
+                    parentNode.AddChild(newboi);
 
                     if (newboi.IsTerminator)
                     {
                         doingMultiLineString = false;
+                        multiLineStringIndentationLevel = -1;
+
                         nestingNodeStack.Pop();
                     }
 
@@ -153,6 +174,7 @@ namespace SUCC.ParsingLogic
                     {
                         nestingNodeStack.Push(node);
                         node.ChildNodeType = NodeChildrenType.multiLineString;
+
                         doingMultiLineString = true;
                     }
                 }
