@@ -10,13 +10,6 @@ namespace SUCC.Abstractions
     /// </summary>
     public abstract class ReadableWritableDataFile : ReadableDataFile
     {
-        /// <summary> Rules for how to format new data saved to this file </summary>
-        public FileStyle Style = FileStyle.Default;
-
-        /// <summary> If true, the DataFile will automatically save changes to disk with each Get or Set. If false, you must call SaveAllData() manually. </summary>
-        /// <remarks> Be careful with this. You do not want to accidentally be writing to a user's disk at 1000MB/s for 3 hours. </remarks>
-        public bool AutoSave { get; set; } = true;
-
         public ReadableWritableDataFile(string defaultFileText = null) : base(defaultFileText)
         {
         }
@@ -24,14 +17,44 @@ namespace SUCC.Abstractions
         /// <summary> Save the file text to wherever you're storing it </summary>
         protected abstract void SetSavedText(string text);
 
+
+        /// <summary> Rules for how to format new data saved to this file </summary>
+        public FileStyle Style = FileStyle.Default;
+
+        /// <summary> If true, the DataFile will automatically save changes to disk with each Get or Set. If false, you must call SaveAllData() manually. </summary>
+        /// <remarks> Be careful with this. You do not want to accidentally be writing to a user's disk at 1000MB/s for 3 hours. </remarks>
+        public bool AutoSave
+        {
+            get => _AutoSave;
+            set
+            {
+                _AutoSave = value;
+
+                if (value == true)
+                    SaveAllData();
+            }
+        }
+        private bool _AutoSave = true;
+
         /// <summary> Serializes the data in this object to the file on disk. </summary>
         public void SaveAllData()
         {
-            string newSUCC = GetRawText();
-            string existingSUCC = GetSavedText();
-
-            if (newSUCC != existingSUCC)
+            if (FileDirty)
+            {
+                string newSUCC = GetRawText();
                 SetSavedText(newSUCC);
+
+                FileDirty = false;
+            }
+        }
+
+        private bool FileDirty = false;
+        protected void MarkFileDirty()
+        {
+            if (AutoSave)
+                SaveAllData();
+            else
+                FileDirty = true;
         }
 
         /// <summary> Get some data from the file, saving a new value if the data does not exist </summary>
@@ -81,8 +104,7 @@ namespace SUCC.Abstractions
             var node = TopLevelNodes[key];
             NodeManager.SetNodeData(node, value, type, Style);
 
-            if (AutoSave)
-                SaveAllData();
+            MarkFileDirty();
         }
 
         /// <inheritdoc/>
@@ -133,8 +155,7 @@ namespace SUCC.Abstractions
 
             NodeManager.SetNodeData(topNode, value, type, Style);
 
-            if (AutoSave)
-                SaveAllData();
+            MarkFileDirty();
         }
 
 
@@ -147,6 +168,8 @@ namespace SUCC.Abstractions
             Node node = TopLevelNodes[key];
             TopLevelNodes.Remove(key);
             TopLevelLines.Remove(node);
+
+            MarkFileDirty();
         }
 
 
@@ -158,7 +181,7 @@ namespace SUCC.Abstractions
         /// <param name="savethis"> the object to save </param>
         public void SaveAsObjectNonGeneric(Type type, object savethis)
         {
-            bool _autosave = AutoSave;
+            bool previousAutosaveValue = AutoSave;
             AutoSave = false; // don't write to disk when we don't have to
 
             try
@@ -168,10 +191,8 @@ namespace SUCC.Abstractions
             }
             finally
             {
-                AutoSave = _autosave;
+                AutoSave = previousAutosaveValue;
             }
-
-            if (AutoSave) SaveAllData();
         }
 
         /// <summary> Save this file as a dictionary, using the dictionary's keys as top-level keys in the file. </summary>
@@ -181,7 +202,7 @@ namespace SUCC.Abstractions
             if (!BaseTypesManager.IsBaseType(typeof(TKey)))
                 throw new Exception("When using GetAsDictionary, TKey must be a base type");
 
-            bool _autosave = AutoSave;
+            bool previousAutosaveValue = AutoSave;
             AutoSave = false; // don't write to disk when we don't have to
 
             try
@@ -206,11 +227,8 @@ namespace SUCC.Abstractions
             }
             finally
             {
-                AutoSave = _autosave;
+                AutoSave = previousAutosaveValue;
             }
-
-            if (AutoSave)
-                SaveAllData();
         }
 
 
