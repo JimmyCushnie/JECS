@@ -51,10 +51,10 @@ namespace SUCC.Abstractions
         private bool FileDirty = false;
         protected void MarkFileDirty()
         {
+            FileDirty = true;
+
             if (AutoSave)
                 SaveAllData();
-            else
-                FileDirty = true;
         }
 
         /// <summary> Get some data from the file, saving a new value if the data does not exist </summary>
