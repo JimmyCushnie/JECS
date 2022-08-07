@@ -91,7 +91,6 @@ namespace SUCC
             set
             {
                 _AutoReload = value;
-                Watcher.EnableRaisingEvents = value;
 
                 if (value == true)
                     IgnoreNextFileReload = false; // in case this was set to true while AutoReload was false
@@ -107,7 +106,7 @@ namespace SUCC
 
             Watcher.NotifyFilter = NotifyFilters.LastWrite;
             Watcher.Changed += this.OnWatcherChanged;
-            Watcher.EnableRaisingEvents = this.AutoReload;
+            Watcher.EnableRaisingEvents = true;
         }
 
         // Watcher.Changed takes several seconds to fire, so we use this.
