@@ -2,6 +2,7 @@
 using SUCC.UnityStuff;
 using System;
 using System.IO;
+using System.Timers;
 
 namespace SUCC
 {
@@ -44,17 +45,21 @@ namespace SUCC
             }
 
             this.ReloadAllData();
-
-            SetupWatcher(); // setup watcher AFTER file has been created
         }
 
         /// <inheritdoc/>
         protected override string GetSavedText()
         {
-            if (File.Exists(FilePath))
-                return File.ReadAllText(FilePath);
+            lock (FileSystemReadWriteLock)
+            {
+                if (File.Exists(FilePath))
+                {
+                    LastKnownWriteTimeUTC = GetCurrentLastWriteTimeUTC();
+                    return File.ReadAllText(FilePath);
+                }
 
-            return String.Empty;
+                return String.Empty;
+            }
         }
 
         /// <inheritdoc/>
@@ -81,41 +86,74 @@ namespace SUCC
             set
             {
                 _AutoReload = value;
-                Watcher.EnableRaisingEvents = value;
 
                 if (value == true)
-                    IgnoreNextFileReload = false; // in case this was set to true while AutoReload was false
+                {
+                    EnsureTimerIsSetup();
+                    AutoReloadTimer.Start();
+                }
+                else
+                {
+                    AutoReloadTimer?.Stop();
+                }
             }
         }
-        bool _AutoReload = false;
+        private bool _AutoReload;
 
-        private FileSystemWatcher Watcher;
-        private void SetupWatcher()
+
+        // To make AutoReload work, we regularly check the last write time on the filesystem.
+        // We used to use FileSystemWatcher, but that class is a nasty bastard that loves to randomly not work, especially on Linux, and especially on Mono.
+        // It was also a problem because it's very hard to determine whether FileSystemWatcher is firing legitimately or just because this code has saved a
+        // new value to disk.
+
+        private static readonly TimeSpan AutoReloadTimerInterval = TimeSpan.FromSeconds(1);
+
+        private Timer AutoReloadTimer;
+        private readonly object TimerLock = new object();
+        private void EnsureTimerIsSetup()
         {
-            var info = new FileInfo(FilePath);
-            Watcher = new FileSystemWatcher(path: info.DirectoryName, filter: info.Name);
-
-            Watcher.NotifyFilter = NotifyFilters.LastWrite;
-            Watcher.Changed += this.OnWatcherChanged;
-            Watcher.EnableRaisingEvents = this.AutoReload;
-        }
-
-        // Watcher.Changed takes several seconds to fire, so we use this.
-        private bool IgnoreNextFileReload;
-
-        private void OnWatcherChanged(object idontcare, FileSystemEventArgs goaway)
-        {
-            if (!_AutoReload)
-                return;
-
-            if (IgnoreNextFileReload)
+            if (AutoReloadTimer == null)
             {
-                IgnoreNextFileReload = false;
-                return;
+                AutoReloadTimer = new Timer(AutoReloadTimerInterval.TotalMilliseconds);
+                AutoReloadTimer.AutoReset = false;
+                AutoReloadTimer.Elapsed += AutoReloadTimerElapsed;
             }
+        }
 
-            ReloadAllData();
-            OnAutoReload?.Invoke();
+        private void AutoReloadTimerElapsed(object _, ElapsedEventArgs __)
+        {
+            // Restart the timer manually, only after we finish ReloadIfChanged.
+            // Use the lock to ensure we can properly stop the timer when Disposing.
+            lock (TimerLock)
+            {
+                ReloadIfChanged();
+                AutoReloadTimer.Start();
+            }
+        }
+        private void ReloadIfChanged()
+        {
+            lock (FileSystemReadWriteLock)
+            {
+                if (GetCurrentLastWriteTimeUTC() != LastKnownWriteTimeUTC)
+                {
+                    ReloadAllData();
+                    OnAutoReload?.Invoke();
+                }
+            }
+        }
+
+        private readonly object FileSystemReadWriteLock = new object();
+
+        private DateTime LastKnownWriteTimeUTC;
+        private DateTime GetCurrentLastWriteTimeUTC() => File.GetLastWriteTimeUtc(this.FilePath);
+
+        public void Dispose()
+        {
+            lock (TimerLock)
+            {
+                AutoReloadTimer?.Stop();
+                AutoReloadTimer?.Dispose();
+            }
         }
 
         #endregion

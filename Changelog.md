@@ -36,6 +36,8 @@
 * Vastly improved errors. Many more kinds of error are caught, and error messages have helpful information like the file path and line number.
 * Improved performance when working with generic collections (i.e. `List<T>`) by caching the runtime-compiled generic methods
 * Fixed `DataFile.DeleteKey()` not saving changes to disk when `Autosave` is true
+* AutoReload is much more reliable, especially on non-Windows systems
+* Use lock when reading or writing data to disk to prevent sharing violations
 
 todo update the docs for 1.2
 
