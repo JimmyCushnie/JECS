@@ -32,6 +32,7 @@
 * `System.Net.IPAddress` has been added as a built-in base type
 * `System.Version` has been added as a built-in base type
 * Added `FileInfo` and `DirectoryInfo` as built-in base types
+* Added `System.Numerics.BigInteger` as a built-in base type
 * New and better system for adding custom base types; removed the kind of shitty old system
 * Vastly improved errors. Many more kinds of error are caught, and error messages have helpful information like the file path and line number.
 * Improved performance when working with generic collections (i.e. `List<T>`) by caching the runtime-compiled generic methods

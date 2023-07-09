@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Numerics;
 
 namespace SUCC.Tests
 {
@@ -72,5 +73,45 @@ namespace SUCC.Tests
         [DataRow(ulong.MaxValue, DisplayName = "MaxValue")]
         public void SaveLoad_Ulong(ulong SAVED_VALUE)
             => TestUtilities.PerformSaveLoadTest(SAVED_VALUE);
+
+
+
+        [TestMethod]
+        public void SaveLoad_BigInteger_Zero()
+        {
+            var SAVED_VALUE = BigInteger.Zero;
+            TestUtilities.PerformSaveLoadTest(SAVED_VALUE);
+        }
+
+        [TestMethod]
+        public void SaveLoad_BigInteger_One()
+        {
+            var SAVED_VALUE = BigInteger.One;
+            TestUtilities.PerformSaveLoadTest(SAVED_VALUE);
+        }
+
+        [TestMethod]
+        public void SaveLoad_BigInteger_NegativeOne()
+        {
+            var SAVED_VALUE = BigInteger.MinusOne;
+            TestUtilities.PerformSaveLoadTest(SAVED_VALUE);
+        }
+
+        [TestMethod]
+        public void SaveLoad_BigInteger_EnormousPositiveNumber()
+        {
+            var bigboy = new BigInteger(ulong.MaxValue);
+            var biggerboy = BigInteger.Pow(bigboy, 10);
+            TestUtilities.PerformSaveLoadTest(biggerboy);
+        }
+
+        [TestMethod]
+        public void SaveLoad_BigInteger_EnormousNegativeNumber()
+        {
+            var bigboy = new BigInteger(ulong.MaxValue);
+            var biggerboy = BigInteger.Pow(bigboy, 10);
+            var minusbiggerboy = BigInteger.Multiply(biggerboy, new BigInteger(long.MinValue));
+            TestUtilities.PerformSaveLoadTest(minusbiggerboy);
+        }
     }
 }

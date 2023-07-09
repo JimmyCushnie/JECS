@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Numerics;
 
 namespace SUCC.BuiltInBaseTypeRules
 {
@@ -48,5 +49,12 @@ namespace SUCC.BuiltInBaseTypeRules
     {
         public override ulong ParseItem(string text) => ulong.Parse(text, NumberFormatInfo.InvariantInfo);
         public override string SerializeItem(ulong value) => value.ToString(NumberFormatInfo.InvariantInfo);
+    }
+
+
+    internal class BaseTypeRules_BigInt : BaseTypeLogic<BigInteger>
+    {
+        public override BigInteger ParseItem(string text) => BigInteger.Parse(text, NumberFormatInfo.InvariantInfo);
+        public override string SerializeItem(BigInteger value) => value.ToString(NumberFormatInfo.InvariantInfo);
     }
 }
