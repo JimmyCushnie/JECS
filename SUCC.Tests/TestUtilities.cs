@@ -7,16 +7,25 @@ namespace SUCC.Tests
     static public class TestUtilities
     {
         public static void PerformSaveLoadTest<T>(T SAVED_VALUE)
+            => PerformSaveLoadTest(SAVED_VALUE, Assert.AreEqual);
+
+        public delegate void AssertTwoItemsAreTheSameDelegate<T>(T item1, T item2);
+        public static void PerformSaveLoadTest<T>(T SAVED_VALUE, AssertTwoItemsAreTheSameDelegate<T> assertTwoItemsAreTheSameDelegate)
         {
-            const string SAVED_VALUE_KEY = "test key";
+            const string SAVED_VALUE_KEY = "save/load test key";
             var file = new MemoryDataFile();
 
             file.Set(SAVED_VALUE_KEY, SAVED_VALUE);
             var loadedValue = file.Get<T>(SAVED_VALUE_KEY);
 
-            Assert.AreEqual(SAVED_VALUE, loadedValue);
+            assertTwoItemsAreTheSameDelegate.Invoke(SAVED_VALUE, loadedValue);
 
-            Console.WriteLine($"Successfully saved and loaded {SAVED_VALUE}");
+            // Print file contents just to make it easy to manually check that the expected text is being written for these tests
+            Console.WriteLine($"Successfully saved and loaded value '{SAVED_VALUE}' of type '{typeof(T)}'");
+            Console.WriteLine("Contents of file:");
+            Console.WriteLine("```");
+            Console.WriteLine(file.GetRawText());
+            Console.WriteLine("```");
         }
 
 
