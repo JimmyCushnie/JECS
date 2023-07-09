@@ -84,7 +84,7 @@ namespace SUCC
                 }
             }
         }
-        private bool _AutoReload;
+        private bool _AutoReload = false;
 
 
         // To make AutoReload work, we regularly check the last write time on the filesystem.
