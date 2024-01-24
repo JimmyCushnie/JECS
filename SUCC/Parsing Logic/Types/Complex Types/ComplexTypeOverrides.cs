@@ -10,8 +10,8 @@ namespace SUCC.ParsingLogic
     /// </summary>
     public static class ComplexTypeOverrides
     {
-        private static HashSet<PropertyInfo> AlwaysSaveProperies = new HashSet<PropertyInfo>();
-        private static HashSet<PropertyInfo> NeverSaveProperies = new HashSet<PropertyInfo>();
+        private static HashSet<PropertyInfo> AlwaysSaveProperties = new HashSet<PropertyInfo>();
+        private static HashSet<PropertyInfo> NeverSaveProperties = new HashSet<PropertyInfo>();
 
         private static HashSet<FieldInfo> AlwaysSaveFields = new HashSet<FieldInfo>();
         private static HashSet<FieldInfo> NeverSaveFields = new HashSet<FieldInfo>();
@@ -22,10 +22,10 @@ namespace SUCC.ParsingLogic
         /// </summary>
         public static void AlwaysSave(PropertyInfo property)
         {
-            if (NeverSaveProperies.Contains(property))
+            if (NeverSaveProperties.Contains(property))
                 throw new Exception($"Property ({property}) cannot be both always saved and never saved.");
 
-            AlwaysSaveProperies.Add(property);
+            AlwaysSaveProperties.Add(property);
         }
 
         /// <summary>
@@ -33,10 +33,10 @@ namespace SUCC.ParsingLogic
         /// </summary>
         public static void NeverSave(PropertyInfo property)
         {
-            if (AlwaysSaveProperies.Contains(property))
+            if (AlwaysSaveProperties.Contains(property))
                 throw new Exception($"Property ({property}) cannot be both always saved and never saved.");
 
-            NeverSaveProperies.Add(property);
+            NeverSaveProperties.Add(property);
         }
 
 
@@ -62,8 +62,8 @@ namespace SUCC.ParsingLogic
             NeverSaveFields.Add(field);
         }
 
-        internal static bool IsAlwaysSaved(PropertyInfo property) => AlwaysSaveProperies.Contains(property);
-        internal static bool IsNeverSaved(PropertyInfo property) => NeverSaveProperies.Contains(property);
+        internal static bool IsAlwaysSaved(PropertyInfo property) => AlwaysSaveProperties.Contains(property);
+        internal static bool IsNeverSaved(PropertyInfo property) => NeverSaveProperties.Contains(property);
 
         internal static bool IsAlwaysSaved(FieldInfo field) => AlwaysSaveFields.Contains(field);
         internal static bool IsNeverSaved(FieldInfo field) => NeverSaveFields.Contains(field);

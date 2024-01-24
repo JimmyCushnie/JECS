@@ -1,4 +1,4 @@
-﻿using SUCC.Abstractions;
+using SUCC.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -110,7 +110,7 @@ namespace SUCC.ParsingLogic
                 {
                     Node node = GetNodeFromLine(line, dataFile, lineIndex);
 
-                    addNodeInAppriatePlaceInStack:
+                    addNodeInAppropriatePlaceInStack:
 
                     if (nestingNodeStack.Count == 0) // If this is a top-level node
                     {
@@ -163,7 +163,7 @@ namespace SUCC.ParsingLogic
                         else // If this should NOT be a child of the stack top
                         {
                             nestingNodeStack.Pop();
-                            goto addNodeInAppriatePlaceInStack;
+                            goto addNodeInAppropriatePlaceInStack;
                         }
                     }
 

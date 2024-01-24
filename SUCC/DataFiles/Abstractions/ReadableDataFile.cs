@@ -1,4 +1,4 @@
-﻿using SUCC.ParsingLogic;
+using SUCC.ParsingLogic;
 using SUCC.MemoryFiles;
 using System;
 using System.Collections.Generic;
@@ -190,7 +190,7 @@ namespace SUCC.Abstractions
         /// <summary> Interpret this file as an object of type T, using that type's fields and properties as top-level keys. </summary>
         public T GetAsObject<T>() => (T)GetAsObjectNonGeneric(typeof(T));
 
-        /// <summary> Non-generic version of GetAsObject. You probably wantto use GetAsObject. </summary>
+        /// <summary> Non-generic version of GetAsObject. You probably want to use GetAsObject. </summary>
         /// <param name="type"> the type to get this object as </param>
         public object GetAsObjectNonGeneric(Type type)
         {
