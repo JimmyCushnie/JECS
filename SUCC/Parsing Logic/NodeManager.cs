@@ -1,4 +1,4 @@
-﻿using SUCC.ParsingLogic.CollectionTypes;
+using SUCC.ParsingLogic.CollectionTypes;
 using System;
 
 namespace SUCC.ParsingLogic
@@ -26,7 +26,7 @@ namespace SUCC.ParsingLogic
             // a base type in the type's static constructor.
             System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
 
-            // If we try to save a single-line string and find it is currently saved as a multi-line string, we do NOT remove the mutli-line formatting.
+            // If we try to save a single-line string and find it is currently saved as a multi-line string, we do NOT remove the multi-line formatting.
             // The reason for this is that there might be comments on the """s, and we want to preserve those comments.
             // Also, this happens in only two cases:
             //     1. A string that is usually single-line is manually switched to multi-line formatting by a user

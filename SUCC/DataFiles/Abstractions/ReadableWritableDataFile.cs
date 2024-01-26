@@ -1,4 +1,4 @@
-﻿using SUCC.ParsingLogic;
+using SUCC.ParsingLogic;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -96,9 +96,9 @@ namespace SUCC.Abstractions
 
             if (!KeyExists(key))
             {
-                var newnode = new KeyNode(indentation: 0, key, file: this);
-                TopLevelNodes.Add(key, newnode);
-                TopLevelLines.Add(newnode);
+                var newNode = new KeyNode(indentation: 0, key, file: this);
+                TopLevelNodes.Add(key, newNode);
+                TopLevelLines.Add(newNode);
             }
 
             var node = TopLevelNodes[key];
@@ -141,9 +141,9 @@ namespace SUCC.Abstractions
 
             if (!KeyExists(path[0]))
             {
-                var newnode = new KeyNode(indentation: 0, key: path[0], file: this);
-                TopLevelNodes.Add(path[0], newnode);
-                TopLevelLines.Add(newnode);
+                var newNode = new KeyNode(indentation: 0, key: path[0], file: this);
+                TopLevelNodes.Add(path[0], newNode);
+                TopLevelLines.Add(newNode);
             }
 
             var topNode = TopLevelNodes[path[0]];
@@ -174,12 +174,12 @@ namespace SUCC.Abstractions
 
 
         /// <summary> Save this file as an object of type T, using that type's fields and properties as top-level keys. </summary>
-        public void SaveAsObject<T>(T savethis) => SaveAsObjectNonGeneric(typeof(T), savethis);
+        public void SaveAsObject<T>(T saveThis) => SaveAsObjectNonGeneric(typeof(T), saveThis);
 
         /// <summary> Non-generic version of SaveAsObject. You probably want to use SaveAsObject. </summary>
         /// <param name="type"> what type to save this object as </param>
-        /// <param name="savethis"> the object to save </param>
-        public void SaveAsObjectNonGeneric(Type type, object savethis)
+        /// <param name="saveThis"> the object to save </param>
+        public void SaveAsObjectNonGeneric(Type type, object saveThis)
         {
             bool previousAutosaveValue = AutoSave;
             AutoSave = false; // don't write to disk when we don't have to
@@ -187,7 +187,7 @@ namespace SUCC.Abstractions
             try
             {
                 foreach (var m in type.GetValidMembers())
-                    SetNonGeneric(m.MemberType, m.Name, m.GetValue(savethis));
+                    SetNonGeneric(m.MemberType, m.Name, m.GetValue(saveThis));
             }
             finally
             {

@@ -28,10 +28,10 @@ namespace SUCC.ParsingLogic
             }
             set
             {
-                if (this.UnappliedStyle)
+                if (this.StyleNotYetApplied)
                 {
                     SetDataText("-".AddSpaces(Style.SpacesAfterDash) + value);
-                    this.UnappliedStyle = false;
+                    this.StyleNotYetApplied = false;
                     return;
                 }
 

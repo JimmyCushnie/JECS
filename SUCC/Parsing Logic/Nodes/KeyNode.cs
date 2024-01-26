@@ -1,4 +1,4 @@
-﻿using SUCC.Abstractions;
+using SUCC.Abstractions;
 using System;
 
 namespace SUCC.ParsingLogic
@@ -44,18 +44,18 @@ namespace SUCC.ParsingLogic
             }
             set
             {
-                if (this.UnappliedStyle)
+                if (this.StyleNotYetApplied)
                 {
                     SetDataText(Key + ":".AddSpaces(Style.SpacesAfterColon) + value);
-                    this.UnappliedStyle = false;
+                    this.StyleNotYetApplied = false;
                     return;
                 }
 
                 var text = GetDataText();
                 int colonIndex = GetColonIndex(text);
 
-                string aftercolon = text.Substring(colonIndex + 1);
-                int spacesAfterColon = aftercolon.GetIndentationLevel();
+                string afterColon = text.Substring(colonIndex + 1);
+                int spacesAfterColon = afterColon.GetIndentationLevel();
 
                 SetDataText(
                     text.Substring(startIndex: 0, length: colonIndex + spacesAfterColon + 1) + value

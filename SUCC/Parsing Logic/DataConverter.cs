@@ -76,26 +76,26 @@ namespace SUCC.ParsingLogic
                     if (parentNode.ChildNodeType != NodeChildrenType.multiLineString)
                         throw new Exception("oh no, we were supposed to be doing a multi-line string but the top of the node stack isn't a multi-line string node!");
 
-                    var newboi = new MultiLineStringNode(rawText: line, dataFile);
+                    var newBoi = new MultiLineStringNode(rawText: line, dataFile);
 
                     if (parentNode.ChildNodes.Count == 0)
                     {
                         // If this is the first line of the multi-line string, it determines the indentation level.
                         // However, that indentation level must be greater than the parent's.
-                        multiLineStringIndentationLevel = newboi.IndentationLevel;
+                        multiLineStringIndentationLevel = newBoi.IndentationLevel;
 
                         if (multiLineStringIndentationLevel <= parentNode.IndentationLevel)
                             throw new InvalidFileStructureException(dataFile, lineIndex, "multi-line string lines must have an indentation level greater than their parent");
                     }
                     else
                     {
-                        if (newboi.IndentationLevel != multiLineStringIndentationLevel)
+                        if (newBoi.IndentationLevel != multiLineStringIndentationLevel)
                             throw new InvalidFileStructureException(dataFile, lineIndex, "multi-line string lines must all have the same indentation level");
                     }
 
-                    parentNode.AddChild(newboi);
+                    parentNode.AddChild(newBoi);
 
-                    if (newboi.IsTerminator)
+                    if (newBoi.IsTerminator)
                     {
                         doingMultiLineString = false;
                         multiLineStringIndentationLevel = -1;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Linq;
 
@@ -17,7 +17,7 @@ namespace SUCC.BuiltInBaseTypeRules
             if (float.IsNaN(value))
                 return FloatRulesConstants.NanText;
 
-            return value.ToString(FloatRulesConstants.NoScientificNotationInTostring, NumberFormatInfo.InvariantInfo);
+            return value.ToString(FloatRulesConstants.NoScientificNotationInToString, NumberFormatInfo.InvariantInfo);
         }
 
         public override float ParseItem(string text)
@@ -39,7 +39,7 @@ namespace SUCC.BuiltInBaseTypeRules
             if (double.IsNaN(value))
                 return FloatRulesConstants.NanText;
 
-            return value.ToString(FloatRulesConstants.NoScientificNotationInTostring, NumberFormatInfo.InvariantInfo);
+            return value.ToString(FloatRulesConstants.NoScientificNotationInToString, NumberFormatInfo.InvariantInfo);
         }
 
         public override double ParseItem(string text)
@@ -70,7 +70,7 @@ namespace SUCC.BuiltInBaseTypeRules
 
         // This lets us use decimal places instead of scientific notation. Yes, it's horrible.
         // See https://docs.microsoft.com/en-us/dotnet/api/system.single.tostring?view=netframework-4.7.2#System_Single_ToString_System_String_
-        public const string NoScientificNotationInTostring = "0.#####################################################################################################################################################################################################################################################################################################################################";
+        public const string NoScientificNotationInToString = "0.#####################################################################################################################################################################################################################################################################################################################################";
     }
 
     internal static class FloatRulesMathHelpers
