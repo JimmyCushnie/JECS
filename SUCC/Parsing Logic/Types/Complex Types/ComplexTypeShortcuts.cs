@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 
 namespace SUCC.ParsingLogic
@@ -81,8 +81,8 @@ namespace SUCC.ParsingLogic
             try { 
             if (shortcut.Contains("(") && shortcut.Contains(")"))
             {
-                string methodname = shortcut.Substring(0, shortcut.IndexOf('('));
-                var method = type.GetMethod(methodname, BindingFlags.Public | BindingFlags.Static);
+                string methodName = shortcut.Substring(0, shortcut.IndexOf('('));
+                var method = type.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static);
 
                 if (method != null && method.ReturnType == type)
                 {

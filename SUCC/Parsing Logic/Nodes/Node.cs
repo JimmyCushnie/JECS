@@ -46,10 +46,10 @@ namespace SUCC.ParsingLogic
             this.FileStyleRef = file as ReadableWritableDataFile;
 
             this.IndentationLevel = indentation;
-            this.UnappliedStyle = true;
+            this.StyleNotYetApplied = true;
         }
 
-        protected bool UnappliedStyle = false;
+        protected bool StyleNotYetApplied = false;
 
 
         public KeyNode GetChildAddressedByName(string name)
@@ -58,17 +58,17 @@ namespace SUCC.ParsingLogic
 
             foreach (var node in ChildNodes)
             {
-                var keynode = node as KeyNode;
-                if (keynode.Key == name) return keynode;
+                var keyNode = node as KeyNode;
+                if (keyNode.Key == name) return keyNode;
             }
 
             return CreateKeyNode(name);
             KeyNode CreateKeyNode(string key)
             {
-                var newnode = new KeyNode(GetProperChildIndentation(), key, File);
+                var newNode = new KeyNode(GetProperChildIndentation(), key, File);
 
-                AddChild(newnode);
-                return newnode;
+                AddChild(newNode);
+                return newNode;
             }
         }
 
@@ -80,14 +80,14 @@ namespace SUCC.ParsingLogic
             var indentation = GetProperChildIndentation();
             for (int i = ChildNodes.Count; i <= number; i++)
             {
-                var newnode = new ListNode(indentation, File);
-                AddChild(newnode);
+                var newNode = new ListNode(indentation, File);
+                AddChild(newNode);
             }
 
             return ChildNodes[number] as ListNode;
         }
 
-        public MultiLineStringNode GetChildAddresedByStringLineNumber(int number)
+        public MultiLineStringNode GetChildAddressedByStringLineNumber(int number)
         {
             EnsureProperChildType(NodeChildrenType.multiLineString);
 
@@ -95,8 +95,8 @@ namespace SUCC.ParsingLogic
             var indentation = GetProperChildIndentation();
             for (int i = ChildNodes.Count; i <= number; i++)
             {
-                var newnode = new MultiLineStringNode(indentation, File);
-                AddChild(newnode);
+                var newNode = new MultiLineStringNode(indentation, File);
+                AddChild(newNode);
             }
 
             return ChildNodes[number] as MultiLineStringNode;
@@ -156,8 +156,8 @@ namespace SUCC.ParsingLogic
         {
             foreach (var node in ChildNodes)
             {
-                var keynode = node as KeyNode;
-                if (keynode?.Key == key)
+                var keyNode = node as KeyNode;
+                if (keyNode?.Key == key)
                 {
                     _ChildNodes.Remove(node);
                     _ChildLines.Remove(node);

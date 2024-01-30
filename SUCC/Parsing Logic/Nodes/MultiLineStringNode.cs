@@ -10,7 +10,7 @@ namespace SUCC.ParsingLogic
         public MultiLineStringNode(string rawText, ReadableDataFile file) : base(rawText, file) { }
         public MultiLineStringNode(int indentation, ReadableDataFile file) : base(indentation, file)
         {
-            this.UnappliedStyle = false; // currently, no styles apply to MultiLineStringNodes
+            this.StyleNotYetApplied = false; // currently, no styles apply to MultiLineStringNodes
         }
 
         public override string Value

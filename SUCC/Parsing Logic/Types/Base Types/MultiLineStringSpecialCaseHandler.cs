@@ -1,4 +1,4 @@
-﻿using SUCC.BuiltInBaseTypeRules;
+using SUCC.BuiltInBaseTypeRules;
 using System;
 
 namespace SUCC.ParsingLogic
@@ -19,16 +19,16 @@ namespace SUCC.ParsingLogic
 
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    var newnode = node.GetChildAddresedByStringLineNumber(i);
+                    var newNode = node.GetChildAddressedByStringLineNumber(i);
                     string lineValue = BaseStringRules.SerializeItem(lines[i], style);
 
                     if (lineValue.EndsWith(MultiLineStringNode.NoLineBreakIndicator))
                         lineValue = lineValue.Quote();
 
-                    newnode.Value = lineValue;
+                    newNode.Value = lineValue;
                 }
 
-                node.GetChildAddresedByStringLineNumber(lines.Length).MakeTerminator();
+                node.GetChildAddressedByStringLineNumber(lines.Length).MakeTerminator();
                 return;
             }
             else
