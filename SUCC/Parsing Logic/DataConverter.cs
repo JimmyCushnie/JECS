@@ -12,7 +12,7 @@ namespace SUCC.ParsingLogic
             => SuccFromDataStructure(new Line[] { line });
 
         /// <summary>
-        /// Turns a data structure into raw SUCC
+        /// Turns a data structure into raw SUCC.
         /// </summary>
         internal static string SuccFromDataStructure(IEnumerable<Line> lines)
         {
@@ -38,13 +38,13 @@ namespace SUCC.ParsingLogic
         }
 
         /// <summary>
-        /// Parses a string of SUCC into a data structure
+        /// Parses a string of SUCC into a data structure.
         /// </summary>
         internal static (List<Line> topLevelLines, Dictionary<string, KeyNode> topLevelNodes) DataStructureFromSucc(string input, ReadableDataFile fileRef)
             => DataStructureFromSucc(input.SplitIntoLines(), fileRef);
 
         /// <summary>
-        /// Parses lines of SUCC into a data structure
+        /// Parses lines of SUCC into a data structure.
         /// </summary>
         internal static (List<Line>, Dictionary<string, KeyNode>) DataStructureFromSucc(string[] lines, ReadableDataFile dataFile) // I am so, so sorry. If you need to understand this function for whatever reason... may god give you guidance.
         {
@@ -73,7 +73,7 @@ namespace SUCC.ParsingLogic
                 {
                     var parentNode = nestingNodeStack.Peek();
 
-                    if (parentNode.ChildNodeType != NodeChildrenType.multiLineString)
+                    if (parentNode.ChildNodeType != NodeChildrenType.MultiLineString)
                         throw new Exception("oh no, we were supposed to be doing a multi-line string but the top of the node stack isn't a multi-line string node!");
 
                     var newBoi = new MultiLineStringNode(rawText: line, dataFile);
@@ -140,9 +140,9 @@ namespace SUCC.ParsingLogic
                             if (newParent.ChildNodes.Count == 0) // If this is the first child of the parent, assign the parent's child type
                             {
                                 if (node is KeyNode)
-                                    newParent.ChildNodeType = NodeChildrenType.key;
+                                    newParent.ChildNodeType = NodeChildrenType.Key;
                                 else if (node is ListNode)
-                                    newParent.ChildNodeType = NodeChildrenType.list;
+                                    newParent.ChildNodeType = NodeChildrenType.List;
                                 else
                                     throw new Exception("what the heck?");
                             }
@@ -173,7 +173,7 @@ namespace SUCC.ParsingLogic
                     if (node.Value == MultiLineStringNode.Terminator) // if this is the start of a multi line string
                     {
                         nestingNodeStack.Push(node);
-                        node.ChildNodeType = NodeChildrenType.multiLineString;
+                        node.ChildNodeType = NodeChildrenType.MultiLineString;
 
                         doingMultiLineString = true;
                     }
@@ -223,10 +223,10 @@ namespace SUCC.ParsingLogic
                 throw new InvalidFileStructureException(dataFile, lineNumber, "Line did not have the same indentation as its assumed sibling");
 
             if (  // if there is a mismatch between the new node's type and its sibling's
-                   newParent.ChildNodeType == NodeChildrenType.key && !(child is KeyNode)
-                || newParent.ChildNodeType == NodeChildrenType.list && !(child is ListNode)
-                || newParent.ChildNodeType == NodeChildrenType.multiLineString
-                || newParent.ChildNodeType == NodeChildrenType.none)
+                   newParent.ChildNodeType == NodeChildrenType.Key && !(child is KeyNode)
+                || newParent.ChildNodeType == NodeChildrenType.List && !(child is ListNode)
+                || newParent.ChildNodeType == NodeChildrenType.MultiLineString
+                || newParent.ChildNodeType == NodeChildrenType.None)
                 throw new InvalidFileStructureException(dataFile, lineNumber, $"Line did not match the child type of its parent");
         }
 

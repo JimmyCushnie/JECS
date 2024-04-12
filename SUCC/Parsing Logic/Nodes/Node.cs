@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SUCC.ParsingLogic
 {
-    internal enum NodeChildrenType { none, list, key, multiLineString }
+    internal enum NodeChildrenType { None, List, Key, MultiLineString }
 
     /// <summary>
     /// Represents a line of text in a SUCC file that contains data.
@@ -13,7 +13,7 @@ namespace SUCC.ParsingLogic
     internal abstract class Node : Line
     {
         public abstract string Value { get; set; }
-        public NodeChildrenType ChildNodeType = NodeChildrenType.none;
+        public NodeChildrenType ChildNodeType = NodeChildrenType.None;
 
         private readonly List<Line> _ChildLines = new List<Line>();
         private readonly List<Node> _ChildNodes = new List<Node>();
@@ -25,7 +25,7 @@ namespace SUCC.ParsingLogic
         public readonly ReadableDataFile File;
 
         // This is here so that nodes can access the style of their file. For nodes part of a ReadOnlyDataFile, it is null.
-        // We reference a DataFile rather than a FileStyle because if a user changes the Style of the File, that change is automatically seen by all its nodes.
+        // We reference a DataFile rather than a FileStyle so that if a user changes the Style of the File, that change is automatically seen by all its nodes.
         private readonly ReadableWritableDataFile FileStyleRef;
 
 
@@ -54,7 +54,7 @@ namespace SUCC.ParsingLogic
 
         public KeyNode GetChildAddressedByName(string name)
         {
-            EnsureProperChildType(NodeChildrenType.key);
+            EnsureProperChildType(NodeChildrenType.Key);
 
             foreach (var node in ChildNodes)
             {
@@ -74,7 +74,7 @@ namespace SUCC.ParsingLogic
 
         public ListNode GetChildAddressedByListNumber(int number)
         {
-            EnsureProperChildType(NodeChildrenType.list);
+            EnsureProperChildType(NodeChildrenType.List);
 
             // ensure proper number of child list nodes exist
             var indentation = GetProperChildIndentation();
@@ -89,7 +89,7 @@ namespace SUCC.ParsingLogic
 
         public MultiLineStringNode GetChildAddressedByStringLineNumber(int number)
         {
-            EnsureProperChildType(NodeChildrenType.multiLineString);
+            EnsureProperChildType(NodeChildrenType.MultiLineString);
 
             // ensure proper number of child string nodes exist
             var indentation = GetProperChildIndentation();
@@ -104,17 +104,17 @@ namespace SUCC.ParsingLogic
 
         private int GetProperChildIndentation()
         {
-            int indentation = 0;
+            // If we already have a child, match new indentation level to that child.
             if (this.ChildNodes.Count > 0)
-                indentation = this.ChildNodes[0].IndentationLevel; // if we already have a child, match new indentation level to that child
-            else
-                indentation = this.IndentationLevel + Style.IndentationInterval; // otherwise, increase the indentation level in accordance with the FileStyle
-            return indentation;
+                return this.ChildNodes[0].IndentationLevel;
+            
+            // Otherwise, increase the indentation level in accordance with the FileStyle.
+            return this.IndentationLevel + Style.IndentationInterval; 
         }
 
         private void EnsureProperChildType(NodeChildrenType expectedType)
         {
-            if (expectedType != NodeChildrenType.multiLineString && !this.Value.IsNullOrEmpty())
+            if (expectedType != NodeChildrenType.MultiLineString && !this.Value.IsNullOrEmpty())
                 throw new Exception($"node has a value ({Value}), which means it can't have children");
 
             if (ChildNodeType != expectedType)
@@ -131,18 +131,17 @@ namespace SUCC.ParsingLogic
         public bool ContainsChildNode(string key)
             => GetChildKeys().Contains(key);
 
-        public void ClearChildren(NodeChildrenType? newChildrenType = null)
+        public void ClearChildren()
         {
             _ChildLines.Clear();
             _ChildNodes.Clear();
 
-            if (newChildrenType != null) 
-                ChildNodeType = (NodeChildrenType)newChildrenType;
+            ChildNodeType = NodeChildrenType.None;
         }
 
         public void AddChild(Line newLine)
         {
-            if (this.ChildNodeType == NodeChildrenType.key && newLine is KeyNode keyNode && this.ContainsChildNode(keyNode.Key))
+            if (this.ChildNodeType == NodeChildrenType.Key && newLine is KeyNode keyNode && this.ContainsChildNode(keyNode.Key))
                 throw new ArgumentException($"Tried to add duplicate key node child with key '{keyNode.Key}'");
 
 

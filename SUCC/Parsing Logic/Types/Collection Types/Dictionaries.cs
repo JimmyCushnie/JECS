@@ -33,8 +33,8 @@ namespace SUCC.ParsingLogic.CollectionTypes
             if (keyIsBase && !forceArrayMode && !style.AlwaysArrayDictionaries)
             {
                 // we might have switched between standard and array dictionary storage, and if so, children need to be reset
-                if (node.ChildNodeType != NodeChildrenType.key)
-                    node.ClearChildren(newChildrenType: NodeChildrenType.key);
+                if (node.ChildNodeType != NodeChildrenType.Key)
+                    node.ClearChildren();
 
                 var CurrentKeys = new List<string>(capacity: dictionary.Count);
                 foreach (var key in dictionary.Keys)
@@ -65,8 +65,8 @@ namespace SUCC.ParsingLogic.CollectionTypes
             else // save dictionary as KeyValuePair<TKey, TValue>[]
             {
                 // we might have switched between standard and array dictionary storage, and if so, children need to be reset
-                if (node.ChildNodeType != NodeChildrenType.list)
-                    node.ClearChildren(newChildrenType: NodeChildrenType.list);
+                if (node.ChildNodeType != NodeChildrenType.List)
+                    node.ClearChildren();
 
                 var array = GetWritableKeyValuePairArray(dictionary);
                 NodeManager.SetNodeData(node, array, array.GetType(), style);
@@ -89,7 +89,7 @@ namespace SUCC.ParsingLogic.CollectionTypes
 
             var dictionary = new Dictionary<TKey, TValue>(capacity: node.ChildNodes.Count);
 
-            if (keyIsBase && node.ChildNodeType == NodeChildrenType.key)
+            if (keyIsBase && node.ChildNodeType == NodeChildrenType.Key)
             {
                 foreach (var child in node.ChildNodes)
                 {

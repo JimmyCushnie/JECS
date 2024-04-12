@@ -69,7 +69,7 @@ namespace SUCC.ParsingLogic
             // this ensures the base type rules are registered before they are needed.
             System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
 
-            if (type == typeof(string) && node.Value == MultiLineStringNode.Terminator && node.ChildNodeType == NodeChildrenType.multiLineString && node.ChildLines.Count > 0)
+            if (type == typeof(string) && node.Value == MultiLineStringNode.Terminator && node.ChildNodeType == NodeChildrenType.MultiLineString && node.ChildLines.Count > 0)
                 return MultiLineStringSpecialCaseHandler.ParseSpecialStringCase(node);
 
             if (BaseTypesManager.IsBaseType(type))
@@ -106,7 +106,7 @@ namespace SUCC.ParsingLogic
 
         private static void SetBaseTypeNode(Node node, object data, Type type, FileStyle style)
         {
-            node.ClearChildren(NodeChildrenType.none);
+            node.ClearChildren();
             node.Value = BaseTypesManager.SerializeBaseType(data, type, style);
         }
 
@@ -117,7 +117,7 @@ namespace SUCC.ParsingLogic
             // it will still work.
             // See https://github.com/JimmyCushnie/SUCC/issues/26
 
-            if (node.ChildNodeType == NodeChildrenType.key && node.ChildNodes.Count > 0)
+            if (node.ChildNodeType == NodeChildrenType.Key && node.ChildNodes.Count > 0)
                 return ComplexTypes.RetrieveComplexType(node, type);
 
             if (BaseTypesManager.TryParseBaseType(node.Value, type, out var result))
