@@ -167,10 +167,10 @@ namespace SUCC.ParsingLogic
                         }
                     }
 
-                    if (node.Value == "") // If this is a node with children
+                    if (!node.HasValue) // If this node can have children, but is not the start of a multi-line string
                         nestingNodeStack.Push(node);
 
-                    if (node.Value == MultiLineStringNode.Terminator) // if this is the start of a multi line string
+                    if (node.Value == MultiLineStringNode.Terminator) // If this is the start of a multi line string
                     {
                         nestingNodeStack.Push(node);
                         node.ChildNodeType = NodeChildrenType.MultiLineString;

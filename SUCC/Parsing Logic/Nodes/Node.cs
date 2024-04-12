@@ -114,7 +114,7 @@ namespace SUCC.ParsingLogic
 
         private void EnsureProperChildType(NodeChildrenType expectedType)
         {
-            if (expectedType != NodeChildrenType.MultiLineString && !this.Value.IsNullOrEmpty())
+            if (this.HasValue && expectedType != NodeChildrenType.MultiLineString)
                 throw new Exception($"node has a value ({Value}), which means it can't have children");
 
             if (ChildNodeType != expectedType)
@@ -127,10 +127,10 @@ namespace SUCC.ParsingLogic
         }
 
 
+        public bool HasValue => !Value.IsNullOrEmpty();
+        public void ClearValue() => Value = String.Empty;
 
-        public bool ContainsChildNode(string key)
-            => GetChildKeys().Contains(key);
-
+        public bool HasChildNodes => ChildNodes.Count > 0;
         public void ClearChildren()
         {
             _ChildLines.Clear();
@@ -138,6 +138,10 @@ namespace SUCC.ParsingLogic
 
             ChildNodeType = NodeChildrenType.None;
         }
+
+
+        public bool ContainsChildNode(string key)
+            => GetChildKeys().Contains(key);
 
         public void AddChild(Line newLine)
         {

@@ -78,7 +78,7 @@ namespace SUCC.ParsingLogic
             if (CollectionTypesManager.IsSupportedType(type))
                 return RetrieveDataWithErrorChecking(() => CollectionTypesManager.RetrieveCollection(node, type));
 
-            if (!node.Value.IsNullOrEmpty())
+            if (node.HasValue)
                 return RetrieveDataWithErrorChecking(() => ComplexTypeShortcuts.GetFromShortcut(node.Value, type));
 
             return RetrieveDataWithErrorChecking(() => ComplexTypes.RetrieveComplexType(node, type));

@@ -41,7 +41,7 @@ namespace SUCC.ParsingLogic.CollectionTypes
 
         public static object RetrieveCollection(Node node, Type collectionType)
         {
-            if (!node.Value.IsNullOrEmpty())
+            if (node.HasValue)
                 throw new FormatException("Collection nodes cannot have a value");
 
 

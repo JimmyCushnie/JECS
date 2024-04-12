@@ -53,13 +53,10 @@ namespace SUCC
 
                 string startOfErrorMessage = $"Invalid file data on line {lineNumber} of {file}. Expected data of type {ExpectedDataType}, but couldn't interpret data as that type";
 
-                bool nodeHasChildren = ErroneousNode.ChildNodes.Count > 0;
-                bool nodeHasValue = !ErroneousNode.Value.IsNullOrEmpty();
-
-                if (nodeHasChildren)
+                if (ErroneousNode.HasChildNodes)
                     return startOfErrorMessage + $" (node has {ErroneousNode.ChildNodes.Count} children)";
 
-                if (nodeHasValue)
+                if (ErroneousNode.HasValue)
                     return startOfErrorMessage + $": {ErroneousNode.Value}";
 
                 return startOfErrorMessage + ".";
