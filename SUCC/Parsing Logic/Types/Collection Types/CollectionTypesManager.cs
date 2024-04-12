@@ -23,6 +23,11 @@ namespace SUCC.ParsingLogic.CollectionTypes
 
         public static void SetCollectionNode(Node node, object data, Type collectionType, FileStyle style)
         {
+            // Collection nodes cannot have a value. Clear it if it's been set.
+            if (node.HasValue)
+                node.ClearValue();
+
+
             if (Arrays.IsArrayType(collectionType))
                 Arrays.SetArrayNode(node, data, collectionType, style);
 
