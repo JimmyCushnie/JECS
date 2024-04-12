@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SUCC.MemoryFiles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,97 +8,57 @@ namespace SUCC.Tests
     [TestClass]
     public class SaveLoad_CollectionTypeTests
     {
-        const string SAVED_VALUE_KEY = "test key";
-
         [TestMethod]
         public void SaveLoad_Array_Ints()
         {
-            var SAVED_VALUE = new int[] { 0, 1, 2, 3 };
-            var file = new MemoryDataFile();
-
-            file.Set(SAVED_VALUE_KEY, SAVED_VALUE);
-            var loadedValue = file.Get<int[]>(SAVED_VALUE_KEY);
-
-            CollectionAssert.AreEqual(SAVED_VALUE, loadedValue);
+            TestUtilities.PerformSaveLoadTest(new int[] { 0, 1, 2, 3 }, CollectionAssert.AreEqual);
         }
 
         [TestMethod]
         public void SaveLoad_List_Ints()
         {
-            var SAVED_VALUE = new List<int>() { 0, 1, 2, 3 };
-            var file = new MemoryDataFile();
-
-            file.Set(SAVED_VALUE_KEY, SAVED_VALUE);
-            var loadedValue = file.Get<List<int>>(SAVED_VALUE_KEY);
-
-            CollectionAssert.AreEqual(SAVED_VALUE, loadedValue);
+            TestUtilities.PerformSaveLoadTest(new List<int>() { 0, 1, 2, 3 }, CollectionAssert.AreEqual);
         }
 
         [TestMethod]
         public void SaveLoad_HashSet_Ints()
         {
-            var SAVED_VALUE = new HashSet<int>() { 0, 1, 2, 3 };
-            var file = new MemoryDataFile();
-
-            file.Set(SAVED_VALUE_KEY, SAVED_VALUE);
-            var loadedValue = file.Get<HashSet<int>>(SAVED_VALUE_KEY);
-
-            Assert.IsTrue(SAVED_VALUE.SequenceEqual(loadedValue));
+            TestUtilities.PerformSaveLoadTest(new HashSet<int>() { 0, 1, 2, 3 }, (a, b) => Assert.IsTrue(a.SequenceEqual(b)));
         }
-
-
 
         [TestMethod]
         public void SaveLoad_Array_DeeplyNestedInts()
         {
-            var SAVED_VALUE = DeeplyNestedIntArray;
-            var file = new MemoryDataFile();
-
-            file.Set(SAVED_VALUE_KEY, SAVED_VALUE);
-            var loadedValue = file.Get<int[][][][]>(SAVED_VALUE_KEY);
-
-            for (int i = 0; i < loadedValue.Length; i++)
-                for (int j = 0; j < loadedValue[i].Length; j++)
-                    for (int k = 0; k < loadedValue[i][j].Length; k++)
-                        CollectionAssert.AreEqual(loadedValue[i][j][k], SAVED_VALUE[i][j][k]);
+            TestUtilities.PerformSaveLoadTest(DeeplyNestedIntArray, (a, b) =>
+            {
+                for (int i = 0; i < a.Length; i++)
+                    for (int j = 0; j < a[i].Length; j++)
+                        for (int k = 0; k < a[i][j].Length; k++)
+                            CollectionAssert.AreEqual(a[i][j][k], b[i][j][k]);
+            });
         }
-
-
 
         [TestMethod]
         public void SaveLoad_Dictionary_StringToInt()
         {
-            var SAVED_VALUE = new Dictionary<string, int>()
+            TestUtilities.PerformSaveLoadTest(new Dictionary<string, int>()
             {
                 ["one"] = 1,
                 ["two"] = 2,
                 ["three"] = 3,
-            };
-            var file = new MemoryDataFile();
-
-            file.Set(SAVED_VALUE_KEY, SAVED_VALUE);
-            var loadedValue = file.Get<Dictionary<string, int>>(SAVED_VALUE_KEY);
-
-            CollectionAssert.AreEquivalent(SAVED_VALUE, loadedValue);
+            }, CollectionAssert.AreEquivalent);
         }
 
         [TestMethod]
         public void SaveLoad_Dictionary_ComplexTypeToComplexType()
         {
-            var SAVED_VALUE = new Dictionary<ComplexType, ComplexType>()
+            TestUtilities.PerformSaveLoadTest(new Dictionary<ComplexType, ComplexType>()
             {
                 [new ComplexType(832, "jfhkdslfjsd", true)] = new ComplexType(22323, Environment.NewLine, false),
                 [new ComplexType(int.MaxValue, "oof ouch owie my unit test", false)] = new ComplexType(int.MinValue, "penis lmao", true),
                 [new ComplexType(8564698, "I like socialized healthcare", true)] = new ComplexType(99999, "aaaaaaaaaaaaaaaaa", true),
-            };
-            var file = new MemoryDataFile();
-
-            file.Set(SAVED_VALUE_KEY, SAVED_VALUE);
-            var loadedValue = file.Get<Dictionary<ComplexType, ComplexType>>(SAVED_VALUE_KEY);
-
-            CollectionAssert.AreEquivalent(SAVED_VALUE, loadedValue);
+            }, CollectionAssert.AreEquivalent);
         }
-
 
 
         static readonly int[][][][] DeeplyNestedIntArray = new int[][][][]
