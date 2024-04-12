@@ -11,13 +11,22 @@ namespace SUCC.ParsingLogic
         internal static void SetNodeData<T>(Node node, T data, FileStyle style) => SetNodeData(node, data, typeof(T), style);
         internal static void SetNodeData(Node node, object data, Type type, FileStyle style)
         {
+            if (data == null && !type.IsNullableType())
+                throw new Exception($"There's been some kind of coding mistake: {nameof(data)} is null, but type {type} is not nullable.");
+            
+            if (data != null && !type.IsAssignableFrom(data.GetType()))
+                throw new Exception($"There's been some kind of coding mistake: {nameof(data)} is of type {data.GetType()}, which is not assignable to type {type}.");
+
+
+
             if (data == null)
             {
                 node.ClearChildren();
                 node.Value = Utilities.NullIndicator;
                 return;
             }
-            else if (node.Value == Utilities.NullIndicator)
+
+            if (node.Value == Utilities.NullIndicator)
             {
                 node.Value = String.Empty;
             }

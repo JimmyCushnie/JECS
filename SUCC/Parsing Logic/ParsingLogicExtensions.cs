@@ -52,10 +52,19 @@ namespace SUCC.ParsingLogic
         /// </summary>
         internal static object GetDefaultValue(this Type t)
         {
-            if (t.IsValueType && Nullable.GetUnderlyingType(t) == null)
-                return Activator.CreateInstance(t);
-            else
+            if (t.IsNullableType())
                 return null;
+
+            return Activator.CreateInstance(t);
         }
+
+        internal static bool IsNullableType(this Type type)
+        {
+            if (!type.IsValueType)
+                return true;
+
+            return Nullable.GetUnderlyingType(type) != null;
+        }
+
     }
 }
