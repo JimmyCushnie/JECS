@@ -39,6 +39,7 @@
 * Fixed `DataFile.DeleteKey()` not saving changes to disk when `Autosave` is true
 * AutoReload is much more reliable, especially on non-Windows systems
 * Use lock when reading or writing data to disk to prevent sharing violations
+* Improved logic for saving & loading System.Type so the strings look better
 
 todo update the docs for 1.2
 
