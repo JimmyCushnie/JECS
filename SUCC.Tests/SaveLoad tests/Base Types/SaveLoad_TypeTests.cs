@@ -21,8 +21,24 @@ namespace SUCC.Tests
         [DataRow(typeof(List<int[]>), DisplayName = "List of array of ints")]
         [DataRow(typeof(List<Dictionary<string, int>>), DisplayName = "List of dictionary")]
         [DataRow(typeof(Dictionary<string, List<int[,,]>>), DisplayName = "Dictionary of string, list of 3D int arrays")]
-        [DataRow(typeof(Tuple<string, string, List<int>, Dictionary<List<HashSet<ulong>>, Tuple<DateTime, Tuple<string, string>>>>), DisplayName = "Literally insane mess of generics")]
+        [DataRow(typeof(Tuple<string, string, List<int>, Dictionary<List<HashSet<ulong>>, Tuple<DateTime, Tuple<string, string>>>>), DisplayName = "Absolutely ridiculous mess of generics")]
+        [DataRow(typeof(CustomClass), DisplayName = "Custom class")]
+        [DataRow(typeof(CustomClass.CustomNestedClass), DisplayName = "Custom nested class")]
+        [DataRow(typeof(CustomClass.CustomEnumWithinClass), DisplayName = "Custom enum nested within class")]
+        [DataRow(typeof(CustomClass.CustomEnumWithinClass[]), DisplayName = "Array of custom enum nested within class")]
+        [DataRow(typeof(HashSet<CustomClass.CustomNestedClass>), DisplayName = "Hashset of custom nested class")]
         public void SaveLoad_Type(System.Type SAVED_VALUE)
             => TestUtilities.PerformSaveLoadTest(SAVED_VALUE);
+    }
+
+    class CustomClass
+    {
+        public class CustomNestedClass
+        {
+        }
+
+        public enum CustomEnumWithinClass
+        {
+        }
     }
 }
