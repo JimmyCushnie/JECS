@@ -28,8 +28,12 @@ namespace SUCC.ParsingLogic
 
             if (node.Value == Utilities.NullIndicator)
             {
-                node.Value = String.Empty;
+                node.ClearValue();
             }
+
+            var underlyingNullableType = Nullable.GetUnderlyingType(type);
+            if (underlyingNullableType != null)
+                type = underlyingNullableType;
 
             // Ensure the type is initialized. This is especially important if it's added as
             // a base type in the type's static constructor.
@@ -62,6 +66,10 @@ namespace SUCC.ParsingLogic
         {
             if (node.Value == Utilities.NullIndicator)
                 return null;
+
+            var underlyingNullableType = Nullable.GetUnderlyingType(type);
+            if (underlyingNullableType != null)
+                type = underlyingNullableType;
 
 
             // Ensures that the type's static constructor has been run before we try to load it.
