@@ -15,17 +15,20 @@ namespace SUCC.Tests
             const string SAVED_VALUE_KEY = "save/load test key";
             var file = new MemoryDataFile();
 
-            file.Set(SAVED_VALUE_KEY, SAVED_VALUE);
-            var loadedValue = file.Get<T>(SAVED_VALUE_KEY);
+            try
+            {
+                file.Set(SAVED_VALUE_KEY, SAVED_VALUE);
+                var loadedValue = file.Get<T>(SAVED_VALUE_KEY);
 
-            assertTwoItemsAreTheSameDelegate.Invoke(SAVED_VALUE, loadedValue);
-
-            // Print file contents just to make it easy to manually check that the expected text is being written for these tests
-            Console.WriteLine($"Successfully saved and loaded value '{SAVED_VALUE}' of type '{typeof(T)}'");
-            Console.WriteLine("Contents of file:");
-            Console.WriteLine("```");
-            Console.WriteLine(file.GetRawText());
-            Console.WriteLine("```");
+                assertTwoItemsAreTheSameDelegate.Invoke(SAVED_VALUE, loadedValue);
+            }
+            finally
+            {
+                Console.WriteLine("Contents of file:");
+                Console.WriteLine("```");
+                Console.WriteLine(file.GetRawText());
+                Console.WriteLine("```");
+            }
         }
 
 
