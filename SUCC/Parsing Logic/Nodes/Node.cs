@@ -182,14 +182,13 @@ namespace SUCC.ParsingLogic
             }
         }
 
-        public string[] GetChildKeys()
+        public IEnumerable<string> GetChildKeys()
         {
-            var keys = new string[ChildNodes.Count];
+            if (ChildNodeType != NodeChildrenType.Key)
+                yield break;
 
-            for (int i = 0; i < ChildNodes.Count; i++)
-                keys[i] = (ChildNodes[i] as KeyNode).Key;
-
-            return keys;
+            foreach (var node in ChildNodes)
+                yield return (node as KeyNode).Key;
         }
 
 
