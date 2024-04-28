@@ -1,166 +1,124 @@
-<img src="https://raw.githubusercontent.com/JimmyCushnie/SUCC/master/Succ_Logo_nosubtitle.png" width = 480>
+# JECS
 
-Sexy and Utilitarian Code Configuration  
-Created by Jimmy Cushnie
+Jimmy's Epic Config System
 
 ---
 
-Do your configuration files look like this?
+JECS is a C# library for reading and writing configuration files. It is focused on ease of use: the API is simple and intuitive, and the generated files are likewise straightforward, readable, and easy to manually tweak.
 
-```
-<weapons>
-    <weapon>
-        <name>sword</name>
-        <damage>10</damage>
-        <attackSpeed>1</attackSpeed>
-    </weapon>
-    <weapon>
-        <name>dagger</name>
-        <damage>6</damage>
-        <attackSpeed>1.3</attackSpeed>
-    </weapon>
-    <weapon>
-        <name>axe</name>
-        <damage>20</damage>
-        <attackSpeed>0.4</attackSpeed>
-    </weapon>
-</weapons>
-```
+JECS makes it easy for you to expose data in your program through human-readable and human-editable plaintext files. We use it extensively in [Logic World](https://store.steampowered.com/app/1054340/Logic_World/) for the game's user settings, save files, modding system, and more.
 
-Do your configuration files, god forbid, look like this? <sup>cough cough<sup>easy save</sup></sup>
+## Basic usage
 
-```
-{"weapons":{"__type":"System.Collections.Generic.List`1[[Weapon, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]],mscorlib","value":[{"name":"sword","damage":10,"attackSpeed":1},{"name":"dagger","damage":6,"attackSpeed":1.3},{"name":"axe","damage":20,"attackSpeed":0.4}]}}
-```
-
-With SUCC, your configuration files can look like this:
-
-```
-weapons:
-    -
-        name: sword
-        damage: 10
-        attackSpeed: 1
-    -
-        name: dagger
-        damage: 6
-        attackSpeed: 1.3
-    -
-        name: axe
-        damage: 20
-        attackSpeed: 0.4
-```
-
-Look at that. That's a *beautiful* configuration file. There's zero wasted space on formatting. Everything is laid out clearly so that it's easy to find what you're looking for. The file is fast for a human to read and fast for a human to edit. If you were working on this game and needed to add a new weapon type, what would you rather the configuration file look like?
-
-Furthermore, SUCC gives you a lot of freedom when writing or editing config files. You can play around with the colon position and the indentation level, you can add whitespace, you can add comments. The following file will, to SUCC, load exactly the same as the preceding one:
-
-```
-weapons:
-    -
-      # the sword is your starting weapon, very general purpose.
-      name        : sword
-      damage      : 10
-      attackSpeed : 1
-      
-    -
-      # daggers are useful against enemies with slow attack rates.
-      name        : dagger
-      damage      : 6
-      attackSpeed : 1.3
-      
-    -
-      # you use an axe when you need to get rid of a low-health
-      # enemy as quickly as possible.
-      name        : axe
-      damage      : 20 # this is overpowered. TODO balance better
-      attackSpeed : 0.4
-```
-
-Not only are SUCC files easy to work with in a text editor, they're easy to work with in your code too. Here is all the code required to recreate that configuration file:
+Create a `DataFile` object, which corresponds to an actual `.jecs` file on disk. Use the `Get()` and `Set()` methods to get and set data in the file.
 
 ```csharp
-using System.Collections.Generic;
-using SUCC;
+var userSettingsFile = new DataFile(path: "user_settings.jecs");
 
-public class Weapon
+// Gets the string stored in user_settings.jecs under the key `user_name`.
+// If no value exists under that key, it will be created and given the default value of `Spongebob Squarepants`.
+string userName = userSettingsFile.Get(key: "user_name", defaultValue: "Spongebob Squarepants");
+
+// Outputs the value stored in the file, or "Spongebob Squarepants" if the value/file didn't exist yet.
+Console.WriteLine(userName);
+```
+
+The above code will create a file called `user_settings.jecs` with the following contents:
+
+```yaml
+user_name: Spongebob Squarepants
+```
+
+## Intermediate usage
+
+JECS cleanly handles complex nested data structures. You can feed JECS most kinds of data, and that data will be saved and loaded as expected.
+
+```csharp
+class RepeatingReminder
 {
-    public string name;
-    public float damage;
-    public float attackSpeed;
+    public string ReminderText;
+    public DayOfWeek Day;
+    public BigInteger Importance;
 }
 
-static class Program
+static void Main()
 {
-    static void Main()
+    var reminders = new RepeatingReminder[]
     {
-        List<Weapon> weapons = new List<Weapon>()
+        new RepeatingReminder()
         {
-            new Weapon()
-            {
-                name = "sword",
-                damage = 10,
-                attackSpeed = 1
-            },
-            new Weapon()
-            {
-                name = "dagger",
-                damage = 6,
-                attackSpeed = 1.3f
-            },
-            new Weapon()
-            {
-                name = "axe",
-                damage = 20,
-                attackSpeed = 0.4f
-            },
-        };
+            ReminderText = "Water plants",
+            Day = DayOfWeek.Thursday,
+            Importance = 100,
+        },
+        new RepeatingReminder()
+        {
+            ReminderText = "Check mail",
+            Day = DayOfWeek.Thursday,
+            Importance = 75,
+        },
+        new RepeatingReminder()
+        {
+            ReminderText = "Have a shower",
+            Day = DayOfWeek.Monday,
+            Importance = BigInteger.Pow(9, 40),
+        },
+    };
 
-        var file = new DataFile("weaponsFile");
-        file.Set("weapons", weapons);
-    }
+    var remindersFile = new DataFile("reminders.jecs");
+    remindersFile.Set(key: "reminders", value: reminders);
 }
 ```
 
-The important part of that is
+The above code will create will create a file called `reminders.jecs` with the following contents:
 
-```csharp
-var file = new DataFile("weaponsFile");
-file.Set("weapons", weapons);
+```yaml
+reminders:
+    -
+        ReminderText: Water plants
+        Day: Thursday
+        Importance: 100
+    -
+        ReminderText: Check mail
+        Day: Thursday
+        Importance: 75
+    -
+        ReminderText: Have a shower
+        Day: Monday
+        Importance: 147808829414345923316083210206383297601
 ```
 
-You keep a reference to that `DataFile` variable, and later when you need to read it, it's as simple as this:
+This is a great example of how nice JECS files are. Notice how this config file has everything laid out clearly so that it's easy to find what you're looking for. The file has minimal formatting boilerplate, so that almost everything in the file is the actual data. This file is fast for a human to read, and fast for a human to edit or expand.
 
-```csharp
-var weaponsList = file.Get<List<Weapon>>("weapons");
+Furthermore, JECS gives you a lot of freedom when writing or editing config files. You can add or remove whitespace, use a different indentation level, or add comments. For example:
+
+```yaml
+reminders:
+    -
+        ReminderText  :  Water plants
+        Day           :  Thursday
+        Importance    :  100
+    
+    -
+        ReminderText  :  Check mail
+        Day           :  Wednesday
+        Importance    :  75 # Don't change this. Critical that it's exactly 75
+    
+    -
+        ReminderText  :  Have a shower
+        Day           :  Monday
+        Importance    :  147808829414345923316083210206383297601
+
+# Todo: add reminders about skydiving
 ```
 
-But it can be *even easier.* You just do
+For more information on the file format, see the [File Structure wiki page](https://github.com/JimmyCushnie/JECS/wiki/File-Structure).
 
-```csharp
-var weaponsList = file.Get("weapons", defaultValue: weapons);
-```
+## Advanced usage
 
-SUCC will check if a value called "weapons" exists in the file. If so, it will read the file and give you that data. If not, it will save `defaultValue` to the file and return it to you.
+JECS has many powerful features that make working with it, both from code and in the config files themselves, smooth and easy. This includes [custom base types], [control over the format of generated files], [auto-reloading when a file changes on disk], and much more.
 
-## Start Using SUCC
+---
 
-Much more information about SUCC can be found on the [wiki](https://github.com/JimmyCushnie/SUCC/wiki). If you're new to SUCC, you probably want to see the [Installing](https://github.com/JimmyCushnie/SUCC/wiki/Installing) and [Getting Started](https://github.com/JimmyCushnie/SUCC/wiki/Getting-Started) pages.
+For full documentation on all of JECS's features, and a guide to installing + getting started, see the [wiki](https://github.com/JimmyCushnie/JECS/wiki).
 
-## Related Projects
-
-#### In C#
-
-[InterSUCC](https://github.com/JimmyCushnie/InterSUCC) is an extension for SUCC that lets you create SUCC DataFiles which implement an interface type. Getting and setting the properties of those interfaces gets and sets the values in the DataFiles.
-
-#### SUCC in Other Languages
-
-Check out [SUCC4J](https://github.com/FalsePattern/Succ4J) by FalsePattern, a full port of SUCC to java!
-
-There are also ongoing projects to port SUCC to [Rust](https://github.com/DoctorVWA/rust-succ) and [node.js](https://github.com/DoctorVWA/node-succ).
-
-Also check out [cSUCC](https://github.com/VigilanteHobo/cSucc), a tool for reading and writing values to SUCC files in C.
-
-#### SUCC Utilities
-
-[Sublime SUCC](https://github.com/pipe01/Sublime-SUCC) by pipe01 provides syntax highlighting for SUCC files in Sublime Text 3.
