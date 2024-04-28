@@ -16,7 +16,7 @@ Create a `DataFile` object, which corresponds to an actual `.jecs` file on disk.
 var userSettingsFile = new DataFile(path: "user_settings.jecs");
 
 // Gets the string stored in user_settings.jecs under the key `user_name`.
-// If no value exists under that key, it will be created and given the default value of `Spongebob Squarepants`.
+// If no key by that name exists, it will be created set to `Spongebob Squarepants`.
 string userName = userSettingsFile.Get(key: "user_name", defaultValue: "Spongebob Squarepants");
 
 // Outputs the value stored in the file, or "Spongebob Squarepants" if the value/file didn't exist yet.
