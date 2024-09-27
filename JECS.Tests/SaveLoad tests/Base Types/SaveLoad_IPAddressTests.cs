@@ -9,8 +9,7 @@ namespace JECS.Tests
         [TestMethod]
         public void SaveLoad_IP()
         {
-            string hostName = Dns.GetHostName();
-            IPAddress ip = Dns.GetHostAddresses(hostName)[0];
+            IPAddress ip = IPAddress.Parse("8.8.8.8");
             TestUtilities.PerformSaveLoadTest(ip);
         }
     }
