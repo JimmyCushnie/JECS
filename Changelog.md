@@ -41,6 +41,8 @@
 * Use lock when reading or writing data to disk to prevent sharing violations
 * Improved logic for saving & loading System.Type so the strings look better
 * Added support for saving and loading nullable value types
+* Added support for saving and loading abstract types and interfaces
+* Gave the library a new name
 
 todo update the docs for 1.2
 
