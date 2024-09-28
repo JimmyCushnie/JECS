@@ -8,7 +8,7 @@ namespace JECS.ParsingLogic
     /// </summary>
     internal static class NodeManager
     {
-        const string KEY_CONCRETE_TYPE = "{JECS_INTERNAL_CONCRETE_TYPE}";
+        const string KEY_CONCRETE_TYPE = "{JECS_CONCRETE_TYPE}";
         
         internal static void SetNodeData<T>(Node node, T data, FileStyle style) => SetNodeData(node, data, typeof(T), style);
         internal static void SetNodeData(Node node, object data, Type type, FileStyle style)
