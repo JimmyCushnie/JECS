@@ -1,8 +1,9 @@
 ﻿using System;
+using System.IO;
 
 namespace JECS.Abstractions
 {
-    internal interface IDataFileOnDisk : IDisposable
+    public interface IDataFileOnDisk
     {
         /// <summary> The absolute path of the file this object corresponds to. </summary>
         string FilePath { get; }
@@ -13,10 +14,16 @@ namespace JECS.Abstractions
         /// <summary> Size of this file on disk in bytes. If there is unsaved data in memory it will not be counted. </summary>
         long SizeOnDisk { get; }
 
-        /// <summary> If true, the DataFile will automatically reload its data when the file changes on disk. If false, you can still call ReloadAllData() manually. </summary>
-        bool AutoReload { get; set; }
+        void ReloadAllData();
+        
+        
+        object FileSystemReadWriteLock { get; }
+        DateTime LastKnownWriteTimeUTC { get; }
+    }
 
-        /// <summary> Invoked every time the file is auto-reloaded. This only happens when AutoReload is set to true. </summary>
-        event Action OnAutoReload;
+    internal static class IDataFileOnDiskExtensions
+    {
+        public static DateTime GetCurrentLastWriteTimeUTC(this IDataFileOnDisk dataFileOnDisk) 
+            => File.GetLastWriteTimeUtc(dataFileOnDisk.FilePath);
     }
 }

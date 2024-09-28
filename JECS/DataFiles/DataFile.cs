@@ -1,7 +1,6 @@
 ﻿using JECS.Abstractions;
 using System;
 using System.IO;
-using System.Timers;
 
 namespace JECS
 {
@@ -40,7 +39,7 @@ namespace JECS
             {
                 if (File.Exists(FilePath))
                 {
-                    LastKnownWriteTimeUTC = GetCurrentLastWriteTimeUTC();
+                    LastKnownWriteTimeUTC = this.GetCurrentLastWriteTimeUTC();
                     return File.ReadAllText(FilePath);
                 }
 
@@ -54,14 +53,12 @@ namespace JECS
             lock (FileSystemReadWriteLock)
             {
                 File.WriteAllText(FilePath, text);
-                LastKnownWriteTimeUTC = GetCurrentLastWriteTimeUTC();
+                LastKnownWriteTimeUTC = this.GetCurrentLastWriteTimeUTC();
             }
         }
 
         /// <inheritdoc/>
         public override string Identifier => FilePath;
-
-
 
 
 
@@ -75,85 +72,15 @@ namespace JECS
         public string FileName => Path.GetFileNameWithoutExtension(FilePath);
         /// <inheritdoc/>
         public long SizeOnDisk => new FileInfo(FilePath).Length;
-        /// <inheritdoc/>
-        public event Action OnAutoReload;
-
-        /// <inheritdoc/>
-        public bool AutoReload
-        {
-            get => _AutoReload;
-            set
-            {
-                _AutoReload = value;
-
-                if (value == true)
-                {
-                    EnsureTimerIsSetup();
-                    AutoReloadTimer.Start();
-                }
-                else
-                {
-                    AutoReloadTimer?.Stop();
-                }
-            }
-        }
-        private bool _AutoReload = false;
 
 
-        // To make AutoReload work, we regularly check the last write time on the filesystem.
-        // We used to use FileSystemWatcher, but that class is a nasty bastard that loves to randomly not work, especially on Linux, and especially on Mono.
-        // It was also a problem because it's very hard to determine whether FileSystemWatcher is firing legitimately or just because this code has saved a
-        // new value to disk.
+        // For the below members, don't make them directly public; it'll just clutter the public API for this class.
 
-        private static readonly TimeSpan AutoReloadTimerInterval = TimeSpan.FromSeconds(1);
-
-        private Timer AutoReloadTimer;
-        private readonly object TimerLock = new object();
-        private void EnsureTimerIsSetup()
-        {
-            if (AutoReloadTimer == null)
-            {
-                AutoReloadTimer = new Timer(AutoReloadTimerInterval.TotalMilliseconds);
-                AutoReloadTimer.AutoReset = false;
-                AutoReloadTimer.Elapsed += AutoReloadTimerElapsed;
-            }
-        }
-
-        private void AutoReloadTimerElapsed(object _, ElapsedEventArgs __)
-        {
-            // Restart the timer manually, only after we finish ReloadIfChanged.
-            // Use the lock to ensure we can properly stop the timer when Disposing.
-            lock (TimerLock)
-            {
-                ReloadIfChanged();
-                AutoReloadTimer.Start();
-            }
-        }
-        private void ReloadIfChanged()
-        {
-            lock (FileSystemReadWriteLock)
-            {
-                if (GetCurrentLastWriteTimeUTC() != LastKnownWriteTimeUTC)
-                {
-                    ReloadAllData();
-                    OnAutoReload?.Invoke();
-                }
-            }
-        }
-
+        object IDataFileOnDisk.FileSystemReadWriteLock => FileSystemReadWriteLock;
         private readonly object FileSystemReadWriteLock = new object();
 
+        DateTime IDataFileOnDisk.LastKnownWriteTimeUTC => LastKnownWriteTimeUTC;
         private DateTime LastKnownWriteTimeUTC;
-        private DateTime GetCurrentLastWriteTimeUTC() => File.GetLastWriteTimeUtc(this.FilePath);
-
-        public void Dispose()
-        {
-            lock (TimerLock)
-            {
-                AutoReloadTimer?.Stop();
-                AutoReloadTimer?.Dispose();
-            }
-        }
 
         #endregion
     }
