@@ -1,7 +1,7 @@
-using JECS.ParsingLogic;
-using JECS.MemoryFiles;
 using System;
 using System.Collections.Generic;
+using JECS.MemoryFiles;
+using JECS.ParsingLogic;
 
 namespace JECS.Abstractions
 {
@@ -184,45 +184,6 @@ namespace JECS.Abstractions
 
             value = Get<T>(key);
             return true;
-        }
-
-
-        /// <summary> Interpret this file as an object of type T, using that type's fields and properties as top-level keys. </summary>
-        public T GetAsObject<T>() => (T)GetAsObjectNonGeneric(typeof(T));
-
-        /// <summary> Non-generic version of GetAsObject. You probably want to use GetAsObject. </summary>
-        /// <param name="type"> the type to get this object as </param>
-        public object GetAsObjectNonGeneric(Type type)
-        {
-            object returnThis = Activator.CreateInstance(type);
-
-            foreach (var m in type.GetValidMembers())
-            {
-                var value = GetNonGeneric(m.MemberType, m.Name, m.GetValue(returnThis));
-                m.SetValue(returnThis, value);
-            }
-
-            return returnThis;
-        }
-
-        /// <summary> Interpret this file as a dictionary. Top-level keys in the file are interpreted as keys in the dictionary. </summary>
-        /// <remarks> TKey must be a Base Type </remarks>
-        public Dictionary<TKey, TValue> GetAsDictionary<TKey, TValue>()
-        {
-            if (!BaseTypesManager.IsBaseType(typeof(TKey)))
-                throw new Exception("When using GetAsDictionary, TKey must be a base type");
-
-            var keys = this.TopLevelKeys;
-            var dictionary = new Dictionary<TKey, TValue>(capacity: keys.Count);
-
-            foreach (var keyText in keys)
-            {
-                TKey key = BaseTypesManager.ParseBaseType<TKey>(keyText);
-                TValue value = NodeManager.GetNodeData<TValue>(TopLevelNodes[keyText]);
-                dictionary.Add(key, value);
-            }
-
-            return dictionary;
         }
     }
 }

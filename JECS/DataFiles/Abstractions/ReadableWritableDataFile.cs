@@ -1,7 +1,6 @@
-using JECS.ParsingLogic;
 using System;
 using System.Linq;
-using System.Collections.Generic;
+using JECS.ParsingLogic;
 
 namespace JECS.Abstractions
 {
@@ -170,65 +169,6 @@ namespace JECS.Abstractions
             TopLevelLines.Remove(node);
 
             MarkFileDirty();
-        }
-
-
-        /// <summary> Save this file as an object of type T, using that type's fields and properties as top-level keys. </summary>
-        public void SaveAsObject<T>(T saveThis) => SaveAsObjectNonGeneric(typeof(T), saveThis);
-
-        /// <summary> Non-generic version of SaveAsObject. You probably want to use SaveAsObject. </summary>
-        /// <param name="type"> what type to save this object as </param>
-        /// <param name="saveThis"> the object to save </param>
-        public void SaveAsObjectNonGeneric(Type type, object saveThis)
-        {
-            bool previousAutosaveValue = AutoSave;
-            AutoSave = false; // don't write to disk when we don't have to
-
-            try
-            {
-                foreach (var m in type.GetValidMembers())
-                    SetNonGeneric(m.MemberType, m.Name, m.GetValue(saveThis));
-            }
-            finally
-            {
-                AutoSave = previousAutosaveValue;
-            }
-        }
-
-        /// <summary> Save this file as a dictionary, using the dictionary's keys as top-level keys in the file. </summary>
-        /// <remarks> TKey must be a Base Type </remarks>
-        public void SaveAsDictionary<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
-        {
-            if (!BaseTypesManager.IsBaseType(typeof(TKey)))
-                throw new Exception("When using GetAsDictionary, TKey must be a base type");
-
-            bool previousAutosaveValue = AutoSave;
-            AutoSave = false; // don't write to disk when we don't have to
-
-            try
-            {
-                var CurrentKeys = new List<string>(capacity: dictionary.Count);
-                foreach (var key in dictionary.Keys)
-                {
-                    var keyText = BaseTypesManager.SerializeBaseType(key, Style);
-                    if (!Utilities.IsValidKey(keyText, out string whyNot))
-                        throw new Exception($"can't save file as this dictionary. A key ({keyText}) is not valid: {whyNot}");
-
-                    CurrentKeys.Add(keyText);
-                    Set(keyText, dictionary[key]);
-                }
-
-                // make sure that old data in the file is deleted when a new dictionary is saved.
-                foreach (var key in this.TopLevelKeys)
-                {
-                    if (!CurrentKeys.Contains(key))
-                        this.TopLevelNodes.Remove(key);
-                }
-            }
-            finally
-            {
-                AutoSave = previousAutosaveValue;
-            }
         }
 
 
