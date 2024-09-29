@@ -8,8 +8,6 @@ namespace JECS.ParsingLogic
     /// </summary>
     internal static class NodeManager
     {
-        const string KEY_CONCRETE_TYPE = "{JECS_CONCRETE_TYPE}";
-        
         internal static void SetNodeData<T>(Node node, T data, FileStyle style) => SetNodeData(node, data, typeof(T), style);
         internal static void SetNodeData(Node node, object data, Type type, FileStyle style)
         {
@@ -68,15 +66,6 @@ namespace JECS.ParsingLogic
                 return;
             }
 
-            if (type.IsAbstract || type.IsInterface)
-            {
-                var concreteTypeNode = node.GetChildAddressedByName(KEY_CONCRETE_TYPE);
-                var concreteType = data.GetType();
-                SetNodeData(concreteTypeNode, concreteType, typeof(Type), style);
-                SetNodeData(node, data, concreteType, style);
-                return;
-            }
-
             ComplexTypes.SetComplexNode(node, data, type, style);
         }
 
@@ -107,13 +96,6 @@ namespace JECS.ParsingLogic
 
             if (node.HasValue)
                 return RetrieveDataWithErrorChecking(() => ComplexTypeShortcuts.GetFromShortcut(node.Value, type));
-
-            if (type.IsAbstract || type.IsInterface)
-            {
-                var concreteTypeNode = node.GetChildAddressedByName(KEY_CONCRETE_TYPE);
-                var concreteType = GetNodeData<Type>(concreteTypeNode);
-                return GetNodeData(node, concreteType);
-            }
 
             return RetrieveDataWithErrorChecking(() => ComplexTypes.RetrieveComplexType(node, type));
 

@@ -7,16 +7,28 @@ namespace JECS.ParsingLogic
 {
     internal static class ComplexTypes
     {
-        internal static void SetComplexNode(Node node, object item, Type type, FileStyle style)
+        internal const string KEY_CONCRETE_TYPE = "{JECS_CONCRETE_TYPE}";
+
+        internal static void SetComplexNode(Node node, object data, Type type, FileStyle style)
         {
             // Clear the shortcut if there is any
             if (node.HasValue)
                 node.ClearValue();
+            
 
+            if (type.IsAbstract || type.IsInterface)
+            {
+                var concreteTypeNode = node.GetChildAddressedByName(KEY_CONCRETE_TYPE);
+                var concreteType = data.GetType();
+                NodeManager.SetNodeData(concreteTypeNode, concreteType, typeof(Type), style);
+
+                type = concreteType;
+            }
+            
             foreach (var m in type.GetValidMembers())
             {
                 var child = node.GetChildAddressedByName(m.Name);
-                NodeManager.SetNodeData(child, m.GetValue(item), m.MemberType, style);
+                NodeManager.SetNodeData(child, m.GetValue(data), m.MemberType, style);
             }
         }
 
@@ -25,6 +37,15 @@ namespace JECS.ParsingLogic
             if (node.ChildNodes.Count > 0 && node.ChildNodeType != NodeChildrenType.Key)
                 throw new FormatException("Non-shortcut complex type nodes must have key children");
 
+            
+            if (type.IsAbstract || type.IsInterface)
+            {
+                var concreteTypeNode = node.GetChildAddressedByName(KEY_CONCRETE_TYPE);
+                var concreteType = NodeManager.GetNodeData<Type>(concreteTypeNode);
+
+                type = concreteType;
+            }
+            
             object returnThis = Activator.CreateInstance(type);
 
             foreach (var m in type.GetValidMembers())
