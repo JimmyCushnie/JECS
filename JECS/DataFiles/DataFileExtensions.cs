@@ -9,14 +9,18 @@ namespace JECS
     public static class DataFileExtensions
     {
         /// <summary> Interpret this file as an object of type T, using that type's fields and properties as top-level keys. </summary>
-        public static T GetAsObject<T>(this ReadableDataFile dataFile) => (T)GetAsObjectNonGeneric(dataFile, typeof(T));
+        public static T GetAsObject<T>(this ReadableDataFile dataFile, T defaultValue = default) => (T)GetAsObjectNonGeneric(dataFile, typeof(T), defaultValue);
 
         /// <summary> Non-generic version of GetAsObject. You probably want to use GetAsObject. </summary>
         /// <param name="type"> the type to get this object as </param>
-        public static object GetAsObjectNonGeneric(this ReadableDataFile dataFile, Type type)
+        public static object GetAsObjectNonGeneric(this ReadableDataFile dataFile, Type type, object defaultValue)
         {
+            if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))
+                throw new InvalidCastException($"Expected type {type}, but the object is of type {defaultValue.GetType()}");
+            
+            
             if (TypeRequiresSubKeyWhenWholeFileIsObject(type))
-                return dataFile.GetNonGeneric(type, KEY_SAVED_OBJECT_VALUE);
+                return dataFile.GetNonGeneric(type, KEY_SAVED_OBJECT_VALUE, defaultValue);
 
 
             if (type.IsNullableType() && dataFile.TopLevelKeys.Count == 0)
@@ -24,18 +28,22 @@ namespace JECS
 
             if (type.IsAbstract || type.IsInterface)
             {
-                var concreteType = dataFile.Get<Type>(ComplexTypes.KEY_CONCRETE_TYPE);
+                var concreteType = dataFile.Get<Type>(ComplexTypes.KEY_CONCRETE_TYPE, defaultValue?.GetType());
+                
                 if (concreteType == null)
                     throw new Exception($"Cannot load file {dataFile.Identifier} as type {type}, because it's an abstract or interface type and the concrete type is not specified.");
+                if (!type.IsAssignableFrom(concreteType))
+                    throw new InvalidCastException($"Concrete type {concreteType} doesn't work with base type {type}");
 
                 type = concreteType;
             }
             
             object returnThis = Activator.CreateInstance(type);
+            var defaultValuesSource = defaultValue ?? returnThis;
 
             foreach (var m in type.GetValidMembers())
             {
-                var value = dataFile.GetNonGeneric(m.MemberType, m.Name, m.GetValue(returnThis));
+                var value = dataFile.GetNonGeneric(m.MemberType, m.Name, m.GetValue(defaultValuesSource));
                 m.SetValue(returnThis, value);
             }
 
