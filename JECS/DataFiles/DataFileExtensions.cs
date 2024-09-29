@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using JECS.Abstractions;
 using JECS.ParsingLogic;
+using JECS.ParsingLogic.CollectionTypes;
 
 namespace JECS
 {
@@ -14,6 +15,22 @@ namespace JECS
         /// <param name="type"> the type to get this object as </param>
         public static object GetAsObjectNonGeneric(this ReadableDataFile dataFile, Type type)
         {
+            if (TypeRequiresSubKeyWhenWholeFileIsObject(type))
+                return dataFile.GetNonGeneric(type, KEY_SAVED_OBJECT_VALUE);
+
+
+            if (type.IsNullableType() && dataFile.TopLevelKeys.Count == 0)
+                return null;
+
+            if (type.IsAbstract || type.IsInterface)
+            {
+                var concreteType = dataFile.Get<Type>(ComplexTypes.KEY_CONCRETE_TYPE);
+                if (concreteType == null)
+                    throw new Exception($"Cannot load file {dataFile.Identifier} as type {type}, because it's an abstract or interface type and the concrete type is not specified.");
+
+                type = concreteType;
+            }
+            
             object returnThis = Activator.CreateInstance(type);
 
             foreach (var m in type.GetValidMembers())
@@ -39,14 +56,59 @@ namespace JECS
 
             try
             {
-                foreach (var m in type.GetValidMembers())
-                    dataFile.SetNonGeneric(m.MemberType, m.Name, m.GetValue(saveThis));
+                SetFileContents();
             }
             finally
             {
                 dataFile.AutoSave = previousAutosaveValue;
             }
+
+            void SetFileContents()
+            {
+                if (TypeRequiresSubKeyWhenWholeFileIsObject(type))
+                {
+                    dataFile.SetNonGeneric(type, KEY_SAVED_OBJECT_VALUE, saveThis);
+                    return;
+                }
+
+
+                if (saveThis == null)
+                {
+                    dataFile.DeleteAllKeys();
+                    return;
+                }
+
+                if (type.IsAbstract || type.IsInterface)
+                {
+                    var concreteType = saveThis.GetType();
+                    dataFile.Set<Type>(ComplexTypes.KEY_CONCRETE_TYPE, concreteType);
+
+                    type = concreteType;
+                }
+                
+                foreach (var m in type.GetValidMembers())
+                    dataFile.SetNonGeneric(m.MemberType, m.Name, m.GetValue(saveThis));
+            }
         }
+
+        private static bool TypeRequiresSubKeyWhenWholeFileIsObject(Type type)
+        {
+            if (BaseTypesManager.IsBaseType(type))
+                return true;
+            
+            var underlyingNullableType = Nullable.GetUnderlyingType(type);
+            if (underlyingNullableType != null && BaseTypesManager.IsBaseType(underlyingNullableType))
+                return true;
+
+            if (CollectionTypesManager.IsSupportedType(type))
+                return true;
+
+            return false;
+        }
+
+        private const string KEY_SAVED_OBJECT_VALUE = "value";
+        
+        
         
         
         
@@ -83,6 +145,15 @@ namespace JECS
 
             try
             {
+                SetFileContents();
+            }
+            finally
+            {
+                dataFile.AutoSave = previousAutosaveValue;
+            }
+
+            void SetFileContents()
+            {
                 var currentKeys = new List<string>(capacity: dictionary.Count);
                 foreach (var key in dictionary.Keys)
                 {
@@ -100,10 +171,6 @@ namespace JECS
                     if (!currentKeys.Contains(key))
                         dataFile.TopLevelNodes.Remove(key);
                 }
-            }
-            finally
-            {
-                dataFile.AutoSave = previousAutosaveValue;
             }
         }
     }

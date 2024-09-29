@@ -43,6 +43,8 @@
 * Added support for saving and loading nullable value types
 * Added support for saving and loading abstract types and interfaces
 * Gave the library a new name
+* Added `ReadableWritableDataFile.DeleteAllKeys()`
+* `GetAsObject` and `SetAsObject` now fully support all JECS types
 
 todo update the docs for 1.2
 
