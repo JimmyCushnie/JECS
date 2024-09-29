@@ -12,11 +12,12 @@ namespace JECS.Tests
         public delegate void AssertTwoItemsAreTheSameDelegate<T>(T item1, T item2);
         public static void PerformSaveLoadTest<T>(T SAVED_VALUE, AssertTwoItemsAreTheSameDelegate<T> assertTwoItemsAreTheSameDelegate)
         {
-            const string SAVED_VALUE_KEY = "save/load test key";
             var file = new MemoryDataFile();
 
             try
             {
+                const string SAVED_VALUE_KEY = "JECS_TEST_KEY";
+                
                 file.Set(SAVED_VALUE_KEY, SAVED_VALUE);
                 var loadedValue = file.Get<T>(SAVED_VALUE_KEY);
 
@@ -24,9 +25,31 @@ namespace JECS.Tests
             }
             finally
             {
-                Console.WriteLine("Contents of file:");
+                Console.WriteLine("Save under a top-level key | Contents of file:");
                 Console.WriteLine("```");
                 Console.WriteLine(file.GetRawText());
+                Console.WriteLine("```");
+            }
+
+            
+            // There are two ways a value can be saved: under a key, and as a whole file.
+            // I want all SaveLoad tests to test both methods of saving.
+            // Now ideally these would be separate tests so that it's easy to see which way of saving went wrong in the case that it's just one of them.
+            // Unfortunately I can't see an easy way to do that.
+            
+            var file2 = new MemoryDataFile();
+            try
+            {
+                file2.SaveAsObject(SAVED_VALUE);
+                var loadedValue = file2.GetAsObject<T>();
+
+                assertTwoItemsAreTheSameDelegate.Invoke(SAVED_VALUE, loadedValue);
+            }
+            finally
+            {
+                Console.WriteLine("\n\nSave as whole file | Contents of file:");
+                Console.WriteLine("```");
+                Console.WriteLine(file2.GetRawText());
                 Console.WriteLine("```");
             }
         }

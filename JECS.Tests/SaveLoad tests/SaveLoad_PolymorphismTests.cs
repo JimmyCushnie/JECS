@@ -7,6 +7,43 @@ namespace JECS.Tests
     public class SaveLoad_PolymorphismTests
     {
         [TestMethod]
+        public void SaveLoad_Polymorphism()
+        {
+            AbstractBaseClass value = new ChildClass1()
+                {
+                    StringValue = "test1",
+                    IntValue = 532,
+                };
+
+            TestUtilities.PerformSaveLoadTest<AbstractBaseClass>(value);
+        }
+        
+        [TestMethod]
+        public void SaveLoad_Interface()
+        {
+            IBaseClassInterface value = new ChildClass1()
+            {
+                StringValue = "test1",
+                IntValue = 532,
+            };
+
+            TestUtilities.PerformSaveLoadTest<IBaseClassInterface>(value);
+        }
+        
+        [TestMethod]
+        public void SaveLoad_Polymorphism_Null()
+        {
+            TestUtilities.PerformSaveLoadTest<AbstractBaseClass>(null);
+        }
+        
+        [TestMethod]
+        public void SaveLoad_Interface_Null()
+        {
+            TestUtilities.PerformSaveLoadTest<IBaseClassInterface>(null);
+        }
+        
+        
+        [TestMethod]
         public void SaveLoad_PolymorphismArray()
         {
             var array = new AbstractBaseClass[]
@@ -20,7 +57,8 @@ namespace JECS.Tests
                 {
                     StringValue = "test222",
                     FloatValue = 101.0101f,
-                }
+                },
+                null,
             };
 
             TestUtilities.PerformSaveLoadTest(array, CollectionAssert.AreEqual);
@@ -40,7 +78,8 @@ namespace JECS.Tests
                 {
                     StringValue = "test222",
                     FloatValue = 101.0101f,
-                }
+                },
+                null,
             };
 
             TestUtilities.PerformSaveLoadTest(array, CollectionAssert.AreEqual);
