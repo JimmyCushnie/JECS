@@ -171,6 +171,14 @@ namespace JECS.Abstractions
             MarkFileDirty();
         }
 
+        /// <summary> Wipes all lines from the file that encode data. </summary>
+        public void DeleteAllKeys()
+        {
+            TopLevelNodes.Clear();
+            TopLevelLines.Clear();
+            
+            MarkFileDirty();
+        }
 
 
         /// <summary>
