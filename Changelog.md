@@ -45,6 +45,8 @@
 * Gave the library a new name
 * Added `ReadableWritableDataFile.DeleteAllKeys()`
 * `GetAsObject` and `SetAsObject` now fully support all JECS types
+* All written files now end with a newline
+* Add `ReadableWritableDataFile.DeleteKeyAtPath`
 
 todo update the docs for 1.2
 
