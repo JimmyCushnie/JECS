@@ -135,7 +135,7 @@ namespace JECS.Abstractions
             return NodeManager.GetNodeData(node, type);
         }
 
-        /// <summary> Like <see cref="GetAtPath{T}(T, string[])"/>, but the default value is searched for in the default file text </summary>
+        /// <summary> Like <see cref="Get{T}(string)"/> but works for nested paths instead of just the top level of the file. </summary>
         public T GetAtPath<T>(params string[] path)
             => (T)GetAtPathNonGeneric(typeof(T), path);
 
@@ -147,15 +147,11 @@ namespace JECS.Abstractions
             return this.GetAtPathNonGeneric(type, defaultValue, path);
         }
 
-        /// <summary> 
-        /// Like Get but works for nested paths instead of just the top level of the file 
-        /// </summary>
+        /// <summary> Like <see cref="GetAtPath{T}(T, string[])"/>, but the default value is searched for in the default file text </summary>
         public virtual T GetAtPath<T>(T defaultValue, params string[] path)
             => (T)GetAtPathNonGeneric(typeof(T), defaultValue, path);
 
-        /// <summary>
-        /// Non-generic version of GetAtPath. You probably want to use GetAtPath.
-        /// </summary>
+        /// <summary> Non-generic version of <see cref="GetAtPath{T}(T,string[])"/>. You probably want to use that one.</summary>
         public virtual object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path)
         {
             if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))

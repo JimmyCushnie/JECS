@@ -124,7 +124,7 @@ namespace JECS.Abstractions
             return NodeManager.GetNodeData(topNode, type);
         }
 
-        /// <summary> Like Set but works for nested paths instead of just the top level of the file </summary>
+        /// <summary> Like <see cref="Set{T}"/> but works for nested paths instead of just the top level of the file. </summary>
         public void SetAtPath<T>(T value, params string[] path)
             => SetAtPathNonGeneric(typeof(T), value, path);
 
