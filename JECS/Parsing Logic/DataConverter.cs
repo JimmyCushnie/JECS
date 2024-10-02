@@ -14,11 +14,19 @@ namespace JECS.ParsingLogic
         /// <summary>
         /// Turns a data structure into raw JECS.
         /// </summary>
-        internal static string JecsFromDataStructure(IEnumerable<Line> lines)
+        internal static string JecsFromDataStructure(IReadOnlyList<Line> lines)
         {
             var jecsBuilder = new StringBuilder();
             RecursivelyBuildLines(lines, jecsBuilder);
-            return FinishJecsBuilder(jecsBuilder);
+
+            // All written files should end with a newline. This is convention when generating plaintext files for a number of good reasons.
+            // If the last line that already exists is empty, then we already have a newline at the end of the file.
+            // In this case, we need to remove the extra newline that was added in RecursivelyBuildLines.
+            // Without this check, files gain an extra newline every time they're saved, ad infinitum!
+            if (lines[lines.Count - 1].RawText == string.Empty)
+                jecsBuilder.Remove(jecsBuilder.Length - Utilities.NewLine.Length, Utilities.NewLine.Length);
+
+            return jecsBuilder.ToString();
 
 
             void RecursivelyBuildLines(IEnumerable<Line> _lines, StringBuilder builder)
@@ -32,9 +40,6 @@ namespace JECS.ParsingLogic
                         RecursivelyBuildLines(node.ChildLines, builder);
                 }
             }
-
-            string FinishJecsBuilder(StringBuilder builder)
-                => builder.ToString().TrimEnd('\n', '\r', ' ');
         }
 
         /// <summary>

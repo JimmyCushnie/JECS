@@ -13,7 +13,7 @@ namespace JECS.ParsingLogic
             this.RawText = rawText;
         }
 
-        public string RawText { get; set; }
+        public string RawText { get; protected set; }
         public int IndentationLevel
         {
             get => RawText.GetIndentationLevel();
