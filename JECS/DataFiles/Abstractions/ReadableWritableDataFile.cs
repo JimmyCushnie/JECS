@@ -180,6 +180,31 @@ namespace JECS.Abstractions
             MarkFileDirty();
         }
 
+        /// <summary> Like <see cref="DeleteKey"/> but works for nested paths instead of just the top level of the file. </summary>
+        public void DeleteKeyAtPath(params string[] path)
+        {
+            if (path.Length < 1)
+                throw new ArgumentException($"{nameof(path)} must have a length greater than 0");
+
+
+            if (path.Length == 1)
+            {
+                DeleteKey(path[0]);
+                return;
+            }
+            
+            var topNode = TopLevelNodes[path[0]];
+            for (int i = 1; i < path.Length - 1; i++)
+            {
+                if (topNode.ContainsChildNode(path[i]))
+                    topNode = topNode.GetChildAddressedByName(path[i]);
+            }
+            
+            topNode.RemoveChild(path[path.Length - 1]);
+
+            MarkFileDirty();
+        }
+
 
         /// <summary>
         /// Reset the file to the default data provided when it was created.
