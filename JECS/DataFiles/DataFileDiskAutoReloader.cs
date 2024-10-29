@@ -74,6 +74,20 @@ namespace JECS
                 AutoReloadTimer.Stop();
                 AutoReloadTimer.Dispose();
             }
+
+            OnAutoReload = null;
+        }
+
+        
+        public static DataFileDiskAutoReloader StartWatching(IDataFileOnDisk file, Action onAutoReload = null)
+        {
+            var reloader = new DataFileDiskAutoReloader(file);
+            reloader.StartWatchingForDiskChanges();
+            
+            if (onAutoReload != null)
+                reloader.OnAutoReload += onAutoReload;
+
+            return reloader;
         }
     }
 }
