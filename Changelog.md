@@ -47,6 +47,7 @@
 * `GetAsObject` and `SetAsObject` now fully support all JECS types
 * All written files now end with a newline
 * Add `ReadableWritableDataFile.DeleteKeyAtPath`
+* Changed default property saving behavior: properties with public get are now saved by default, even if set is private
 
 todo update the docs for 1.2
 

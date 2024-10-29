@@ -80,7 +80,7 @@ namespace JECS.ParsingLogic
                 if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
                 if (Attribute.IsDefined(p, typeof(DontSaveThisAttribute))) continue;
                 if (ComplexTypeOverrides.IsNeverSaved(p)) continue;
-                if (p.GetOrSetIsPrivate() && !Attribute.IsDefined(p, typeof(SaveThisAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(p)) continue;
+                if (p.GetMethod.IsPrivate && !Attribute.IsDefined(p, typeof(SaveThisAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(p)) continue;
 
                 members.Add(p);
             }

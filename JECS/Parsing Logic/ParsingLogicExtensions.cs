@@ -38,13 +38,9 @@ namespace JECS.ParsingLogic
             => String.IsNullOrEmpty(s);
 
 
-        // this is just to enable params
+        // this extension is just to enable params
         internal static object Invoke(this MethodInfo method, object obj, params object[] parameters)
             => method.Invoke(obj, parameters);
-
-
-        internal static bool GetOrSetIsPrivate(this PropertyInfo p)
-            => p.GetMethod.IsPrivate || p.SetMethod.IsPrivate;
 
 
         /// <summary>
