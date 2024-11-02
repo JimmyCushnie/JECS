@@ -1,7 +1,7 @@
 ﻿using JECS.ParsingLogic;
 using System;
 
-namespace JECS.BuiltInBaseTypeRules
+namespace JECS.BuiltInBaseTypeLogics
 {
     internal class BaseTypeLogic_String : StyledBaseTypeLogic<string>
     {

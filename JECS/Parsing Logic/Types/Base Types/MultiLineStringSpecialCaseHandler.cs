@@ -1,4 +1,4 @@
-using JECS.BuiltInBaseTypeRules;
+using JECS.BuiltInBaseTypeLogics;
 using System;
 
 namespace JECS.ParsingLogic

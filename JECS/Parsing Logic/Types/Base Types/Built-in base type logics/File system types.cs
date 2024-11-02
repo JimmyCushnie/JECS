@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace JECS.BuiltInBaseTypeRules
+namespace JECS.BuiltInBaseTypeLogics
 {
     internal class BaseTypeLogic_DirectoryInfo : BaseTypeLogic<DirectoryInfo>
     {

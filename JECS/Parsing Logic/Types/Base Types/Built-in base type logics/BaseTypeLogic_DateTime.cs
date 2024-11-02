@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace JECS.BuiltInBaseTypeRules
+namespace JECS.BuiltInBaseTypeLogics
 {
     internal class BaseTypeLogic_DateTime : BaseTypeLogic<DateTime>
     {

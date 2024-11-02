@@ -2,9 +2,9 @@ using System;
 using System.Globalization;
 using System.Linq;
 
-namespace JECS.BuiltInBaseTypeRules
+namespace JECS.BuiltInBaseTypeLogics
 {
-    internal class BaseTypeRules_Float : BaseTypeLogic<float>
+    internal class BaseTypeLogic_Float : BaseTypeLogic<float>
     {
         public override string SerializeItem(float value)
         {
@@ -26,7 +26,7 @@ namespace JECS.BuiltInBaseTypeRules
         }
     }
 
-    internal class BaseTypeRules_Double : BaseTypeLogic<double>
+    internal class BaseTypeLogic_Double : BaseTypeLogic<double>
     {
         public override string SerializeItem(double value)
         {
@@ -48,7 +48,7 @@ namespace JECS.BuiltInBaseTypeRules
         }
     }
 
-    internal class BaseTypeRules_Decimal : BaseTypeLogic<decimal>
+    internal class BaseTypeLogic_Decimal : BaseTypeLogic<decimal>
     {
         public override string SerializeItem(decimal value)
         {

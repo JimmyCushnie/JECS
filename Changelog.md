@@ -1,4 +1,4 @@
-# SUCC Changelog
+# JECS Changelog
 
 ## v1.2 | some time in the future probably
 

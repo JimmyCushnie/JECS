@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace JECS.BuiltInBaseTypeRules
+namespace JECS.BuiltInBaseTypeLogics
 {
     internal class BaseTypeLogic_IPAddress : BaseTypeLogic<IPAddress>
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace JECS.BuiltInBaseTypeRules
+namespace JECS.BuiltInBaseTypeLogics
 {
     internal class BaseTypeLogic_Bool : StyledBaseTypeLogic<bool>
     {

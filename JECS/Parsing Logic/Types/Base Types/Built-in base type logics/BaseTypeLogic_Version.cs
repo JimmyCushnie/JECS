@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JECS.BuiltInBaseTypeRules
+namespace JECS.BuiltInBaseTypeLogics
 {
     internal class BaseTypeLogic_Version : BaseTypeLogic<Version>
     {

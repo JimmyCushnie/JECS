@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using JECS.BuiltInBaseTypeLogics;
 
 namespace JECS.ParsingLogic
 {
@@ -9,46 +10,53 @@ namespace JECS.ParsingLogic
     /// </summary>
     public static class BaseTypesManager
     {
-        private static readonly Dictionary<Type, BaseTypeLogic> RegisteredBaseTypeLogics = new Dictionary<Type, BaseTypeLogic>();
-
         static BaseTypesManager()
         {
-            ReloadBaseTypes();
-        }
+            RegisterBuiltInBaseTypes();
 
-        /// <summary>
-        /// Re-scans the loaded assemblies for base type logic implementations.
-        /// </summary>
-        public static void ReloadBaseTypes()
-        {
-            RegisteredBaseTypeLogics.Clear();
-
-            foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
+            void RegisterBuiltInBaseTypes()
             {
-                // Not sure why, but these particular assemblies cause weird errors. I get them when running JECS in Unity.
-                // Microsoft.CodeAnalysis is unlikely to ever add custom JECS base type rules so I feel safe skipping them
-                if (ass.FullName.StartsWith("Microsoft.CodeAnalysis"))
-                    continue;
-
-                LoadBaseTypeLogicsIn(ass);
+                RegisterBaseType(new BaseTypeLogic_Bool());
+                RegisterBaseType(new BaseTypeLogic_Char());
+                RegisterBaseType(new BaseTypeLogic_DateTime());
+                RegisterBaseType(new BaseTypeLogic_IPAddress());
+                RegisterBaseType(new BaseTypeLogic_String());
+                RegisterBaseType(new BaseTypeLogic_Type());
+                RegisterBaseType(new BaseTypeLogic_Version());
+                
+                RegisterBaseType(new BaseTypeLogic_DirectoryInfo());
+                RegisterBaseType(new BaseTypeLogic_FileInfo());
+                
+                RegisterBaseType(new BaseTypeLogic_Float());
+                RegisterBaseType(new BaseTypeLogic_Double());
+                RegisterBaseType(new BaseTypeLogic_Decimal());
+                
+                RegisterBaseType(new BaseTypeLogic_Sbyte());
+                RegisterBaseType(new BaseTypeLogic_Byte());
+                RegisterBaseType(new BaseTypeLogic_Short());
+                RegisterBaseType(new BaseTypeLogic_Ushort());
+                RegisterBaseType(new BaseTypeLogic_Int());
+                RegisterBaseType(new BaseTypeLogic_Uint());
+                RegisterBaseType(new BaseTypeLogic_Long());
+                RegisterBaseType(new BaseTypeLogic_Ulong());
+                RegisterBaseType(new BaseTypeLogic_BigInt());
             }
         }
+        
+        private static readonly Dictionary<Type, BaseTypeLogic> RegisteredBaseTypeLogics = new Dictionary<Type, BaseTypeLogic>();
 
-        public static void LoadBaseTypeLogicsIn(Assembly ass)
+        public static void RegisterBaseType(BaseTypeLogic logic)
         {
-            foreach (var type in ass.GetTypes())
-            {
-                if (typeof(BaseTypeLogic).IsAssignableFrom(type) && !type.IsAbstract && !type.IsGenericType && !type.IsGenericTypeDefinition)
-                {
-                    var logic = Activator.CreateInstance(type) as BaseTypeLogic;
+            if (logic == null)
+                throw new ArgumentNullException(nameof(logic));
+            
+            if (RegisteredBaseTypeLogics.ContainsKey(logic.ApplicableType))
+                throw new Exception($"Failed to register base type with logic {logic.GetType()}. There is already a base type logic for type {logic.ApplicableType}. The existing logic is of type {RegisteredBaseTypeLogics[logic.ApplicableType]}");
 
-                    if (RegisteredBaseTypeLogics.ContainsKey(logic.ApplicableType))
-                        throw new Exception($"Can't load base type logics, duplicate logics for type {logic.ApplicableType}");
-
-                    RegisteredBaseTypeLogics.Add(logic.ApplicableType, logic);
-                }
-            }
+            RegisteredBaseTypeLogics.Add(logic.ApplicableType, logic);
         }
+        
+        
 
         /// <summary> Returns true if the type is a registered base type. </summary>
         public static bool IsBaseType(Type type)
