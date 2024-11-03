@@ -112,10 +112,10 @@ namespace JECS.ParsingLogic
                     // number appropriate to the actual error.
                     throw deeperException;
                 }
-                catch
-                {
-                    throw new CannotRetrieveDataFromNodeException(node, type);
-                }
+                // catch
+                // {
+                //     throw new CannotRetrieveDataFromNodeException(node, type);
+                // }
             }
         }
 

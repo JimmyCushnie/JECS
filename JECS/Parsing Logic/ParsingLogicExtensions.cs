@@ -62,5 +62,9 @@ namespace JECS.ParsingLogic
             return Nullable.GetUnderlyingType(type) != null;
         }
 
+        // internal static PropertyInfo GetDeclaredPropertyInfo(this PropertyInfo possiblyInheritedProperty)
+        // {
+        //     possiblyInheritedProperty.DeclaringType.BaseType
+        // }
     }
 }

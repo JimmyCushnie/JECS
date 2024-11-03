@@ -26,9 +26,18 @@ namespace JECS.ParsingLogic
         public void SetValue(object obj, object value)
         {
             if (Member is FieldInfo field)
+            {
                 field.SetValue(obj, value);
+            }
             else if (Member is PropertyInfo prop)
-                prop.SetValue(obj, value);
+            {
+              //  prop.
+                
+              //  prop.SetValue(obj, value,  BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, null, null);
+             //   prop.SetMethod.Invoke(obj, value);
+                prop.GetSetMethod(true).Invoke(obj, value);
+                //prop.SetValue(obj, value);
+            }
         }
 
         public ClassMember WithName(string name) => new ClassMember(Member, MemberType, name);

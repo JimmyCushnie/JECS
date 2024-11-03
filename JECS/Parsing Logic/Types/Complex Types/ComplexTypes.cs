@@ -77,10 +77,16 @@ namespace JECS.ParsingLogic
 
             foreach (var p in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
-                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
+                if (!p.CanRead) continue; // Skip unreadable properties
+                if (p.GetIndexParameters().Length > 0) continue; // Skip indexer properties
                 if (Attribute.IsDefined(p, typeof(DontSaveThisAttribute))) continue;
                 if (ComplexTypeOverrides.IsNeverSaved(p)) continue;
+                
+                // Require a public get method OR a SaveThisAttribute OR an entry in ComplexTypeOverrides
                 if (p.GetMethod.IsPrivate && !Attribute.IsDefined(p, typeof(SaveThisAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(p)) continue;
+
+                // Require a set method
+                if (p.GetSetMethod(true) == null) continue;
 
                 members.Add(p);
             }

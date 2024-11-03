@@ -15,6 +15,8 @@ namespace JECS.Tests
                     IntValue = 532,
                 };
 
+            value.SetStringValueWithPrivateSetter("hfkdlahfdsakjlfhdsakl");
+
             TestUtilities.PerformSaveLoadTest<AbstractBaseClass>(value);
         }
         
@@ -84,6 +86,14 @@ namespace JECS.Tests
 
             TestUtilities.PerformSaveLoadTest(array, CollectionAssert.AreEqual);
         }
+        
+        [TestMethod]
+        public void SaveLoad_DerivedClassWithPrivateSavedProperty()
+        {
+            var value = new DerivedClassWithPrivateSavedPropertyInBaseClass(5769856798);
+
+            TestUtilities.PerformSaveLoadTest(value);
+        }
 
 
 
@@ -93,20 +103,57 @@ namespace JECS.Tests
         abstract class AbstractBaseClass : IBaseClassInterface
         {
             public string StringValue { get; set; }
+            public string StringValueWithPrivateSetter { get; private set; }
+
+            public void SetStringValueWithPrivateSetter(string value)
+                => StringValueWithPrivateSetter = value;
         }
         class ChildClass1 : AbstractBaseClass
         {
             public int IntValue { get; set; }
 
             public override bool Equals(object obj)
-                => obj is ChildClass1 other && StringValue == other.StringValue && IntValue == other.IntValue;
+                => obj is ChildClass1 other 
+                   && StringValue == other.StringValue 
+                   && StringValueWithPrivateSetter == other.StringValueWithPrivateSetter 
+                   && IntValue == other.IntValue;
         }
         class ChildClass2 : AbstractBaseClass
         {
             public float FloatValue { get; set; }
 
             public override bool Equals(object obj)
-                => obj is ChildClass2 other && StringValue == other.StringValue && FloatValue == other.FloatValue;
+                => obj is ChildClass2 other 
+                   && StringValue == other.StringValue 
+                   && StringValueWithPrivateSetter == other.StringValueWithPrivateSetter 
+                   && FloatValue == other.FloatValue;
+        }
+
+
+        class BaseClassWithPrivateSavedProperty
+        {
+            [SaveThis]
+            private float PrivateSavedProperty { get; set; }
+            
+            public BaseClassWithPrivateSavedProperty(){}
+
+            public BaseClassWithPrivateSavedProperty(float privateSavedProperty)
+            {
+                PrivateSavedProperty = privateSavedProperty;
+            }
+
+            public override bool Equals(object obj)
+                => obj is BaseClassWithPrivateSavedProperty other
+                   && other.PrivateSavedProperty == this.PrivateSavedProperty;
+        }
+
+        class DerivedClassWithPrivateSavedPropertyInBaseClass : BaseClassWithPrivateSavedProperty
+        {
+            public DerivedClassWithPrivateSavedPropertyInBaseClass(){}
+
+            public DerivedClassWithPrivateSavedPropertyInBaseClass(float privateSavedProperty) : base(privateSavedProperty)
+            {
+            }
         }
     }
 }
