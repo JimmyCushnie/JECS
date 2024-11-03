@@ -3,7 +3,7 @@
     /// <summary>
     /// The easiest way to save and load data in JECS.
     /// </summary>
-    public static class Easy
+    public static class EasyJecs
     {
         /// <summary>
         /// Saves <see cref="data"/> to a JECS file at <see cref="filePath"/>.
