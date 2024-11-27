@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace JECS.ParsingLogic
 {
-    internal sealed class ClassMember
+    public sealed class ClassMember
     {
         public string Name { get; }
         public Type MemberType { get; }

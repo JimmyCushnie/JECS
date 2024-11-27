@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace JECS.ParsingLogic
 {
-    internal static class ComplexTypes
+    public static class ComplexTypes
     {
         internal const string KEY_CONCRETE_TYPE = "{JECS_CONCRETE_TYPE}";
 
@@ -61,7 +61,7 @@ namespace JECS.ParsingLogic
             return returnThis;
         }
 
-        internal static IEnumerable<ClassMember> GetValidMembers(this Type type)
+        public static IEnumerable<ClassMember> GetValidMembers(this Type type)
         {
             var members = new List<ClassMember>();
 
