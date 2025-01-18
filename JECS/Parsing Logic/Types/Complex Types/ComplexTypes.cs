@@ -8,6 +8,8 @@ namespace JECS.ParsingLogic
     internal static class ComplexTypes
     {
         internal const string KEY_CONCRETE_TYPE = "{JECS_CONCRETE_TYPE}";
+        internal static bool TypeRequiresSavingAsConcrete(Type type)
+            => type.IsAbstract || type.IsInterface;
 
         internal static void SetComplexNode(Node node, object data, Type type, FileStyle style)
         {
@@ -16,7 +18,7 @@ namespace JECS.ParsingLogic
                 node.ClearValue();
             
 
-            if (type.IsAbstract || type.IsInterface)
+            if (TypeRequiresSavingAsConcrete(type))
             {
                 var concreteTypeNode = node.GetChildAddressedByName(KEY_CONCRETE_TYPE);
                 var concreteType = data.GetType();
@@ -38,7 +40,7 @@ namespace JECS.ParsingLogic
                 throw new FormatException("Non-shortcut complex type nodes must have key children");
 
             
-            if (type.IsAbstract || type.IsInterface)
+            if (TypeRequiresSavingAsConcrete(type))
             {
                 var concreteTypeNode = node.GetChildAddressedByName(KEY_CONCRETE_TYPE);
                 var concreteType = NodeManager.GetNodeData<Type>(concreteTypeNode);

@@ -26,7 +26,7 @@ namespace JECS
             if (type.IsNullableType() && dataFile.TopLevelKeys.Count == 0)
                 return null;
 
-            if (type.IsAbstract || type.IsInterface)
+            if (ComplexTypes.TypeRequiresSavingAsConcrete(type))
             {
                 var concreteType = dataFile.Get<Type>(ComplexTypes.KEY_CONCRETE_TYPE, defaultValue?.GetType());
                 
@@ -86,7 +86,7 @@ namespace JECS
                     return;
                 }
 
-                if (type.IsAbstract || type.IsInterface)
+                if (ComplexTypes.TypeRequiresSavingAsConcrete(type))
                 {
                     var concreteType = saveThis.GetType();
                     dataFile.Set<Type>(ComplexTypes.KEY_CONCRETE_TYPE, concreteType);
