@@ -9,10 +9,48 @@ namespace JECS
     public static class DataFileExtensions
     {
         /// <summary> Interpret this file as an object of type T, using that type's fields and properties as top-level keys. </summary>
-        public static T GetAsObject<T>(this ReadableDataFile dataFile, T defaultValue = default) => (T)GetAsObjectNonGeneric(dataFile, typeof(T), defaultValue);
+        public static T GetAsObject<T>(this ReadableDataFile dataFile) 
+            => (T)GetAsObjectNonGeneric(dataFile, typeof(T));
+
+        /// <summary> Interpret this file as an object of type T, using that type's fields and properties as top-level keys. </summary>
+        public static T GetAsObject<T>(this ReadableDataFile dataFile, T defaultValue)
+            => (T)GetAsObjectNonGeneric(dataFile, typeof(T), defaultValue);
 
         /// <summary> Non-generic version of GetAsObject. You probably want to use GetAsObject. </summary>
         /// <param name="type"> the type to get this object as </param>
+        public static object GetAsObjectNonGeneric(this ReadableDataFile dataFile, Type type)
+        {
+            if (TypeRequiresSubKeyWhenWholeFileIsObject(type))
+                return dataFile.GetNonGeneric(type, KEY_SAVED_OBJECT_VALUE);
+
+
+            if (type.IsNullableType() && dataFile.TopLevelKeys.Count == 0)
+                return null;
+
+            if (ComplexTypes.TypeRequiresSavingAsConcrete(type))
+            {
+                var concreteType = dataFile.Get<Type>(ComplexTypes.KEY_CONCRETE_TYPE);
+
+                if (concreteType == null)
+                    throw new Exception($"Cannot load file {dataFile.Identifier} as type {type}, because it's an abstract or interface type and the concrete type is not specified.");
+                if (!type.IsAssignableFrom(concreteType))
+                    throw new InvalidCastException($"Concrete type {concreteType} doesn't work with base type {type}");
+
+                type = concreteType;
+            }
+
+            object returnThis = Activator.CreateInstance(type);
+
+            foreach (var m in type.GetValidMembers())
+            {
+                var value = dataFile.GetNonGeneric(m.MemberType, m.Name);
+                m.SetValue(returnThis, value);
+            }
+
+            return returnThis;
+        }
+
+        /// <summary> Non-generic version of GetAsObject, with a defaultValue you can provide. </summary>
         public static object GetAsObjectNonGeneric(this ReadableDataFile dataFile, Type type, object defaultValue)
         {
             if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))
@@ -52,7 +90,8 @@ namespace JECS
 
 
         /// <summary> Save this file as an object of type T, using that type's fields and properties as top-level keys. </summary>
-        public static void SaveAsObject<T>(this ReadableWritableDataFile dataFile, T saveThis) => SaveAsObjectNonGeneric(dataFile, typeof(T), saveThis);
+        public static void SaveAsObject<T>(this ReadableWritableDataFile dataFile, T saveThis) 
+            => SaveAsObjectNonGeneric(dataFile, typeof(T), saveThis);
 
         /// <summary> Non-generic version of SaveAsObject. You probably want to use SaveAsObject. </summary>
         /// <param name="type"> what type to save this object as </param>
