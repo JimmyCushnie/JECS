@@ -96,17 +96,23 @@ namespace JECS.Tests
         }
         class ChildClass1 : AbstractBaseClass
         {
-            public int IntValue { get; set; }
+            public int IntValue { get; init; }
 
             public override bool Equals(object obj)
                 => obj is ChildClass1 other && StringValue == other.StringValue && IntValue == other.IntValue;
+
+            public override int GetHashCode()
+                => IntValue;
         }
         class ChildClass2 : AbstractBaseClass
         {
-            public float FloatValue { get; set; }
+            public float FloatValue { get; init; }
 
             public override bool Equals(object obj)
                 => obj is ChildClass2 other && StringValue == other.StringValue && FloatValue == other.FloatValue;
+
+            public override int GetHashCode()
+                => FloatValue.GetHashCode();
         }
     }
 }
