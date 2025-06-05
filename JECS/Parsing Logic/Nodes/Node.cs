@@ -143,6 +143,26 @@ namespace JECS.ParsingLogic
         public bool ContainsChildNode(string key)
             => GetChildKeys().Contains(key);
 
+        /// <summary> Tries to add a child node, without causing a KeyNode collision. </summary>
+        /// <param name="newNode"> The new node to add as child to this node. </param>
+        /// <returns> <see langword="false"/> when a key collision occurred, otherwise <see langword="false"/> (successfully added new node). </returns>
+        /// <remarks> <b>IMPORTANT</b>: It is callers responsibility to ensure the ChildType is correct. This is an internal class. </remarks>
+        public bool TryAddChild(Node newNode)
+        {
+            if (ChildNodeType == NodeChildrenType.Key
+                && newNode is KeyNode keyNode
+                && ContainsChildNode(keyNode.Key))
+                return false;
+
+            _ChildNodes.Add(newNode);
+            _ChildLines.Add(newNode);
+            return true;
+        }
+
+        /// <summary> Adds a child line. </summary>
+        /// <param name="newLine"> The new line to add as a child to this node. </param>
+        /// <exception cref="ArgumentException"> When the child is a <see cref="KeyNode"/> and the key is already registered in this node. </exception>
+        /// <remarks> <b>IMPORTANT</b>: It is callers responsibility to ensure the ChildType is correct. This is an internal class. </remarks>
         public void AddChild(Line newLine)
         {
             if (this.ChildNodeType == NodeChildrenType.Key && newLine is KeyNode keyNode && this.ContainsChildNode(keyNode.Key))
