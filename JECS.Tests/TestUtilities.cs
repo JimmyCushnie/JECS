@@ -66,6 +66,7 @@ namespace JECS.Tests
             try
             {
                 file.Get<TData>("data");
+                Assert.Fail($"Parsed data which should throw a {nameof(CannotRetrieveDataFromNodeException)}");
             }
             catch (CannotRetrieveDataFromNodeException expectedException)
             {
@@ -80,6 +81,7 @@ namespace JECS.Tests
             try
             {
                 var file = new MemoryReadOnlyDataFile(invalidFileStructure);
+                Assert.Fail($"Parsed invalid file structure which should throw a {nameof(InvalidFileStructureException)}");
             }
             catch (InvalidFileStructureException expectedException)
             {
