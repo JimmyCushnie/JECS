@@ -125,6 +125,8 @@ namespace JECS.ParsingLogic
                     {
                         if (!(node is KeyNode))
                             throw new InvalidFileStructureException(dataFile, lineIndex, "top level lines must be key nodes");
+                        if (node.IndentationLevel != 0)
+                            throw new InvalidFileStructureException(dataFile, lineIndex, "top level nodes must not have indentation");
 
                         topLevelLines.Add(node);
                         KeyNode heck = node as KeyNode;
