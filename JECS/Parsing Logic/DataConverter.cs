@@ -198,6 +198,9 @@ namespace JECS.ParsingLogic
                 }
             }
 
+            if (doingMultiLineString)
+                throw new InvalidFileStructureException(dataFile, lines.Length, "multi-line string must be terminated");
+
             return (topLevelLines, topLevelNodes);
         }
 

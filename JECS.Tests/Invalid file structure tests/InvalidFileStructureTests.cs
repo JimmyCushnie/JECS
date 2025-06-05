@@ -100,6 +100,16 @@ namespace JECS.Tests
         }
 
         [TestMethod]
+        public void InvalidFileStructure_MultiLineString_MissingTerminator_AtEndOfFile()
+        {
+            const string fileText = """"
+                key: """
+                    multi-line string
+                """";
+            TestUtilities.PerformInvalidFileStructureTest(fileText);
+        }
+
+        [TestMethod]
         public void InvalidFileStructure_MultiLineString_MismatchedBodyIndents()
         {
             const string fileText = """"
