@@ -35,14 +35,14 @@ namespace JECS.ParsingLogic
         /// <summary> This constructor used when loading lines from file </summary>
         public Node(string rawText, ReadableDataFile file) : base(rawText)
         {
-            this.File = file ?? throw new ArgumentNullException("Nodes must belong to a file");
+            this.File = file ?? throw new ArgumentNullException(nameof(file), "Nodes must belong to a file");
             this.FileStyleRef = file as ReadableWritableDataFile;
         }
 
         /// <summary> This constructor used when creating new lines to add to the file </summary>
         public Node(int indentation, ReadableDataFile file)
         {
-            this.File = file ?? throw new ArgumentNullException("Nodes must belong to a file");
+            this.File = file ?? throw new ArgumentNullException(nameof(file), "Nodes must belong to a file");
             this.FileStyleRef = file as ReadableWritableDataFile;
 
             this.IndentationLevel = indentation;
@@ -58,7 +58,7 @@ namespace JECS.ParsingLogic
 
             foreach (var node in ChildNodes)
             {
-                var keyNode = node as KeyNode;
+                var keyNode = (KeyNode)node;
                 if (keyNode.Key == name) return keyNode;
             }
 
@@ -107,9 +107,9 @@ namespace JECS.ParsingLogic
             // If we already have a child, match new indentation level to that child.
             if (this.ChildNodes.Count > 0)
                 return this.ChildNodes[0].IndentationLevel;
-            
+
             // Otherwise, increase the indentation level in accordance with the FileStyle.
-            return this.IndentationLevel + Style.IndentationInterval; 
+            return this.IndentationLevel + Style.IndentationInterval;
         }
 
         private void EnsureProperChildType(NodeChildrenType expectedType)
@@ -128,7 +128,7 @@ namespace JECS.ParsingLogic
 
 
         public bool HasValue => !Value.IsNullOrEmpty();
-        public void ClearValue() => Value = String.Empty;
+        public void ClearValue() => Value = string.Empty;
 
         public bool HasChildNodes => ChildNodes.Count > 0;
         public void ClearChildren()
@@ -171,8 +171,8 @@ namespace JECS.ParsingLogic
 
         public void CapChildCount(int count)
         {
-            if (count < 0) 
-                throw new ArgumentOutOfRangeException("stop it");
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count), "Child cap count cannot be negative");
 
             while (ChildNodes.Count > count)
             {
@@ -188,14 +188,14 @@ namespace JECS.ParsingLogic
                 yield break;
 
             foreach (var node in ChildNodes)
-                yield return (node as KeyNode).Key;
+                yield return ((KeyNode)node).Key;
         }
 
 
 
         public string GetDataText()
         {
-            if (RawText.IsWhitespace()) 
+            if (RawText.IsWhitespace())
                 return String.Empty;
 
             return RawText.Substring(DataStartIndex, DataEndIndex - DataStartIndex)
@@ -217,7 +217,7 @@ namespace JECS.ParsingLogic
             {
                 var text = RawText;
 
-                if (text.IsWhitespace()) 
+                if (text.IsWhitespace())
                     return text.Length;
 
                 // find the first # in the string

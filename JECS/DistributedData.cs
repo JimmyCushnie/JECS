@@ -58,7 +58,7 @@ namespace JECS
         public static DistributedData CreateBySearching(DirectoryInfo directory, string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
         {
             searchPattern = Path.ChangeExtension(searchPattern, Utilities.FileExtension);
-            
+
             var paths = new List<string>();
             foreach (var fileInfo in directory.EnumerateFiles(searchPattern, searchOption))
                 paths.Add(fileInfo.FullName);
@@ -125,7 +125,7 @@ namespace JECS
         /// <summary> Get some data from our files, or return a default value if the data does not exist. </summary>
         /// <param name="key"> What the data is labeled as within the file. </param>
         /// <param name="defaultValue"> If the key does not exist in the file, this value is returned instead. </param>
-        public T Get<T>(string key, T defaultValue = default) 
+        public T Get<T>(string key, T defaultValue = default)
             => (T)GetNonGeneric(typeof(T), key, defaultValue);
 
         /// <summary> Non-generic version of <see cref="Get{T}(string, T)"/>. You probably want to use <see cref="Get{T}(string, T)"/>. </summary>

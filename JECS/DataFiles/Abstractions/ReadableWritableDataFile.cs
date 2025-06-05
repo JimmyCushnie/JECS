@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using JECS.ParsingLogic;
 
@@ -176,7 +176,7 @@ namespace JECS.Abstractions
         {
             TopLevelNodes.Clear();
             TopLevelLines.Clear();
-            
+
             MarkFileDirty();
         }
 
@@ -192,14 +192,14 @@ namespace JECS.Abstractions
                 DeleteKey(path[0]);
                 return;
             }
-            
+
             var topNode = TopLevelNodes[path[0]];
             for (int i = 1; i < path.Length - 1; i++)
             {
                 if (topNode.ContainsChildNode(path[i]))
                     topNode = topNode.GetChildAddressedByName(path[i]);
             }
-            
+
             topNode.RemoveChild(path[path.Length - 1]);
 
             MarkFileDirty();

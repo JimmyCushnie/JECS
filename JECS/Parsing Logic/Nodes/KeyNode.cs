@@ -1,4 +1,4 @@
-using JECS.Abstractions;
+﻿using JECS.Abstractions;
 using System;
 
 namespace JECS.ParsingLogic
@@ -59,7 +59,7 @@ namespace JECS.ParsingLogic
 
                 SetDataText(
                     text.Substring(startIndex: 0, length: colonIndex + spacesAfterColon + 1) + value
-                    );
+                );
             }
         }
 

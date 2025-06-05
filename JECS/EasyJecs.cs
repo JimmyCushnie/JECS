@@ -23,7 +23,7 @@
             if (Utilities.JecsFileExists(filePath))
             {
                 var dataFile = new DataFile(filePath);
-                return dataFile.GetAsObject<T>(defaultValue);
+                return dataFile.GetAsObject(defaultValue);
             }
             else
             {

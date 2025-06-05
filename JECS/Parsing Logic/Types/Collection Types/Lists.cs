@@ -29,7 +29,7 @@ namespace JECS.ParsingLogic.CollectionTypes
             node.CapChildCount(list.Count);
 
             for (int i = 0; i < list.Count; i++)
-                NodeManager.SetNodeData<T>(node.GetChildAddressedByListNumber(i), list[i], style);
+                NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), list[i], style);
         }
 
         public static object RetrieveList(Node node, Type listType)

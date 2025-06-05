@@ -1,7 +1,6 @@
-using JECS.Abstractions;
+﻿using JECS.Abstractions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace JECS.ParsingLogic
@@ -123,21 +122,20 @@ namespace JECS.ParsingLogic
 
                     if (nestingNodeStack.Count == 0) // If this is a top-level node
                     {
-                        if (!(node is KeyNode))
+                        if (node is not KeyNode keyNode)
                             throw new InvalidFileStructureException(dataFile, lineIndex, "top level lines must be key nodes");
-                        if (node.IndentationLevel != 0)
+                        if (keyNode.IndentationLevel != 0)
                             throw new InvalidFileStructureException(dataFile, lineIndex, "top level nodes must not have indentation");
 
                         topLevelLines.Add(node);
-                        KeyNode heck = node as KeyNode;
 
                         try
                         {
-                            topLevelNodes.Add(heck.Key, heck);
+                            topLevelNodes.Add(keyNode.Key, keyNode);
                         }
                         catch (ArgumentException)
                         {
-                            throw new InvalidFileStructureException(dataFile, lineIndex, $"multiple top level keys called '{heck.Key}'");
+                            throw new InvalidFileStructureException(dataFile, lineIndex, $"multiple top level keys called '{keyNode.Key}'");
                         }
                     }
                     else // If this is NOT a top-level node
@@ -168,7 +166,7 @@ namespace JECS.ParsingLogic
                             }
                             catch (ArgumentException)
                             {
-                                throw new InvalidFileStructureException(dataFile, lineIndex, $"multiple sibling keys called '{(node as KeyNode).Key}' (indentation level {lineIndentation})");
+                                throw new InvalidFileStructureException(dataFile, lineIndex, $"multiple sibling keys called '{((KeyNode)node).Key}' (indentation level {lineIndentation})");
                             }
                         }
                         else // If this should NOT be a child of the stack top
@@ -218,7 +216,7 @@ namespace JECS.ParsingLogic
             {
                 case DataLineType.key:
                     return new KeyNode(rawText: line, file);
-                    
+
                 case DataLineType.list:
                     return new ListNode(rawText: line, file);
 
@@ -234,8 +232,8 @@ namespace JECS.ParsingLogic
                 throw new InvalidFileStructureException(dataFile, lineNumber, "Line did not have the same indentation as its assumed sibling");
 
             if (  // if there is a mismatch between the new node's type and its sibling's
-                   newParent.ChildNodeType == NodeChildrenType.Key && !(child is KeyNode)
-                || newParent.ChildNodeType == NodeChildrenType.List && !(child is ListNode)
+                   newParent.ChildNodeType == NodeChildrenType.Key && child is not KeyNode
+                || newParent.ChildNodeType == NodeChildrenType.List && child is not ListNode
                 || newParent.ChildNodeType == NodeChildrenType.MultiLineString
                 || newParent.ChildNodeType == NodeChildrenType.None)
                 throw new InvalidFileStructureException(dataFile, lineNumber, $"Line did not match the child type of its parent");
@@ -245,10 +243,14 @@ namespace JECS.ParsingLogic
         private static DataLineType GetDataLineType(string line)
         {
             var trimmed = line.Trim();
-            if (trimmed.Length == 0) return DataLineType.none;
-            if (trimmed[0] == '#') return DataLineType.none;
-            if (trimmed[0] == '-') return DataLineType.list;
-            if (trimmed.Contains(':')) return DataLineType.key;
+            if (trimmed.Length == 0)
+                return DataLineType.none;
+            if (trimmed[0] == '#')
+                return DataLineType.none;
+            if (trimmed[0] == '-')
+                return DataLineType.list;
+            if (trimmed.Contains(':'))
+                return DataLineType.key;
 
             return DataLineType.none;
         }

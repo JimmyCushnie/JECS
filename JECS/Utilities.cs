@@ -1,7 +1,6 @@
 ﻿using JECS.ParsingLogic;
 using System;
 using System.IO;
-using System.Linq;
 
 namespace JECS
 {
@@ -28,7 +27,7 @@ namespace JECS
 
         private static string GetDefaultDefaultPath()
         {
-            return System.AppContext.BaseDirectory;
+            return AppContext.BaseDirectory;
         }
 
         /// <summary> All JECS files have this file extension. </summary>
@@ -37,7 +36,7 @@ namespace JECS
         /// <summary> detects whether a file path is relative or absolute, and returns the absolute path </summary>
         public static string AbsolutePath(string relativeOrAbsolutePath)
         {
-            if (Path.IsPathRooted(relativeOrAbsolutePath)) 
+            if (Path.IsPathRooted(relativeOrAbsolutePath))
                 return relativeOrAbsolutePath;
 
             if (DefaultPath == null)
@@ -103,7 +102,7 @@ namespace JECS
             }
         }
 
-        internal static string NullIndicator { get; } = "null";
+        internal static string NullIndicator => "null";
     }
 
     /// <summary>

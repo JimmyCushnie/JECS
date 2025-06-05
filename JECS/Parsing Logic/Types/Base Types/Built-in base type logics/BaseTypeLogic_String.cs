@@ -1,5 +1,4 @@
 ﻿using JECS.ParsingLogic;
-using System;
 
 namespace JECS.BuiltInBaseTypeLogics
 {
@@ -8,7 +7,7 @@ namespace JECS.BuiltInBaseTypeLogics
         public override string SerializeItem(string value, FileStyle style)
         {
             if (value.IsNullOrEmpty())
-                return String.Empty;
+                return string.Empty;
 
             value = value.Replace("\t", "    "); // JECS files cannot contain tabs. Prevent saving strings with tabs in them.
 

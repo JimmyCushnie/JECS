@@ -30,10 +30,10 @@ namespace JECS.BuiltInBaseTypeLogics
         {
             text = text.ToLower();
 
-            if (TrueStrings.Contains(text)) 
+            if (TrueStrings.Contains(text))
                 return true;
 
-            if (FalseStrings.Contains(text)) 
+            if (FalseStrings.Contains(text))
                 return false;
 
             throw new FormatException($"Cannot parse text {text} as boolean");

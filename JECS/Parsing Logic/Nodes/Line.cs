@@ -19,10 +19,12 @@ namespace JECS.ParsingLogic
             get => RawText.GetIndentationLevel();
             set
             {
-                if (value < 0) throw new ArgumentOutOfRangeException($"node indents must be at least 0. You tried to set it to {value}");
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException($"node indents must be at least 0. You tried to set it to {value}");
 
                 var indent = RawText.GetIndentationLevel();
-                if (value == indent) return;
+                if (value == indent)
+                    return;
 
                 var diff = value - indent;
                 if (diff > 0)

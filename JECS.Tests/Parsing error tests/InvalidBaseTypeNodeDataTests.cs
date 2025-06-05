@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using JECS.MemoryFiles;
 
 namespace JECS.Tests
 {
@@ -9,20 +8,20 @@ namespace JECS.Tests
         [TestMethod]
         public void InvalidFileData_InvalidBaseType_InvalidNodeValue()
         {
-            const string fileText = @"
-data: notanint
-";
+            const string fileText = """
+                data: notanint
+                """;
             TestUtilities.PerformParsingErrorTest<int>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidBaseType_BadSpecialStringCase()
         {
-            const string fileText = @"
-data: """"""
-    lmao it's a string
-    """"""
-";
+            const string fileText = """"
+                data: """
+                    lmao it's a string
+                    """
+                """";
             TestUtilities.PerformParsingErrorTest<int>(fileText);
         }
     }

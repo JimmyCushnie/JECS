@@ -13,7 +13,7 @@ namespace JECS.MemoryFiles
         /// Creates an empty ReadOnlyDataFile in memory.
         /// </summary>
         /// <remarks> why would you do this? </remarks>
-        public MemoryReadOnlyDataFile() : this(string.Empty) 
+        public MemoryReadOnlyDataFile() : this(string.Empty)
         {
         }
 
@@ -38,8 +38,8 @@ namespace JECS.MemoryFiles
         /// <inheritdoc/>
         public override string Identifier { get; }
 
-        private readonly string MemoryTextData = "";
-        
+        private readonly string MemoryTextData;
+
         /// <inheritdoc/>
         protected override string GetSavedText()
             => MemoryTextData;

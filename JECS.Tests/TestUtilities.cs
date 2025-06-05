@@ -17,7 +17,7 @@ namespace JECS.Tests
             try
             {
                 const string SAVED_VALUE_KEY = "JECS_TEST_KEY";
-                
+
                 file.Set(SAVED_VALUE_KEY, SAVED_VALUE);
                 var loadedValue = file.Get<T>(SAVED_VALUE_KEY);
 
@@ -31,12 +31,12 @@ namespace JECS.Tests
                 Console.WriteLine("```");
             }
 
-            
+
             // There are two ways a value can be saved: under a key, and as a whole file.
             // I want all SaveLoad tests to test both methods of saving.
             // Now ideally these would be separate tests so that it's easy to see which way of saving went wrong in the case that it's just one of them.
             // Unfortunately I can't see an easy way to do that.
-            
+
             var file2 = new MemoryDataFile();
             try
             {

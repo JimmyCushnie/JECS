@@ -31,7 +31,7 @@ namespace JECS.ParsingLogic.CollectionTypes
             int i = 0;
             foreach (var item in hashset)
             {
-                NodeManager.SetNodeData<T>(node.GetChildAddressedByListNumber(i), item, style);
+                NodeManager.SetNodeData(node.GetChildAddressedByListNumber(i), item, style);
                 i++;
             }
         }

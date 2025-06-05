@@ -1,4 +1,4 @@
-using JECS.BuiltInBaseTypeLogics;
+﻿using JECS.BuiltInBaseTypeLogics;
 using System;
 
 namespace JECS.ParsingLogic
@@ -29,7 +29,6 @@ namespace JECS.ParsingLogic
                 }
 
                 node.GetChildAddressedByStringLineNumber(lines.Length).MakeTerminator();
-                return;
             }
             else
             {
@@ -44,7 +43,7 @@ namespace JECS.ParsingLogic
 
             for (int i = 0; i < parentNode.ChildNodes.Count; i++)
             {
-                var lineNode = parentNode.ChildNodes[i] as MultiLineStringNode;
+                var lineNode = (MultiLineStringNode)parentNode.ChildNodes[i];
 
                 if (i == parentNode.ChildNodes.Count - 1)
                 {
@@ -66,7 +65,7 @@ namespace JECS.ParsingLogic
                 }
                 else
                 {
-                    text += (string)BaseStringRules.ParseItem(lineNode.Value);
+                    text += BaseStringRules.ParseItem(lineNode.Value);
 
                     if (!isLineBeforeTerminator)
                         text += Utilities.NewLine;

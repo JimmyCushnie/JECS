@@ -20,12 +20,12 @@ namespace JECS.ParsingLogic
         }
 
 
-        public static readonly string Terminator = "\"\"\"";
+        public const string Terminator = "\"\"\"";
 
         public bool IsTerminator => Value == Terminator;
         public void MakeTerminator() => Value = Terminator;
 
 
-        public static readonly string NoLineBreakIndicator = @"\";
+        public const string NoLineBreakIndicator = @"\";
     }
 }

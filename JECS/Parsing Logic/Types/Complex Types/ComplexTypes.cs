@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace JECS.ParsingLogic
@@ -16,7 +15,7 @@ namespace JECS.ParsingLogic
             // Clear the shortcut if there is any
             if (node.HasValue)
                 node.ClearValue();
-            
+
 
             if (TypeRequiresSavingAsConcrete(type))
             {
@@ -26,7 +25,7 @@ namespace JECS.ParsingLogic
 
                 type = concreteType;
             }
-            
+
             foreach (var m in type.GetValidMembers())
             {
                 var child = node.GetChildAddressedByName(m.Name);
@@ -39,7 +38,7 @@ namespace JECS.ParsingLogic
             if (node.ChildNodes.Count > 0 && node.ChildNodeType != NodeChildrenType.Key)
                 throw new FormatException("Non-shortcut complex type nodes must have key children");
 
-            
+
             if (TypeRequiresSavingAsConcrete(type))
             {
                 var concreteTypeNode = node.GetChildAddressedByName(KEY_CONCRETE_TYPE);
@@ -47,12 +46,12 @@ namespace JECS.ParsingLogic
 
                 type = concreteType;
             }
-            
+
             object returnThis = Activator.CreateInstance(type);
 
             foreach (var m in type.GetValidMembers())
             {
-                if (!node.ContainsChildNode(m.Name)) 
+                if (!node.ContainsChildNode(m.Name))
                     continue;
 
                 var child = node.GetChildAddressedByName(m.Name);
@@ -69,20 +68,28 @@ namespace JECS.ParsingLogic
 
             foreach (var f in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
-                if (f.IsInitOnly || f.IsLiteral) continue;
-                if (Attribute.IsDefined(f, typeof(DontSaveThisAttribute))) continue;
-                if (ComplexTypeOverrides.IsNeverSaved(f)) continue;
-                if (f.IsPrivate && !Attribute.IsDefined(f, typeof(SaveThisAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(f)) continue;
+                if (f.IsInitOnly || f.IsLiteral)
+                    continue;
+                if (Attribute.IsDefined(f, typeof(DontSaveThisAttribute)))
+                    continue;
+                if (ComplexTypeOverrides.IsNeverSaved(f))
+                    continue;
+                if (f.IsPrivate && !Attribute.IsDefined(f, typeof(SaveThisAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(f))
+                    continue;
 
                 members.Add(f);
             }
 
             foreach (var p in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
-                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0) continue;
-                if (Attribute.IsDefined(p, typeof(DontSaveThisAttribute))) continue;
-                if (ComplexTypeOverrides.IsNeverSaved(p)) continue;
-                if (p.GetMethod.IsPrivate && !Attribute.IsDefined(p, typeof(SaveThisAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(p)) continue;
+                if (!p.CanRead || !p.CanWrite || p.GetIndexParameters().Length > 0)
+                    continue;
+                if (Attribute.IsDefined(p, typeof(DontSaveThisAttribute)))
+                    continue;
+                if (ComplexTypeOverrides.IsNeverSaved(p))
+                    continue;
+                if (p.GetMethod.IsPrivate && !Attribute.IsDefined(p, typeof(SaveThisAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(p))
+                    continue;
 
                 members.Add(p);
             }

@@ -43,7 +43,7 @@ namespace JECS.ParsingLogic
 
                 SetDataText(
                     text.Substring(startIndex: 0, length: dashIndex + spacesAfterDash + 1) + value
-                    );
+                );
             }
         }
 

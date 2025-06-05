@@ -49,7 +49,7 @@ namespace JECS.BuiltInBaseTypeLogics
             string typeFullName = type.FullName;
 
             // You get this when you're recursively getting the generic parameters of an unbound generic type
-            if (String.IsNullOrEmpty(typeFullName))
+            if (string.IsNullOrEmpty(typeFullName))
                 return typeFullName;
 
             if (type.IsArray)
@@ -66,7 +66,7 @@ namespace JECS.BuiltInBaseTypeLogics
             if (type.IsGenericType)
             {
                 string typeNameWithoutGenerics = typeFullName.Split('`')[0];
-                string genericArguments = String.Join(", ", type.GetGenericArguments().Select(GetCsharpTypeName));
+                string genericArguments = string.Join(", ", type.GetGenericArguments().Select(GetCsharpTypeName));
 
                 return typeNameWithoutGenerics + "<" + genericArguments + ">";
             }
@@ -204,7 +204,7 @@ namespace JECS.BuiltInBaseTypeLogics
 
                 var genericTypeBase = ParseTypeFromFullName(TypeFullName + "`" + GenericParameters.Count);
 
-                if (String.IsNullOrEmpty(GenericParameters[0].TypeFullName))
+                if (string.IsNullOrEmpty(GenericParameters[0].TypeFullName))
                     return genericTypeBase;
 
                 var genericParameterTypes = GenericParameters.Select(t => t.TurnIntoType()).ToArray();

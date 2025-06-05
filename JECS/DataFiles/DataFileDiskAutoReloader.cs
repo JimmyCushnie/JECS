@@ -27,12 +27,12 @@ namespace JECS
         {
             if (AutoReloadTimer != null)
                 throw new Exception($"You can only call {nameof(StartWatchingForDiskChanges)} once!");
-            
+
             const float AutoReloadTimerIntervalSeconds = 1f;
             AutoReloadTimer = new Timer(TimeSpan.FromSeconds(AutoReloadTimerIntervalSeconds).TotalMilliseconds);
             AutoReloadTimer.AutoReset = false;
             AutoReloadTimer.Elapsed += AutoReloadTimerElapsed;
-            
+
             AutoReloadTimer.Start();
         }
 
@@ -78,12 +78,12 @@ namespace JECS
             OnAutoReload = null;
         }
 
-        
+
         public static DataFileDiskAutoReloader StartWatching(IDataFileOnDisk file, Action onAutoReload = null)
         {
             var reloader = new DataFileDiskAutoReloader(file);
             reloader.StartWatchingForDiskChanges();
-            
+
             if (onAutoReload != null)
                 reloader.OnAutoReload += onAutoReload;
 

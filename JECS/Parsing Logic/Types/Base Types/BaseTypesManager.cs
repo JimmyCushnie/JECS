@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using JECS.BuiltInBaseTypeLogics;
 
 namespace JECS.ParsingLogic
@@ -23,14 +22,14 @@ namespace JECS.ParsingLogic
                 RegisterBaseType(new BaseTypeLogic_String());
                 RegisterBaseType(new BaseTypeLogic_Type());
                 RegisterBaseType(new BaseTypeLogic_Version());
-                
+
                 RegisterBaseType(new BaseTypeLogic_DirectoryInfo());
                 RegisterBaseType(new BaseTypeLogic_FileInfo());
-                
+
                 RegisterBaseType(new BaseTypeLogic_Float());
                 RegisterBaseType(new BaseTypeLogic_Double());
                 RegisterBaseType(new BaseTypeLogic_Decimal());
-                
+
                 RegisterBaseType(new BaseTypeLogic_Sbyte());
                 RegisterBaseType(new BaseTypeLogic_Byte());
                 RegisterBaseType(new BaseTypeLogic_Short());
@@ -42,21 +41,21 @@ namespace JECS.ParsingLogic
                 RegisterBaseType(new BaseTypeLogic_BigInt());
             }
         }
-        
+
         private static readonly Dictionary<Type, BaseTypeLogic> RegisteredBaseTypeLogics = new Dictionary<Type, BaseTypeLogic>();
 
         public static void RegisterBaseType(BaseTypeLogic logic)
         {
             if (logic == null)
                 throw new ArgumentNullException(nameof(logic));
-            
+
             if (RegisteredBaseTypeLogics.ContainsKey(logic.ApplicableType))
                 throw new Exception($"Failed to register base type with logic {logic.GetType()}. There is already a base type logic for type {logic.ApplicableType}. The existing logic is of type {RegisteredBaseTypeLogics[logic.ApplicableType]}");
 
             RegisteredBaseTypeLogics.Add(logic.ApplicableType, logic);
         }
-        
-        
+
+
 
         /// <summary> Returns true if the type is a registered base type. </summary>
         public static bool IsBaseType(Type type)
@@ -122,7 +121,6 @@ namespace JECS.ParsingLogic
                 return false;
             }
         }
-
 
 
 

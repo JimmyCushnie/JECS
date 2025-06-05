@@ -43,7 +43,7 @@ namespace JECS
                     return File.ReadAllText(FilePath);
                 }
 
-                return String.Empty;
+                return string.Empty;
             }
         }
 
