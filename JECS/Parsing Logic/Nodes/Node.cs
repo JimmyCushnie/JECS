@@ -253,6 +253,12 @@ namespace JECS.ParsingLogic
                 // remove trailing spaces
                 text = text.TrimEnd();
 
+                // When there is no data, but only indentation & a comment. Then the previous trim statement would have removed the whole content.
+                // In that case, we must not return an index below indentation count (due to that causing a negative message length).
+                // Instead, return: the indentation == basically where the pound sign is == where the data would have started.
+                if (text.Length == 0)
+                    return PoundSignIndex;
+
                 return text.Length;
             }
         }
