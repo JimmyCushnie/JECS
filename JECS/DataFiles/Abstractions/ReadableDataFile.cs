@@ -40,10 +40,7 @@ namespace JECS.Abstractions
         public void ReloadAllData()
         {
             string jecs = GetSavedText();
-            var data = DataConverter.DataStructureFromJecs(jecs, this);
-
-            TopLevelLines = data.topLevelLines;
-            TopLevelNodes = data.topLevelNodes;
+            (TopLevelLines, TopLevelNodes) = DataConverter.DataStructureFromJecs(jecs, this);
         }
 
         /// <summary> Gets the data as it appears in file </summary>
@@ -81,24 +78,7 @@ namespace JECS.Abstractions
 
         /// <summary> Whether a key exists in the file at a nested path </summary>
         public bool KeyExistsAtPath(params string[] path)
-        {
-            if (path.Length < 1)
-                throw new ArgumentException($"{nameof(path)} must have a length greater than 0");
-
-            if (!KeyExists(path[0]))
-                return false;
-
-            var topNode = TopLevelNodes[path[0]];
-            for (int i = 1; i < path.Length; i++)
-            {
-                if (topNode.ContainsChildNode(path[i]))
-                    topNode = topNode.GetChildAddressedByName(path[i]);
-                else
-                    return false;
-            }
-
-            return true;
-        }
+            => TryGetNodeAtPath(out _, path);
 
 
         /// <summary> Like <see cref="Get{T}(string, T)"/>, but the default value is searched for in the default file text </summary>
@@ -108,9 +88,13 @@ namespace JECS.Abstractions
         /// <summary> Like <see cref="GetNonGeneric(Type, string, object)"/>, but the default value is searched for in the default file text </summary>
         public object GetNonGeneric(Type type, string key)
         {
-            var defaultDefaultValue = type.GetDefaultValue();
-            object defaultValue = DefaultFileCache?.GetNonGeneric(type, key, defaultDefaultValue) ?? defaultDefaultValue;
-            return this.GetNonGeneric(type, key, defaultValue);
+            if (TryGetNonGeneric(type, key, out var dataValue))
+                return dataValue;
+
+            if (DefaultFileCache != null && DefaultFileCache.TryGetNonGeneric(type, key, out var fallbackValue))
+                return fallbackValue;
+
+            return type.GetDefaultValue();
         }
 
         // many of these methods are virtual so that their overrides in ReadableWritableDataFile
@@ -120,7 +104,13 @@ namespace JECS.Abstractions
         /// <param name="key"> what the data is labeled as within the file </param>
         /// <param name="defaultValue"> if the key does not exist in the file, this value is returned instead </param>
         public virtual T Get<T>(string key, T defaultValue)
-            => (T)GetNonGeneric(typeof(T), key, defaultValue);
+            => TryGetNonGeneric(typeof(T), key, out var result) ? (T)result : defaultValue;
+
+        protected static void EnsureValueIsCorrectType(Type type, object defaultValue)
+        {
+            if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))
+                throw new InvalidCastException($"Expected type {type}, but the object is of type {defaultValue.GetType()}");
+        }
 
         /// <summary> Non-generic version of Get. You probably want to use Get. </summary>
         /// <param name="type"> the type to get the data as </param>
@@ -128,11 +118,8 @@ namespace JECS.Abstractions
         /// <param name="defaultValue"> if the key does not exist in the file, this value is returned instead </param>
         public virtual object GetNonGeneric(Type type, string key, object defaultValue)
         {
-            if (!KeyExists(key))
-                return defaultValue;
-
-            var node = TopLevelNodes[key];
-            return NodeManager.GetNodeData(node, type);
+            EnsureValueIsCorrectType(type, defaultValue);
+            return TryGetNonGeneric(type, key, out var result) ? result : defaultValue;
         }
 
         /// <summary> Like <see cref="Get{T}(string)"/> but works for nested paths instead of just the top level of the file. </summary>
@@ -142,44 +129,128 @@ namespace JECS.Abstractions
         /// <summary> Like <see cref="GetAtPathNonGeneric(Type, object, string[])"/>, but the value is searched for in the default file text </summary>
         public object GetAtPathNonGeneric(Type type, params string[] path)
         {
-            var defaultDefaultValue = type.GetDefaultValue();
-            object defaultValue = DefaultFileCache?.GetAtPathNonGeneric(type, defaultDefaultValue, path) ?? defaultDefaultValue;
-            return this.GetAtPathNonGeneric(type, defaultValue, path);
+            if (TryGetAtPathNonGeneric(type, out var dataValue, path))
+                return dataValue;
+
+            if (DefaultFileCache != null && DefaultFileCache.TryGetAtPathNonGeneric(type, out var fallbackValue, path))
+                return fallbackValue;
+
+            return type.GetDefaultValue();
         }
 
         /// <summary> Like <see cref="GetAtPath{T}(T, string[])"/>, but the default value is searched for in the default file text </summary>
         public virtual T GetAtPath<T>(T defaultValue, params string[] path)
-            => (T)GetAtPathNonGeneric(typeof(T), defaultValue, path);
+            => TryGetAtPathNonGeneric(typeof(T), out var result, path) ? (T)result : defaultValue;
 
         /// <summary> Non-generic version of <see cref="GetAtPath{T}(T,string[])"/>. You probably want to use that one.</summary>
         public virtual object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path)
         {
-            if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))
-                throw new InvalidCastException($"Expected type {type}, but the object is of type {defaultValue.GetType()}");
-
-            if (!KeyExistsAtPath(path))
-                return defaultValue;
-
-            var topNode = TopLevelNodes[path[0]];
-            for (int i = 1; i < path.Length; i++)
-            {
-                topNode = topNode.GetChildAddressedByName(path[i]);
-            }
-
-            return NodeManager.GetNodeData(topNode, type);
+            EnsureValueIsCorrectType(type, defaultValue);
+            return TryGetAtPathNonGeneric(type, out var result, path) ? result : defaultValue;
         }
 
-
-        public bool TryGet<T>(string key, out T value)
+        /// <summary> Tries to get a node at a path from file. </summary>
+        /// <param name="topNode"> The node at path, or <see langword="null"/> if not found. </param>
+        /// <param name="path"> The path to the node in file. </param>
+        /// <returns> <see langword="true"/>, if the node exists <see langword="false"/> otherwise. </returns>
+        /// <exception cref="ArgumentException"> When the path has a length smaller 1. </exception>
+        internal bool TryGetNodeAtPath(out KeyNode topNode, params string[] path)
         {
-            if (!KeyExists(key))
+            if (path.Length < 1)
+                throw new ArgumentException($"{nameof(path)} must have a length greater than 0");
+
+            if (!TryGetNode(path[0], out topNode))
             {
-                value = default;
+                topNode = null;
                 return false;
             }
 
-            value = Get<T>(key);
+            for (int i = 1; i < path.Length; i++)
+            {
+                if (!topNode.TryGetChildAddressedByName(path[i], out topNode))
+                {
+                    topNode = null;
+                    return false;
+                }
+            }
+
             return true;
         }
+
+        /// <summary> Tries to get value from file. </summary>
+        /// <param name="type"> The type which the value is expected to be. </param>
+        /// <param name="value"> The value of type <paramref name="type"/>, if the value at <paramref name="path"/> was found else <see langword="null"/>. </param>
+        /// <param name="path"> The path to the value in the file. </param>
+        /// <returns> <see langword="true"/>, if the value exists <see langword="false"/> otherwise. </returns>
+        public bool TryGetAtPathNonGeneric(Type type, out object value, params string[] path)
+        {
+            if (!TryGetNodeAtPath(out var node, path))
+            {
+                value = null;
+                return false;
+            }
+
+            value = NodeManager.GetNodeData(node, type);
+            return true;
+        }
+
+
+        /// <summary> Tries to get value from file. </summary>
+        /// <param name="type"> The type which the value is expected to be. </param>
+        /// <param name="key"> The key to the top-level value in the file. </param>
+        /// <param name="value"> The value of type <paramref name="type"/>, if the value at <paramref name="key"/> was found else <see langword="null"/>. </param>
+        /// <returns> <see langword="true"/>, if the value exists <see langword="false"/> otherwise. </returns>
+        public bool TryGetNonGeneric(Type type, string key, out object value)
+        {
+            if (!TryGetNode(key, out var node))
+            {
+                value = null;
+                return false;
+            }
+
+            value = NodeManager.GetNodeData(node, type);
+            return true;
+        }
+
+        /// <summary> Tries to get value from file. </summary>
+        /// <param name="key"> The key to the top-level value in the file. </param>
+        /// <param name="value"> The value of type <typeparamref name="T"/>, if the value at <paramref name="key"/> was found else <see langword="null"/>. </param>
+        /// <typeparam name="T"> The type which the value is expected to be. </typeparam>
+        /// <returns> <see langword="true"/>, if the value exists <see langword="false"/> otherwise. </returns>
+        public bool TryGet<T>(string key, out T value)
+        {
+            if (TryGetNonGeneric(typeof(T), key, out var objValue))
+            {
+                value = (T)objValue;
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+
+        /// <summary> Tries to get value from file. </summary>
+        /// <param name="value"> The value of type <typeparamref name="T"/>, if the value at <paramref name="key"/> was found else <see langword="null"/>. </param>
+        /// <param name="path"> The path to the value in the file. </param>
+        /// <typeparam name="T"> The type which the value is expected to be. </typeparam>
+        /// <returns> <see langword="true"/>, if the value exists <see langword="false"/> otherwise. </returns>
+        public bool TryGetAtPath<T>(out T value, params string[] path)
+        {
+            if (TryGetAtPathNonGeneric(typeof(T), out var objValue, path))
+            {
+                value = (T)objValue;
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+
+        /// <summary> Tries to get a node for key from file. </summary>
+        /// <param name="key"> The key of the top-level node in the file. </param>
+        /// <param name="node"> The node for key, or <see langword="null"/> if not found. </param>
+        /// <returns> <see langword="true"/>, if the node exists <see langword="false"/> otherwise. </returns>
+        internal bool TryGetNode(string key, out KeyNode node)
+            => TopLevelNodes.TryGetValue(key, out node);
     }
 }

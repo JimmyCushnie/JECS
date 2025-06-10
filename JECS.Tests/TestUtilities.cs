@@ -89,5 +89,20 @@ namespace JECS.Tests
                 Console.WriteLine(expectedException);
             }
         }
+
+
+        public static void PrintJecsLined(string jecs)
+        {
+            string[] lines = jecs.Split('\n');
+            for (int i = 0; i < lines.Length; i++)
+            {
+                // Padding is limited to two digits. As JECS test cases are normally not that big.
+                if (i < 10)
+                    Console.Write(' ');
+                Console.Write(i);
+                Console.Write("| ");
+                Console.WriteLine(lines[i]);
+            }
+        }
     }
 }

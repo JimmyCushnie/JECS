@@ -52,6 +52,25 @@ namespace JECS.ParsingLogic
         protected bool StyleNotYetApplied = false;
 
 
+        public bool TryGetChildAddressedByName(string name, out KeyNode outNode)
+        {
+            EnsureProperChildType(NodeChildrenType.Key);
+
+            foreach (var node in ChildNodes)
+            {
+                var keyNode = (KeyNode)node;
+                if (keyNode.Key == name)
+                {
+                    outNode = keyNode;
+                    return true;
+                }
+            }
+
+            outNode = null;
+            return false;
+        }
+
+        /// <summary> Returns an existing child with key <paramref name="name"/>. If it does not exist, it will be created and injected first. </summary>
         public KeyNode GetChildAddressedByName(string name)
         {
             EnsureProperChildType(NodeChildrenType.Key);
@@ -177,10 +196,12 @@ namespace JECS.ParsingLogic
 
         public void RemoveChild(string key)
         {
+            if (ChildNodeType != NodeChildrenType.Key)
+                return;
+
             foreach (var node in ChildNodes)
             {
-                var keyNode = node as KeyNode;
-                if (keyNode?.Key == key)
+                if (((KeyNode)node).Key == key)
                 {
                     _ChildNodes.Remove(node);
                     _ChildLines.Remove(node);
