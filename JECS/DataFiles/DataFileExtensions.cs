@@ -43,8 +43,9 @@ namespace JECS
 
             foreach (var m in type.GetValidMembers())
             {
-                var value = dataFile.GetNonGeneric(m.MemberType, m.Name);
-                m.SetValue(returnThis, value);
+                // Only overwrite the instantiated default field, when there is a value. This preserves default class assignments.
+                if (dataFile.TryGetNonGeneric(m.MemberType, m.Name, out var value))
+                    m.SetValue(returnThis, value);
             }
 
             return returnThis;
@@ -81,7 +82,9 @@ namespace JECS
 
             foreach (var m in type.GetValidMembers())
             {
-                var value = dataFile.GetNonGeneric(m.MemberType, m.Name, m.GetValue(defaultValuesSource));
+                // Always overwrite the instance. Either with the value acquired or a default provided
+                var value = dataFile.TryGetNonGeneric(m.MemberType, m.Name, out var output)
+                    ? output : m.GetValue(defaultValuesSource);
                 m.SetValue(returnThis, value);
             }
 
