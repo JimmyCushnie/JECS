@@ -1,4 +1,4 @@
-using JECS.ParsingLogic.CollectionTypes;
+﻿using JECS.ParsingLogic.CollectionTypes;
 using System;
 
 namespace JECS.ParsingLogic
@@ -13,7 +13,7 @@ namespace JECS.ParsingLogic
         {
             if (data == null && !type.IsNullableType())
                 throw new Exception($"There's been some kind of coding mistake: {nameof(data)} is null, but type {type} is not nullable.");
-            
+
             if (data != null && !type.IsAssignableFrom(data.GetType()))
                 throw new Exception($"There's been some kind of coding mistake: {nameof(data)} is of type {data.GetType()}, which is not assignable to type {type}.");
 
@@ -106,11 +106,11 @@ namespace JECS.ParsingLogic
                 {
                     return retrieveDataFunction.Invoke();
                 }
-                catch (CannotRetrieveDataFromNodeException deeperException)
+                catch (CannotRetrieveDataFromNodeException)
                 {
                     // If there's a parsing error deeper in the tree, we want to throw *that* error, so the user gets a line
                     // number appropriate to the actual error.
-                    throw deeperException;
+                    throw;
                 }
                 catch
                 {

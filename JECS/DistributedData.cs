@@ -58,7 +58,7 @@ namespace JECS
         public static DistributedData CreateBySearching(DirectoryInfo directory, string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
         {
             searchPattern = Path.ChangeExtension(searchPattern, Utilities.FileExtension);
-            
+
             var paths = new List<string>();
             foreach (var fileInfo in directory.EnumerateFiles(searchPattern, searchOption))
                 paths.Add(fileInfo.FullName);
@@ -122,17 +122,51 @@ namespace JECS
         }
 
 
+        /// <summary> Tries to get some data from our files. </summary>
+        /// <param name="key"> They key for the data. </param>
+        /// <param name="value"> Output data, if found value of type <typeparamref name="T"/> else <see langword="null"/>. </param>
+        /// <typeparam name="T"> The type the data is expected to be. </typeparam>
+        /// <returns> <see langword="true"/>, if the key for data exists, <see langword="false"/> otherwise. </returns>
+        public bool TryGet<T>(string key, out T value)
+        {
+            foreach (var file in DataSources)
+            {
+                if (file.TryGet(key, out value))
+                    return true;
+            }
+
+            value = default;
+            return false;
+        }
+
+        /// <summary> Tries to get some data from our files. </summary>
+        /// <param name="type"> The type the data is expected to be. </param>
+        /// <param name="key"> They key for the data. </param>
+        /// <param name="value"> Output data, if found value of type <paramref name="type"/> else <see langword="null"/>.</param>
+        /// <returns> <see langword="true"/>, if the key for data exists, <see langword="false"/> otherwise. </returns>
+        public bool TryGetNonGeneric(Type type, string key, out object value)
+        {
+            foreach (var file in DataSources)
+            {
+                if (file.TryGetNonGeneric(type, key, out value))
+                    return true;
+            }
+
+            value = null;
+            return false;
+        }
+
         /// <summary> Get some data from our files, or return a default value if the data does not exist. </summary>
         /// <param name="key"> What the data is labeled as within the file. </param>
         /// <param name="defaultValue"> If the key does not exist in the file, this value is returned instead. </param>
-        public T Get<T>(string key, T defaultValue = default) 
-            => (T)GetNonGeneric(typeof(T), key, defaultValue);
+        public T Get<T>(string key, T defaultValue = default)
+            => TryGet<T>(key, out var output) ? output : defaultValue;
 
         /// <summary> Non-generic version of <see cref="Get{T}(string, T)"/>. You probably want to use <see cref="Get{T}(string, T)"/>. </summary>
         /// <param name="type"> The type to get the data as. </param>
         /// <param name="key"> What the data is labeled as within the file. </param>
         public object GetNonGeneric(Type type, string key)
-            => GetNonGeneric(type, key, type.GetDefaultValue());
+            => TryGetNonGeneric(type, key, out var output) ? output : type.GetDefaultValue();
 
         /// <summary> Non-generic version of <see cref="Get{T}(string, T)"/>. You probably want to use <see cref="Get{T}(string, T)"/>. </summary>
         /// <param name="type"> The type to get the data as. </param>
@@ -143,62 +177,63 @@ namespace JECS
             if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))
                 throw new InvalidCastException($"{nameof(type)} must be assignable from the type of {nameof(defaultValue)}");
 
-            foreach (var file in DataSources)
-            {
-                if (file.KeyExists(key))
-                    return file.GetNonGeneric(type, key, defaultValue);
-            }
-
-            return defaultValue;
+            return TryGetNonGeneric(type, key, out var output) ? output : defaultValue;
         }
 
 
-        /// <summary> Like <see cref="Get{T}(string, T)"/>, but but works for nested paths instead of just the top level of the files. </summary>
-        public T GetAtPath<T>(T defaultValue, params string[] path)
-            => (T)GetAtPathNonGeneric(typeof(T), defaultValue, path);
+        /// <summary> Tries to get some data from our files. </summary>
+        /// <param name="value"> Output data, if found value of type <typeparamref name="T"/> else <see langword="null"/>. </param>
+        /// <param name="path"> They path for the data. </param>
+        /// <typeparam name="T"> The type the data is expected to be. </typeparam>
+        /// <returns> <see langword="true"/>, if the key for data exists, <see langword="false"/> otherwise. </returns>
+        public bool TryGetAtPath<T>(out T value, params string[] path)
+        {
+            foreach (var file in DataSources)
+            {
+                if (file.TryGetAtPath(out value, path))
+                    return true;
+            }
 
-        /// <summary> Like <see cref="GetNonGeneric(Type, string)"/>, but but works for nested paths instead of just the top level of the files. </summary>
+            value = default;
+            return false;
+        }
+
+        /// <summary> Tries to get some data from our files. </summary>
+        /// <param name="type"> The type the data is expected to be. </param>
+        /// <param name="value"> Output data, if found value of type <paramref name="type"/> else <see langword="null"/>.</param>
+        /// <param name="path"> They path for the data. </param>
+        /// <returns> <see langword="true"/>, if the key for data exists, <see langword="false"/> otherwise. </returns>
+        public bool TryGetAtPathNonGeneric(Type type, out object value, params string[] path)
+        {
+            foreach (var file in DataSources)
+            {
+                if (file.TryGetAtPathNonGeneric(type, out value, path))
+                    return true;
+            }
+
+            value = null;
+            return false;
+        }
+
+        /// <summary> Like <see cref="Get{T}(string, T)"/>, but works for nested paths instead of just the top level of the files. </summary>
+        public T GetAtPath<T>(params string[] path)
+            => GetAtPath((T)typeof(T).GetDefaultValue(), path);
+
+        /// <summary> Like <see cref="GetNonGeneric(Type, string)"/>, but works for nested paths instead of just the top level of the files. </summary>
         public object GetAtPathNonGeneric(Type type, params string[] path)
-            => GetAtPathNonGeneric(type, type.GetDefaultValue(), path);
+            => TryGetAtPathNonGeneric(type, out var value, path) ? value : type.GetDefaultValue();
 
-        /// <summary> Like <see cref="GetNonGeneric(Type, string, object)"/>, but but works for nested paths instead of just the top level of the files. </summary>
+        /// <summary> Like <see cref="Get{T}(string, T)"/>, but works for nested paths instead of just the top level of the files. </summary>
+        public T GetAtPath<T>(T defaultValue, params string[] path)
+            => TryGetAtPath<T>(out var output, path) ? output : defaultValue;
+
+        /// <summary> Like <see cref="GetNonGeneric(Type, string, object)"/>, but works for nested paths instead of just the top level of the files. </summary>
         public object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path)
         {
             if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))
                 throw new InvalidCastException($"{nameof(type)} must be assignable from the type of {nameof(defaultValue)}");
 
-            foreach (var file in DataSources)
-            {
-                if (file.KeyExistsAtPath(path))
-                    return file.GetAtPathNonGeneric(type, defaultValue, path);
-            }
-
-            return defaultValue;
-        }
-
-
-        public bool TryGet<T>(string key, out T value)
-        {
-            if (!KeyExists(key))
-            {
-                value = default;
-                return false;
-            }
-
-            value = Get<T>(key);
-            return true;
-        }
-
-        public bool TryGetNonGeneric(Type type, string key, out object value)
-        {
-            if (!KeyExists(key))
-            {
-                value = null;
-                return false;
-            }
-
-            value = GetNonGeneric(type, key);
-            return true;
+            return TryGetAtPathNonGeneric(type, out var value, path) ? value : defaultValue;
         }
     }
 }

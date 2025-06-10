@@ -41,7 +41,7 @@ namespace JECS.ParsingLogic.CollectionTypes
                 {
                     var value = dictionary[key];
 
-                    string keyAsText = BaseTypesManager.SerializeBaseType<TKey>(key, style);
+                    string keyAsText = BaseTypesManager.SerializeBaseType(key, style);
 
                     if (!Utilities.IsValidKey(keyAsText))
                     {
@@ -51,7 +51,7 @@ namespace JECS.ParsingLogic.CollectionTypes
 
                     CurrentKeys.Add(keyAsText);
                     KeyNode child = node.GetChildAddressedByName(keyAsText);
-                    NodeManager.SetNodeData<TValue>(child, value, style);
+                    NodeManager.SetNodeData(child, value, style);
                 }
 
                 // make sure that old data in the file is deleted when a new dictionary is saved.
@@ -93,7 +93,7 @@ namespace JECS.ParsingLogic.CollectionTypes
             {
                 foreach (var child in node.ChildNodes)
                 {
-                    string childKey = (child as KeyNode).Key;
+                    string childKey = ((KeyNode)child).Key;
                     var key = BaseTypesManager.ParseBaseType<TKey>(childKey);
                     var value = NodeManager.GetNodeData<TValue>(child);
                     dictionary.Add(key, value);
@@ -111,7 +111,7 @@ namespace JECS.ParsingLogic.CollectionTypes
 
         private static WritableKeyValuePair<TKey, TValue>[] GetWritableKeyValuePairArray<TKey, TValue>(Dictionary<TKey, TValue> boi)
         {
-            var unwritable = Enumerable.ToArray(boi);
+            var unwritable = boi.ToArray();
             var writable = new WritableKeyValuePair<TKey, TValue>[unwritable.Length];
 
             for (int i = 0; i < unwritable.Length; i++)

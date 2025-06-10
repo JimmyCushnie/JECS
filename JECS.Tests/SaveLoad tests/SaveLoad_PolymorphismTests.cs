@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JECS.Tests
 {
@@ -17,7 +16,7 @@ namespace JECS.Tests
 
             TestUtilities.PerformSaveLoadTest<AbstractBaseClass>(value);
         }
-        
+
         [TestMethod]
         public void SaveLoad_Interface()
         {
@@ -29,20 +28,20 @@ namespace JECS.Tests
 
             TestUtilities.PerformSaveLoadTest<IBaseClassInterface>(value);
         }
-        
+
         [TestMethod]
         public void SaveLoad_Polymorphism_Null()
         {
             TestUtilities.PerformSaveLoadTest<AbstractBaseClass>(null);
         }
-        
+
         [TestMethod]
         public void SaveLoad_Interface_Null()
         {
             TestUtilities.PerformSaveLoadTest<IBaseClassInterface>(null);
         }
-        
-        
+
+
         [TestMethod]
         public void SaveLoad_PolymorphismArray()
         {
@@ -63,7 +62,7 @@ namespace JECS.Tests
 
             TestUtilities.PerformSaveLoadTest(array, CollectionAssert.AreEqual);
         }
-        
+
         [TestMethod]
         public void SaveLoad_InterfaceArray()
         {
@@ -96,17 +95,23 @@ namespace JECS.Tests
         }
         class ChildClass1 : AbstractBaseClass
         {
-            public int IntValue { get; set; }
+            public int IntValue { get; init; }
 
             public override bool Equals(object obj)
                 => obj is ChildClass1 other && StringValue == other.StringValue && IntValue == other.IntValue;
+
+            public override int GetHashCode()
+                => IntValue;
         }
         class ChildClass2 : AbstractBaseClass
         {
-            public float FloatValue { get; set; }
+            public float FloatValue { get; init; }
 
             public override bool Equals(object obj)
                 => obj is ChildClass2 other && StringValue == other.StringValue && FloatValue == other.FloatValue;
+
+            public override int GetHashCode()
+                => FloatValue.GetHashCode();
         }
     }
 }

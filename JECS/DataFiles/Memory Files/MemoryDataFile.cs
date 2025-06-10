@@ -38,7 +38,7 @@ namespace JECS.MemoryFiles
         /// <inheritdoc/>
         public override string Identifier { get; }
 
-        private string MemoryTextData = "";
+        private string MemoryTextData;
 
         /// <inheritdoc/>
         protected override string GetSavedText()

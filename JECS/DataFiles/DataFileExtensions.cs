@@ -9,7 +9,7 @@ namespace JECS
     public static class DataFileExtensions
     {
         /// <summary> Interpret this file as an object of type T, using that type's fields and properties as top-level keys. </summary>
-        public static T GetAsObject<T>(this ReadableDataFile dataFile) 
+        public static T GetAsObject<T>(this ReadableDataFile dataFile)
             => (T)GetAsObjectNonGeneric(dataFile, typeof(T));
 
         /// <summary> Interpret this file as an object of type T, using that type's fields and properties as top-level keys. </summary>
@@ -43,8 +43,9 @@ namespace JECS
 
             foreach (var m in type.GetValidMembers())
             {
-                var value = dataFile.GetNonGeneric(m.MemberType, m.Name);
-                m.SetValue(returnThis, value);
+                // Only overwrite the instantiated default field, when there is a value. This preserves default class assignments.
+                if (dataFile.TryGetNonGeneric(m.MemberType, m.Name, out var value))
+                    m.SetValue(returnThis, value);
             }
 
             return returnThis;
@@ -55,8 +56,8 @@ namespace JECS
         {
             if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))
                 throw new InvalidCastException($"Expected type {type}, but the object is of type {defaultValue.GetType()}");
-            
-            
+
+
             if (TypeRequiresSubKeyWhenWholeFileIsObject(type))
                 return dataFile.GetNonGeneric(type, KEY_SAVED_OBJECT_VALUE, defaultValue);
 
@@ -66,8 +67,8 @@ namespace JECS
 
             if (ComplexTypes.TypeRequiresSavingAsConcrete(type))
             {
-                var concreteType = dataFile.Get<Type>(ComplexTypes.KEY_CONCRETE_TYPE, defaultValue?.GetType());
-                
+                var concreteType = dataFile.Get(ComplexTypes.KEY_CONCRETE_TYPE, defaultValue?.GetType());
+
                 if (concreteType == null)
                     throw new Exception($"Cannot load file {dataFile.Identifier} as type {type}, because it's an abstract or interface type and the concrete type is not specified.");
                 if (!type.IsAssignableFrom(concreteType))
@@ -75,13 +76,15 @@ namespace JECS
 
                 type = concreteType;
             }
-            
+
             object returnThis = Activator.CreateInstance(type);
             var defaultValuesSource = defaultValue ?? returnThis;
 
             foreach (var m in type.GetValidMembers())
             {
-                var value = dataFile.GetNonGeneric(m.MemberType, m.Name, m.GetValue(defaultValuesSource));
+                // Always overwrite the instance. Either with the value acquired or a default provided
+                var value = dataFile.TryGetNonGeneric(m.MemberType, m.Name, out var output)
+                    ? output : m.GetValue(defaultValuesSource);
                 m.SetValue(returnThis, value);
             }
 
@@ -90,7 +93,7 @@ namespace JECS
 
 
         /// <summary> Save this file as an object of type T, using that type's fields and properties as top-level keys. </summary>
-        public static void SaveAsObject<T>(this ReadableWritableDataFile dataFile, T saveThis) 
+        public static void SaveAsObject<T>(this ReadableWritableDataFile dataFile, T saveThis)
             => SaveAsObjectNonGeneric(dataFile, typeof(T), saveThis);
 
         /// <summary> Non-generic version of SaveAsObject. You probably want to use SaveAsObject. </summary>
@@ -128,11 +131,11 @@ namespace JECS
                 if (ComplexTypes.TypeRequiresSavingAsConcrete(type))
                 {
                     var concreteType = saveThis.GetType();
-                    dataFile.Set<Type>(ComplexTypes.KEY_CONCRETE_TYPE, concreteType);
+                    dataFile.Set(ComplexTypes.KEY_CONCRETE_TYPE, concreteType);
 
                     type = concreteType;
                 }
-                
+
                 foreach (var m in type.GetValidMembers())
                     dataFile.SetNonGeneric(m.MemberType, m.Name, m.GetValue(saveThis));
             }
@@ -142,7 +145,7 @@ namespace JECS
         {
             if (BaseTypesManager.IsBaseType(type))
                 return true;
-            
+
             var underlyingNullableType = Nullable.GetUnderlyingType(type);
             if (underlyingNullableType != null && BaseTypesManager.IsBaseType(underlyingNullableType))
                 return true;
@@ -154,12 +157,12 @@ namespace JECS
         }
 
         private const string KEY_SAVED_OBJECT_VALUE = "value";
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
         /// <summary> Interpret this file as a dictionary. Top-level keys in the file are interpreted as keys in the dictionary. </summary>
         /// <remarks> <see cref="TKey"/> must be a Base Type </remarks>
         public static Dictionary<TKey, TValue> GetAsDictionary<TKey, TValue>(this ReadableDataFile dataFile)

@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using JECS.MemoryFiles;
 
 namespace JECS.Tests
 {
@@ -9,47 +8,47 @@ namespace JECS.Tests
         [TestMethod]
         public void InvalidFileData_InvalidArrayData_NodeHasValue()
         {
-            const string fileText = @"
-data: lol this isn't an int array
-";
+            const string fileText = """
+                data: lol this isn't an int array
+                """;
             TestUtilities.PerformParsingErrorTest<int[]>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidArrayData_InvalidListItemNode()
         {
-            const string fileText = @"
-data:
-    - 0
-    - 1
-    - cum
-    - 69
-";
+            const string fileText = """
+                data:
+                    - 0
+                    - 1
+                    - cum
+                    - 69
+                """;
             TestUtilities.PerformParsingErrorTest<int[]>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidArrayData_InvalidNestedCollection()
         {
-            const string fileText = @"
-data:
-    - 22
-    - 121
-    -
-        - 55
-        - 6969
-    - 11
-";
+            const string fileText = """
+                data:
+                    - 22
+                    - 121
+                    -
+                        - 55
+                        - 6969
+                    - 11
+                """;
             TestUtilities.PerformParsingErrorTest<int[]>(fileText);
         }
 
         [TestMethod]
         public void InvalidFileData_InvalidArrayData_InvalidKeyChildren()
         {
-            const string fileText = @"
-data:
-    child: node
-";
+            const string fileText = """
+                data:
+                    child: node
+                """;
             TestUtilities.PerformParsingErrorTest<int[]>(fileText);
         }
     }

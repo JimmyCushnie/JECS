@@ -15,15 +15,15 @@ namespace JECS.Abstractions
         long SizeOnDisk { get; }
 
         void ReloadAllData();
-        
-        
+
+
         object FileSystemReadWriteLock { get; }
         DateTime LastKnownWriteTimeUTC { get; }
     }
 
     internal static class IDataFileOnDiskExtensions
     {
-        public static DateTime GetCurrentLastWriteTimeUTC(this IDataFileOnDisk dataFileOnDisk) 
+        public static DateTime GetCurrentLastWriteTimeUTC(this IDataFileOnDisk dataFileOnDisk)
             => File.GetLastWriteTimeUtc(dataFileOnDisk.FilePath);
     }
 }

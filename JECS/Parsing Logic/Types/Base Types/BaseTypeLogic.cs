@@ -23,7 +23,7 @@ namespace JECS
             if (value is T item)
                 return SerializeItem(item, style);
 
-            throw new ArgumentException($"Wrong type!!!!");
+            throw new ArgumentException("Wrong type!!!!");
         }
         public abstract string SerializeItem(T value, FileStyle style);
 
@@ -43,7 +43,7 @@ namespace JECS
             if (value is T item)
                 return SerializeItem(item);
 
-            throw new ArgumentException($"Wrong type!!!!");
+            throw new ArgumentException("Wrong type!!!!");
         }
         public abstract string SerializeItem(T value);
 

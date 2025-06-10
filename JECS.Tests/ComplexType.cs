@@ -20,11 +20,11 @@ namespace JECS.Tests
         public override bool Equals(object obj)
         {
             var other = (ComplexType)obj;
-            if (other == null) 
+            if (other == null)
                 return false;
 
-            return this.Integer == other.Integer 
-                && this.String == other.String 
+            return this.Integer == other.Integer
+                && this.String == other.String
                 && this.Boolean == other.Boolean;
         }
 
@@ -39,7 +39,7 @@ namespace JECS.Tests
 
 
 
-        public static ComplexType PropertyShortcut 
+        public static ComplexType PropertyShortcut
             => new ComplexType(0, "string", false);
 
         public static ComplexType MethodShortcut(int integer, string text, bool boolean)

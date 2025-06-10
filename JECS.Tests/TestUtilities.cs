@@ -17,7 +17,7 @@ namespace JECS.Tests
             try
             {
                 const string SAVED_VALUE_KEY = "JECS_TEST_KEY";
-                
+
                 file.Set(SAVED_VALUE_KEY, SAVED_VALUE);
                 var loadedValue = file.Get<T>(SAVED_VALUE_KEY);
 
@@ -31,12 +31,12 @@ namespace JECS.Tests
                 Console.WriteLine("```");
             }
 
-            
+
             // There are two ways a value can be saved: under a key, and as a whole file.
             // I want all SaveLoad tests to test both methods of saving.
             // Now ideally these would be separate tests so that it's easy to see which way of saving went wrong in the case that it's just one of them.
             // Unfortunately I can't see an easy way to do that.
-            
+
             var file2 = new MemoryDataFile();
             try
             {
@@ -66,6 +66,7 @@ namespace JECS.Tests
             try
             {
                 file.Get<TData>("data");
+                Assert.Fail($"Parsed data which should throw a {nameof(CannotRetrieveDataFromNodeException)}");
             }
             catch (CannotRetrieveDataFromNodeException expectedException)
             {
@@ -80,11 +81,27 @@ namespace JECS.Tests
             try
             {
                 var file = new MemoryReadOnlyDataFile(invalidFileStructure);
+                Assert.Fail($"Parsed invalid file structure which should throw a {nameof(InvalidFileStructureException)}");
             }
             catch (InvalidFileStructureException expectedException)
             {
                 Console.WriteLine("Got expected exception:");
                 Console.WriteLine(expectedException);
+            }
+        }
+
+
+        public static void PrintJecsLined(string jecs)
+        {
+            string[] lines = jecs.Split('\n');
+            for (int i = 0; i < lines.Length; i++)
+            {
+                // Padding is limited to two digits. As JECS test cases are normally not that big.
+                if (i < 10)
+                    Console.Write(' ');
+                Console.Write(i);
+                Console.Write("| ");
+                Console.WriteLine(lines[i]);
             }
         }
     }

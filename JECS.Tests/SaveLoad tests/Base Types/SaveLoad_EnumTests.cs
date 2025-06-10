@@ -64,35 +64,35 @@ namespace JECS.Tests
 
 
         public enum TestEnumInt : int
-        { 
+        {
             TestValue = 0
         }
         public enum TestEnumLong : long
-        { 
+        {
             TestValue = 0
         }
         public enum TestEnumShort : short
-        { 
+        {
             TestValue = 0
         }
         public enum TestEnumUint : uint
-        { 
+        {
             TestValue = 0
         }
         public enum TestEnumUlong : ulong
-        { 
+        {
             TestValue = 0
         }
         public enum TestEnumUshort : ushort
-        { 
+        {
             TestValue = 0
         }
         public enum TestEnumByte : byte
-        { 
+        {
             TestValue = 0
         }
         public enum TestEnumSbyte : sbyte
-        { 
+        {
             TestValue = 0
         }
     }
