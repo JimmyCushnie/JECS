@@ -122,53 +122,6 @@ namespace JECS
         }
 
 
-        /// <summary> Get some data from our files, or return a default value if the data does not exist. </summary>
-        /// <param name="key"> What the data is labeled as within the file. </param>
-        /// <param name="defaultValue"> If the key does not exist in the file, this value is returned instead. </param>
-        public T Get<T>(string key, T defaultValue = default)
-            => TryGet<T>(key, out var output) ? output : defaultValue;
-
-        /// <summary> Non-generic version of <see cref="Get{T}(string, T)"/>. You probably want to use <see cref="Get{T}(string, T)"/>. </summary>
-        /// <param name="type"> The type to get the data as. </param>
-        /// <param name="key"> What the data is labeled as within the file. </param>
-        public object GetNonGeneric(Type type, string key)
-            => TryGetNonGeneric(type, key, out var output) ? output : type.GetDefaultValue();
-
-        /// <summary> Non-generic version of <see cref="Get{T}(string, T)"/>. You probably want to use <see cref="Get{T}(string, T)"/>. </summary>
-        /// <param name="type"> The type to get the data as. </param>
-        /// <param name="key"> What the data is labeled as within the file. </param>
-        /// <param name="defaultValue"> If the key does not exist in the file, this value is returned instead. </param>
-        public object GetNonGeneric(Type type, string key, object defaultValue)
-        {
-            if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))
-                throw new InvalidCastException($"{nameof(type)} must be assignable from the type of {nameof(defaultValue)}");
-
-            return TryGetNonGeneric(type, key, out var output) ? output : defaultValue;
-        }
-
-
-        /// <summary> Like <see cref="Get{T}(string, T)"/>, but works for nested paths instead of just the top level of the files. </summary>
-        public T GetAtPath<T>(params string[] path)
-            => GetAtPath((T)typeof(T).GetDefaultValue(), path);
-
-        /// <summary> Like <see cref="Get{T}(string, T)"/>, but works for nested paths instead of just the top level of the files. </summary>
-        public T GetAtPath<T>(T defaultValue, params string[] path)
-            => TryGetAtPath<T>(out var output, path) ? output : defaultValue;
-
-        /// <summary> Like <see cref="GetNonGeneric(Type, string)"/>, but works for nested paths instead of just the top level of the files. </summary>
-        public object GetAtPathNonGeneric(Type type, params string[] path)
-            => TryGetAtPathNonGeneric(type, out var value, path) ? value : type.GetDefaultValue();
-
-        /// <summary> Like <see cref="GetNonGeneric(Type, string, object)"/>, but works for nested paths instead of just the top level of the files. </summary>
-        public object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path)
-        {
-            if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))
-                throw new InvalidCastException($"{nameof(type)} must be assignable from the type of {nameof(defaultValue)}");
-
-            return TryGetAtPathNonGeneric(type, out var value, path) ? value : defaultValue;
-        }
-
-
         /// <summary> Tries to get some data from our files. </summary>
         /// <param name="key"> They key for the data. </param>
         /// <param name="value"> Output data, if found value of type <typeparamref name="T"/> else <see langword="null"/>. </param>
@@ -203,6 +156,31 @@ namespace JECS
             return false;
         }
 
+        /// <summary> Get some data from our files, or return a default value if the data does not exist. </summary>
+        /// <param name="key"> What the data is labeled as within the file. </param>
+        /// <param name="defaultValue"> If the key does not exist in the file, this value is returned instead. </param>
+        public T Get<T>(string key, T defaultValue = default)
+            => TryGet<T>(key, out var output) ? output : defaultValue;
+
+        /// <summary> Non-generic version of <see cref="Get{T}(string, T)"/>. You probably want to use <see cref="Get{T}(string, T)"/>. </summary>
+        /// <param name="type"> The type to get the data as. </param>
+        /// <param name="key"> What the data is labeled as within the file. </param>
+        public object GetNonGeneric(Type type, string key)
+            => TryGetNonGeneric(type, key, out var output) ? output : type.GetDefaultValue();
+
+        /// <summary> Non-generic version of <see cref="Get{T}(string, T)"/>. You probably want to use <see cref="Get{T}(string, T)"/>. </summary>
+        /// <param name="type"> The type to get the data as. </param>
+        /// <param name="key"> What the data is labeled as within the file. </param>
+        /// <param name="defaultValue"> If the key does not exist in the file, this value is returned instead. </param>
+        public object GetNonGeneric(Type type, string key, object defaultValue)
+        {
+            if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))
+                throw new InvalidCastException($"{nameof(type)} must be assignable from the type of {nameof(defaultValue)}");
+
+            return TryGetNonGeneric(type, key, out var output) ? output : defaultValue;
+        }
+
+
         /// <summary> Tries to get some data from our files. </summary>
         /// <param name="value"> Output data, if found value of type <typeparamref name="T"/> else <see langword="null"/>. </param>
         /// <param name="path"> They path for the data. </param>
@@ -235,6 +213,27 @@ namespace JECS
 
             value = null;
             return false;
+        }
+
+        /// <summary> Like <see cref="Get{T}(string, T)"/>, but works for nested paths instead of just the top level of the files. </summary>
+        public T GetAtPath<T>(params string[] path)
+            => GetAtPath((T)typeof(T).GetDefaultValue(), path);
+
+        /// <summary> Like <see cref="GetNonGeneric(Type, string)"/>, but works for nested paths instead of just the top level of the files. </summary>
+        public object GetAtPathNonGeneric(Type type, params string[] path)
+            => TryGetAtPathNonGeneric(type, out var value, path) ? value : type.GetDefaultValue();
+
+        /// <summary> Like <see cref="Get{T}(string, T)"/>, but works for nested paths instead of just the top level of the files. </summary>
+        public T GetAtPath<T>(T defaultValue, params string[] path)
+            => TryGetAtPath<T>(out var output, path) ? output : defaultValue;
+
+        /// <summary> Like <see cref="GetNonGeneric(Type, string, object)"/>, but works for nested paths instead of just the top level of the files. </summary>
+        public object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path)
+        {
+            if (defaultValue != null && !type.IsAssignableFrom(defaultValue.GetType()))
+                throw new InvalidCastException($"{nameof(type)} must be assignable from the type of {nameof(defaultValue)}");
+
+            return TryGetAtPathNonGeneric(type, out var value, path) ? value : defaultValue;
         }
     }
 }
