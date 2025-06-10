@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JECS", "JECS\JECS.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JECS.Tests", "JECS.Tests\JECS.Tests.csproj", "{3EAF36D0-8566-4416-B7AF-69754422EEDD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp2", "ConsoleApp2\ConsoleApp2.csproj", "{8F99AC82-8ED7-45A7-864B-5C47E3C6E55B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{3EAF36D0-8566-4416-B7AF-69754422EEDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EAF36D0-8566-4416-B7AF-69754422EEDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EAF36D0-8566-4416-B7AF-69754422EEDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F99AC82-8ED7-45A7-864B-5C47E3C6E55B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F99AC82-8ED7-45A7-864B-5C47E3C6E55B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F99AC82-8ED7-45A7-864B-5C47E3C6E55B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F99AC82-8ED7-45A7-864B-5C47E3C6E55B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

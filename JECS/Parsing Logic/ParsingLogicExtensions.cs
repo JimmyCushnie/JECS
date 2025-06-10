@@ -61,10 +61,37 @@ namespace JECS.ParsingLogic
 
             return Nullable.GetUnderlyingType(type) != null;
         }
+        
+        /// <summary>
+        /// If this is a regular property, just returns the PropertyInfo.
+        /// If this property is inherited from a base class, it returns the PropertyInfo from the base class where it was declared.
+        /// If this property is overridden from a virtual or abstract property, it returns the PropertyInfo where the override happens.
+        /// Basically, this allows you to get the PropertyInfo where the code actually lives that gets executed when you get/set the property.
+        /// </summary>
+        internal static PropertyInfo GetImplementationPropertyInfo(this PropertyInfo property)
+        {
+            // Start with the declaring type of the property
+            Type type = property.DeclaringType;
 
-        // internal static PropertyInfo GetDeclaredPropertyInfo(this PropertyInfo possiblyInheritedProperty)
-        // {
-        //     possiblyInheritedProperty.DeclaringType.BaseType
-        // }
+            while (type != null)
+            {
+                // Attempt to get the property from the current type
+                PropertyInfo localProperty = type.GetProperty(property.Name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                if (localProperty != null)
+                {
+                    // If the property is overridden, the MethodInfo for GetMethod will differ from the base's MethodInfo
+                    if (property.GetMethod != null && localProperty.GetMethod != null && property.GetMethod.GetBaseDefinition() == localProperty.GetMethod.GetBaseDefinition())
+                    {
+                        return localProperty;
+                    }
+                }
+
+                // Move to the base class
+                type = type.BaseType;
+            }
+
+            // In case no implementation is found in the hierarchy, return the original property
+            return property;
+        }
     }
 }

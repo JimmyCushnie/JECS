@@ -31,11 +31,11 @@ namespace JECS.ParsingLogic
             }
             else if (Member is PropertyInfo prop)
             {
-              //  prop.
+                prop.GetImplementationPropertyInfo().SetValue(obj, value);
                 
               //  prop.SetValue(obj, value,  BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, null, null);
              //   prop.SetMethod.Invoke(obj, value);
-                prop.GetSetMethod(true).Invoke(obj, value);
+              //  prop.GetSetMethod(true).Invoke(obj, value);
                 //prop.SetValue(obj, value);
             }
         }
