@@ -23,7 +23,7 @@ namespace JECS.Abstractions
         /// <summary>
         /// When a default value is not supplied in Get, we search for it in this.
         /// </summary>
-        protected MemoryReadOnlyDataFile DefaultFileCache { get; }
+        internal MemoryReadOnlyDataFile DefaultFileCache { get; }
 
         public ReadableDataFile(string defaultFileText = null)
         {
