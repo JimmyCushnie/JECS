@@ -57,17 +57,40 @@ namespace JECS.Abstractions
                 SaveAllData();
         }
 
+        /// <summary> Get some data from the file, saving a new value if the data does not exist. </summary>
+        /// <param name="key"> What the data is labeled as within the file. </param>
+        /// <typeparam name="T"> The type which the value is expected to be. </typeparam>
+        public override T Get<T>(string key)
+            => (T)GetNonGeneric(typeof(T), key);
 
-        /// <summary> Get some data from the file, saving a new value if the data does not exist </summary>
-        /// <param name="key"> what the data is labeled as within the file </param>
-        /// <param name="defaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
+        /// <summary> Get some data from the file, saving a new value if the data does not exist. </summary>
+        /// <remarks> Non-generic version of <see cref="Get{T}(string)"/>. You probably want to use <see cref="Get{T}(string)"/>. </remarks>
+        /// <param name="type"> The type which the value is expected to be. </param>
+        /// <param name="key"> What the data is labeled as within the file. </param>
+        public override object GetNonGeneric(Type type, string key)
+        {
+            if (TryGetNonGeneric(type, key, out var value))
+                return value;
+
+            if (DefaultFileCache == null || !DefaultFileCache.TryGetNonGeneric(type, key, out var defaultValue))
+                defaultValue = type.GetDefaultValue();
+
+            SetNonGeneric(type, key, defaultValue);
+            return defaultValue;
+        }
+
+        /// <summary> Get some data from the file, saving a new value if the data does not exist. </summary>
+        /// <param name="key"> What the data is labeled as within the file. </param>
+        /// <param name="defaultValue"> If the <paramref name="key"/> does not exist in the file, this value is saved there and returned. </param>
+        /// <typeparam name="T"> The type which the value is expected to be. </typeparam>
         public override T Get<T>(string key, T defaultValue)
-            => base.Get(key, defaultValue);
+            => (T)GetNonGeneric(typeof(T), key, defaultValue);
 
-        /// <summary> Non-generic version of Get. You probably want to use Get. </summary>
-        /// <param name="type"> the type to get the data as </param>
-        /// <param name="key"> what the data is labeled as within the file </param>
-        /// <param name="defaultValue"> if the key does not exist in the file, this value is saved there and returned </param>
+        /// <summary> Get some data from the file, saving a new value if the data does not exist. </summary>
+        /// <remarks> Non-generic version of <see cref="Get{T}(string,T)"/>. You probably want to use <see cref="Get{T}(string,T)"/>. </remarks>
+        /// <param name="type"> The type which the value is expected to be. </param>
+        /// <param name="key"> What the data is labeled as within the file. </param>
+        /// <param name="defaultValue"> If the <paramref name="key"/> does not exist in the file, this value is saved there and returned. </param>
         public override object GetNonGeneric(Type type, string key, object defaultValue)
         {
             if (TryGetNonGeneric(type, key, out var value))
@@ -77,16 +100,18 @@ namespace JECS.Abstractions
             return defaultValue;
         }
 
-        /// <summary> Save data to the file </summary>
-        /// <param name="key"> what the data is labeled as within the file </param>
-        /// <param name="value"> the value to save </param>
+        /// <summary> Save data to the file. </summary>
+        /// <param name="key"> What the data is labeled as within the file. </param>
+        /// <param name="value"> The value to save. </param>
+        /// <typeparam name="T"> The type to save the data as. </typeparam>
         public void Set<T>(string key, T value)
             => SetNonGeneric(typeof(T), key, value);
 
-        /// <summary> Non-generic version of Set. You probably want to use Set. </summary>
-        /// <param name="type"> the type to save the data as </param>
-        /// <param name="key"> what the data is labeled as within the file </param>
-        /// <param name="value"> the value to save </param>
+        /// <summary> Save data to the file. </summary>
+        /// <remarks> Non-generic version of <see cref="Set{T}"/>. You probably want to use <see cref="Set{T}"/>. </remarks>
+        /// <param name="type"> The type to save the data as. </param>
+        /// <param name="key"> What the data is labeled as within the file. </param>
+        /// <param name="value"> The value to save. </param>
         public void SetNonGeneric(Type type, string key, object value)
         {
             EnsureValueIsCorrectType(type, value);
@@ -105,7 +130,30 @@ namespace JECS.Abstractions
         }
 
 
-        /// <inheritdoc/>
+        /// <summary> Like <see cref="Get{T}(string)"/> but works for nested paths instead of just the top level of the file. </summary>
+        public override T GetAtPath<T>(params string[] path)
+            => (T)GetAtPathNonGeneric(typeof(T), path);
+
+        /// <summary> Like <see cref="GetNonGeneric(System.Type,string)"/> but works for nested paths instead of just the top level of the file. </summary>
+        /// <remarks> Non-generic version of <see cref="GetAtPath{T}(string[])"/>. You probably want to use <see cref="GetAtPath{T}(string[])"/>. </remarks>
+        public override object GetAtPathNonGeneric(Type type, params string[] path)
+        {
+            if (TryGetAtPathNonGeneric(type, out var value, path))
+                return value;
+
+            if (DefaultFileCache == null || !DefaultFileCache.TryGetAtPathNonGeneric(type, out var defaultValue, path))
+                defaultValue = type.GetDefaultValue();
+
+            SetAtPathNonGeneric(type, defaultValue, path);
+            return defaultValue;
+        }
+
+        /// <summary> Like <see cref="Get{T}(string,T)"/> but works for nested paths instead of just the top level of the file. </summary>
+        public override T GetAtPath<T>(T defaultValue, params string[] path)
+            => (T)GetAtPathNonGeneric(typeof(T), defaultValue, path);
+
+        /// <summary> Like <see cref="GetNonGeneric(System.Type,string,object)"/> but works for nested paths instead of just the top level of the file. </summary>
+        /// <remarks> Non-generic version of <see cref="GetAtPath{T}(T,string[])"/>. You probably want to use <see cref="GetAtPath{T}(T,string[])"/>. </remarks>
         public override object GetAtPathNonGeneric(Type type, object defaultValue, params string[] path)
         {
             if (TryGetAtPathNonGeneric(type, out var value, path))
@@ -119,7 +167,8 @@ namespace JECS.Abstractions
         public void SetAtPath<T>(T value, params string[] path)
             => SetAtPathNonGeneric(typeof(T), value, path);
 
-        /// <summary> Non-generic version of SetAtPath. You probably want to use SetAtPath. </summary>
+        /// <summary> Like <see cref="SetNonGeneric"/> but works for nested paths instead of just the top level of the file. </summary>
+        /// <summary> Non-generic version of <see cref="SetAtPath{T}"/>. You probably want to use <see cref="SetAtPath{T}"/>. </summary>
         public void SetAtPathNonGeneric(Type type, object value, params string[] path)
         {
             EnsureValueIsCorrectType(type, value);
