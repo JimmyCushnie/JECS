@@ -23,7 +23,7 @@ namespace JECS.Abstractions
         /// <summary>
         /// When a default value is not supplied in Get, we search for it in this.
         /// </summary>
-        protected MemoryReadOnlyDataFile DefaultFileCache { get; }
+        internal MemoryReadOnlyDataFile DefaultFileCache { get; }
 
         public ReadableDataFile(string defaultFileText = null)
         {
@@ -158,12 +158,15 @@ namespace JECS.Abstractions
             return true;
         }
 
+        // many of these methods are virtual so that their overrides in ReadableWritableDataFile
+        // can have differing xml documentation.
+
         /// <summary> Like <see cref="Get{T}(string, T)"/>, but the default value is searched for in the default file text </summary>
-        public T Get<T>(string key)
+        public virtual T Get<T>(string key)
             => (T)GetNonGeneric(typeof(T), key);
 
         /// <summary> Like <see cref="GetNonGeneric(Type, string, object)"/>, but the default value is searched for in the default file text </summary>
-        public object GetNonGeneric(Type type, string key)
+        public virtual object GetNonGeneric(Type type, string key)
         {
             if (TryGetNonGeneric(type, key, out var dataValue))
                 return dataValue;
@@ -173,9 +176,6 @@ namespace JECS.Abstractions
 
             return type.GetDefaultValue();
         }
-
-        // many of these methods are virtual so that their overrides in ReadableWritableDataFile
-        // can have differing xml documentation.
 
         /// <summary> Get some data from the file, or return a default value if the data does not exist </summary>
         /// <param name="key"> what the data is labeled as within the file </param>
@@ -229,11 +229,11 @@ namespace JECS.Abstractions
         }
 
         /// <summary> Like <see cref="Get{T}(string)"/> but works for nested paths instead of just the top level of the file. </summary>
-        public T GetAtPath<T>(params string[] path)
+        public virtual T GetAtPath<T>(params string[] path)
             => (T)GetAtPathNonGeneric(typeof(T), path);
 
         /// <summary> Like <see cref="GetAtPathNonGeneric(Type, object, string[])"/>, but the value is searched for in the default file text </summary>
-        public object GetAtPathNonGeneric(Type type, params string[] path)
+        public virtual object GetAtPathNonGeneric(Type type, params string[] path)
         {
             if (TryGetAtPathNonGeneric(type, out var dataValue, path))
                 return dataValue;
