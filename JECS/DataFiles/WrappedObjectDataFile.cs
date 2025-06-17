@@ -8,7 +8,7 @@
     public class WrappedObjectDataFile<T>
     {
         private readonly DataFile DiskFile;
-        public readonly T Data;
+        public T Data;
 
         public WrappedObjectDataFile(string filePath, T defaultValue)
         {
