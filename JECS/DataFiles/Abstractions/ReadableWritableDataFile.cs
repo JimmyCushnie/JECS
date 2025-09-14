@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using JECS.ParsingLogic;
@@ -288,7 +288,7 @@ namespace JECS.Abstractions
                 int index = findIndexInJecs(rawJecs, pathStack);
                 string beforeLine = rawJecs[..index]; // Includes a newline at the end.
                 // Skip to the end of the line, including a newline. This points to the first character of the next line.
-                string afterLine = rawJecs[(index + targetNode.RawText.Length + Utilities.NewLine.Length)..];
+                string afterLine = rawJecs[(index + targetNode.RawText.Length + JecsUtilities.NewLine.Length)..];
 
                 string defaultValueJecs = DataConverter.GetLineTextIncludingChildLines(defaultNode); // This always has a final newline.
                 defaultValueJecs = adjustIndentation(defaultValueJecs); // Fix indentation changes, to prevent corruption.
@@ -320,20 +320,20 @@ namespace JECS.Abstractions
                 if (indentationDelta > 0)
                 {
                     string padding = new string(' ', indentationDelta);
-                    string[] lines = value.Split(Utilities.NewLine);
+                    string[] lines = value.Split(JecsUtilities.NewLine);
 
                     // Skip the last line, that is a blank line - must not be padded
                     for (int i = 0; i < lines.Length - 1; i++)
                         lines[i] = padding + lines[i];
 
-                    value = string.Join(Utilities.NewLine, lines);
+                    value = string.Join(JecsUtilities.NewLine, lines);
                 }
                 else if (indentationDelta < 0)
                 {
                     indentationDelta = -indentationDelta; // Invert for ease of use
                     value = string.Join(
-                        Utilities.NewLine,
-                        value.Split(Utilities.NewLine).Select(line =>
+                        JecsUtilities.NewLine,
+                        value.Split(JecsUtilities.NewLine).Select(line =>
                         {
                             int actualCharacterCountToRemove = 0;
                             // Probe indentationDelta to remove, but never run out of bounds.
@@ -369,7 +369,7 @@ namespace JECS.Abstractions
                 // - Before the indentation lowers, all child nodes (including the one we need) of the last parent appear in the file.
                 // Meaning, by finding each parent we will find the position of the correct node. And can replace it from the raw JECS.
 
-                string newline = Utilities.NewLine;
+                string newline = JecsUtilities.NewLine;
                 // To be able to find full lines, the search line is wrapped in newlines. This however implies that the first line starts with a newline.
                 rawJecsInner = newline + rawJecsInner;
 

@@ -1,4 +1,4 @@
-﻿using JECS.Abstractions;
+using JECS.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +25,7 @@ namespace JECS.ParsingLogic
             // In this case, we need to remove the extra newline that was added in RecursivelyBuildLines.
             // Without this check, files gain an extra newline every time they're saved, ad infinitum!
             if (lastWrittenLineWasEmpty)
-                builder.Remove(builder.Length - Utilities.NewLine.Length, Utilities.NewLine.Length);
+                builder.Remove(builder.Length - JecsUtilities.NewLine.Length, JecsUtilities.NewLine.Length);
 
             return builder.ToString();
 
@@ -35,7 +35,7 @@ namespace JECS.ParsingLogic
                 foreach (var line in _lines)
                 {
                     builder.Append(line.RawText);
-                    builder.Append(Utilities.NewLine);
+                    builder.Append(JecsUtilities.NewLine);
 
                     lastWrittenLineWasEmpty = line.RawText == string.Empty;
 

@@ -1,4 +1,4 @@
-﻿using JECS.Abstractions;
+using JECS.Abstractions;
 using System;
 
 namespace JECS.ParsingLogic
@@ -11,7 +11,7 @@ namespace JECS.ParsingLogic
         public KeyNode(string rawText, ReadableDataFile file) : base(rawText, file) { }
         public KeyNode(int indentation, string key, ReadableDataFile file) : base(indentation, file)
         {
-            if (!Utilities.IsValidKey(key, out string whyNot))
+            if (!JecsUtilities.IsValidKey(key, out string whyNot))
                 throw new FormatException(whyNot);
 
             RawText += key + ":";

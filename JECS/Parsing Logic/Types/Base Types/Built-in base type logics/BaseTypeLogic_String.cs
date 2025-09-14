@@ -1,4 +1,4 @@
-﻿using JECS.ParsingLogic;
+using JECS.ParsingLogic;
 
 namespace JECS.BuiltInBaseTypeLogics
 {
@@ -16,7 +16,7 @@ namespace JECS.BuiltInBaseTypeLogics
                 || value[0] == ' '
                 || value[value.Length - 1] == ' '
                 || value.IsQuoted()
-                || value == Utilities.NullIndicator
+                || value == JecsUtilities.NullIndicator
                 )
                 value = value.Quote();
 

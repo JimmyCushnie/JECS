@@ -1,4 +1,4 @@
-﻿using JECS.ParsingLogic.CollectionTypes;
+using JECS.ParsingLogic.CollectionTypes;
 using System;
 
 namespace JECS.ParsingLogic
@@ -22,11 +22,11 @@ namespace JECS.ParsingLogic
             if (data == null)
             {
                 node.ClearChildren();
-                node.Value = Utilities.NullIndicator;
+                node.Value = JecsUtilities.NullIndicator;
                 return;
             }
 
-            if (node.Value == Utilities.NullIndicator)
+            if (node.Value == JecsUtilities.NullIndicator)
             {
                 node.ClearValue();
             }
@@ -72,7 +72,7 @@ namespace JECS.ParsingLogic
         internal static T GetNodeData<T>(Node node) => (T)GetNodeData(node, typeof(T));
         internal static object GetNodeData(Node node, Type type)
         {
-            if (node.Value == Utilities.NullIndicator)
+            if (node.Value == JecsUtilities.NullIndicator)
                 return null;
 
             var underlyingNullableType = Nullable.GetUnderlyingType(type);

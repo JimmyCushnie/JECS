@@ -1,4 +1,4 @@
-﻿using JECS.Abstractions;
+using JECS.Abstractions;
 using System;
 using System.IO;
 
@@ -16,10 +16,10 @@ namespace JECS
         /// <param name="defaultFileText"> If there isn't already a file at the path, one can be created from the text supplied here. </param>
         public ReadOnlyDataFile(string path, string defaultFileText = null) : base(defaultFileText)
         {
-            path = Utilities.AbsoluteJecsPath(path);
+            path = JecsUtilities.AbsoluteJecsPath(path);
             this.FilePath = path;
 
-            if (!Utilities.JecsFileExists(path))
+            if (!JecsUtilities.JecsFileExists(path))
             {
                 Directory.CreateDirectory(new FileInfo(path).Directory.FullName);
 

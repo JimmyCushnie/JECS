@@ -7,7 +7,7 @@ namespace JECS
     /// <summary>
     /// Provides various helpful functions for working with JECS files.
     /// </summary>
-    public static class Utilities
+    public static class JecsUtilities
     {
         private static string _DefaultPath = GetDefaultDefaultPath();
 

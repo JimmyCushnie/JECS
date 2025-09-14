@@ -1,4 +1,4 @@
-﻿using JECS.Abstractions;
+using JECS.Abstractions;
 using JECS.ParsingLogic;
 using System;
 using System.Linq;
@@ -44,7 +44,7 @@ namespace JECS
         /// <returns></returns>
         public static DistributedData CreateBySearching(string path, string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
         {
-            path = Utilities.AbsolutePath(path);
+            path = JecsUtilities.AbsolutePath(path);
             return CreateBySearching(new DirectoryInfo(path), searchPattern, searchOption);
         }
 
@@ -57,7 +57,7 @@ namespace JECS
         /// <returns></returns>
         public static DistributedData CreateBySearching(DirectoryInfo directory, string searchPattern = "*", SearchOption searchOption = SearchOption.AllDirectories)
         {
-            searchPattern = Path.ChangeExtension(searchPattern, Utilities.FileExtension);
+            searchPattern = Path.ChangeExtension(searchPattern, JecsUtilities.FileExtension);
 
             var paths = new List<string>();
             foreach (var fileInfo in directory.EnumerateFiles(searchPattern, searchOption))

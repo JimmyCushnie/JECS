@@ -1,4 +1,4 @@
-﻿namespace JECS
+namespace JECS
 {
     /// <summary>
     /// The easiest way to save and load data in JECS.
@@ -20,7 +20,7 @@
         /// </summary>
         public static T Get<T>(string filePath, T defaultValue)
         {
-            if (Utilities.JecsFileExists(filePath))
+            if (JecsUtilities.JecsFileExists(filePath))
             {
                 var dataFile = new DataFile(filePath);
                 return dataFile.GetAsObject(defaultValue);

@@ -1,4 +1,4 @@
-﻿using JECS.Abstractions;
+using JECS.Abstractions;
 using System;
 using System.IO;
 
@@ -57,10 +57,10 @@ namespace JECS.MemoryFiles
         /// <returns> Null if overwrite was set to false and a file already existed </returns>
         public DataFile ConvertToFileOnDisk(string relativeOrAbsolutePath, bool overwrite = true)
         {
-            if (!overwrite && Utilities.JecsFileExists(relativeOrAbsolutePath))
+            if (!overwrite && JecsUtilities.JecsFileExists(relativeOrAbsolutePath))
                 return null;
 
-            string path = Utilities.AbsolutePath(relativeOrAbsolutePath);
+            string path = JecsUtilities.AbsolutePath(relativeOrAbsolutePath);
             File.WriteAllText(path, GetRawText());
             return new DataFile(path);
         }

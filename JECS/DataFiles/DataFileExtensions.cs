@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using JECS.Abstractions;
 using JECS.ParsingLogic;
@@ -209,7 +209,7 @@ namespace JECS
                 foreach (var key in dictionary.Keys)
                 {
                     var keyText = BaseTypesManager.SerializeBaseType(key, dataFile.Style);
-                    if (!Utilities.IsValidKey(keyText, out string whyNot))
+                    if (!JecsUtilities.IsValidKey(keyText, out string whyNot))
                         throw new Exception($"Can't save file as this dictionary. A key ({keyText}) is not valid: {whyNot}");
 
                     currentKeys.Add(keyText);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -43,7 +43,7 @@ namespace JECS.ParsingLogic.CollectionTypes
 
                     string keyAsText = BaseTypesManager.SerializeBaseType(key, style);
 
-                    if (!Utilities.IsValidKey(keyAsText))
+                    if (!JecsUtilities.IsValidKey(keyAsText))
                     {
                         SetDictionaryNodeGeneric(node, dictionary, style, forceArrayMode: true);
                         return;

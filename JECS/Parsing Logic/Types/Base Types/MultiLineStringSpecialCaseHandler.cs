@@ -1,4 +1,4 @@
-﻿using JECS.BuiltInBaseTypeLogics;
+using JECS.BuiltInBaseTypeLogics;
 using System;
 
 namespace JECS.ParsingLogic
@@ -68,7 +68,7 @@ namespace JECS.ParsingLogic
                     text += BaseStringRules.ParseItem(lineNode.Value);
 
                     if (!isLineBeforeTerminator)
-                        text += Utilities.NewLine;
+                        text += JecsUtilities.NewLine;
                 }
             }
 
