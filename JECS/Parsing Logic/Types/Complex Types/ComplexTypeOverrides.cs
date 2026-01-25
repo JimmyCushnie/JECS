@@ -12,9 +12,11 @@ namespace JECS.ParsingLogic
     {
         private static HashSet<PropertyInfo> AlwaysSaveProperties = new HashSet<PropertyInfo>();
         private static HashSet<PropertyInfo> NeverSaveProperties = new HashSet<PropertyInfo>();
+        private static HashSet<PropertyInfo> OnlyReadProperties = new HashSet<PropertyInfo>();
 
         private static HashSet<FieldInfo> AlwaysSaveFields = new HashSet<FieldInfo>();
         private static HashSet<FieldInfo> NeverSaveFields = new HashSet<FieldInfo>();
+        private static HashSet<FieldInfo> OnlyReadFields = new HashSet<FieldInfo>();
 
 
         /// <summary>
@@ -37,6 +39,16 @@ namespace JECS.ParsingLogic
                 throw new Exception($"Property ({property}) cannot be both always saved and never saved.");
 
             NeverSaveProperties.Add(property);
+        }
+
+        /// <summary>
+        /// Always read this property, even if it's private but never save it.
+        /// </summary>
+        public static void OnlyRead(PropertyInfo property)
+        {
+            AlwaysSave(property);
+
+            OnlyReadProperties.Add(property);
         }
 
 
@@ -62,10 +74,22 @@ namespace JECS.ParsingLogic
             NeverSaveFields.Add(field);
         }
 
+        /// <summary>
+        /// Always read this field, even if it's private but never save it.
+        /// </summary>
+        public static void OnlyRead(FieldInfo field)
+        {
+            AlwaysSave(field);
+
+            OnlyReadFields.Add(field);
+        }
+
         internal static bool IsAlwaysSaved(PropertyInfo property) => AlwaysSaveProperties.Contains(property);
         internal static bool IsNeverSaved(PropertyInfo property) => NeverSaveProperties.Contains(property);
+        internal static bool IsOnlyRead(PropertyInfo property) => OnlyReadProperties.Contains(property);
 
         internal static bool IsAlwaysSaved(FieldInfo field) => AlwaysSaveFields.Contains(field);
         internal static bool IsNeverSaved(FieldInfo field) => NeverSaveFields.Contains(field);
+        internal static bool IsOnlyRead(FieldInfo field) => OnlyReadFields.Contains(field);
     }
 }

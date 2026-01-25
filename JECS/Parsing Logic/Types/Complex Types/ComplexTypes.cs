@@ -62,7 +62,7 @@ namespace JECS.ParsingLogic
             return returnThis;
         }
 
-        internal static IEnumerable<ClassMember> GetValidMembers(this Type type)
+        internal static IEnumerable<ClassMember> GetValidMembers(this Type type, bool includeOnlyRead = true)
         {
             var members = new List<ClassMember>();
 
@@ -75,6 +75,8 @@ namespace JECS.ParsingLogic
                 if (ComplexTypeOverrides.IsNeverSaved(f))
                     continue;
                 if (f.IsPrivate && !Attribute.IsDefined(f, typeof(SaveThisAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(f))
+                    continue;
+                if (!includeOnlyRead && (Attribute.IsDefined(f, typeof(OnlyReadThisAttribute)) || ComplexTypeOverrides.IsOnlyRead(f)))
                     continue;
 
                 members.Add(f);
@@ -89,6 +91,8 @@ namespace JECS.ParsingLogic
                 if (ComplexTypeOverrides.IsNeverSaved(p))
                     continue;
                 if (p.GetMethod.IsPrivate && !Attribute.IsDefined(p, typeof(SaveThisAttribute)) && !ComplexTypeOverrides.IsAlwaysSaved(p))
+                    continue;
+                if (!includeOnlyRead && (Attribute.IsDefined(p, typeof(OnlyReadThisAttribute)) || ComplexTypeOverrides.IsOnlyRead(p)))
                     continue;
 
                 members.Add(p);
