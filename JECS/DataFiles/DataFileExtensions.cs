@@ -137,7 +137,7 @@ namespace JECS
                     type = concreteType;
                 }
 
-                foreach (var m in type.GetValidMembers())
+                foreach (var m in type.GetValidMembers(false))
                     dataFile.SetNonGeneric(m.MemberType, m.Name, m.GetValue(saveThis));
             }
         }
