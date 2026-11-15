@@ -61,6 +61,15 @@ namespace JECS.Tests
         public void SaveLoad_EnumSbyte(TestEnumSbyte SAVED_VALUE)
             => TestUtilities.PerformSaveLoadTest(SAVED_VALUE);
 
+        [TestMethod]
+        [DataRow(TestEnumCustomLogic.FirstValue)]
+        [DataRow(TestEnumCustomLogic.SecondValue)]
+        public void SaveLoad_EnumWithCustomBaseTypeLogic(TestEnumCustomLogic SAVED_VALUE)
+        {
+            CustomEnumLogic.EnsureRegistered();
+            TestUtilities.PerformSaveLoadTest(SAVED_VALUE);
+        }
+
 
 
         public enum TestEnumInt : int
@@ -94,6 +103,28 @@ namespace JECS.Tests
         public enum TestEnumSbyte : sbyte
         {
             TestValue = 0
+        }
+        public enum TestEnumCustomLogic
+        {
+            FirstValue,
+            SecondValue,
+        }
+
+        private class CustomEnumLogic : BaseTypeLogic<TestEnumCustomLogic>
+        {
+            private static bool Registered;
+            public static void EnsureRegistered()
+            {
+                if (Registered)
+                    return;
+
+                ParsingLogic.BaseTypesManager.RegisterBaseType(new CustomEnumLogic());
+                Registered = true;
+            }
+
+            // A format the default enum parsing can't read, so the test fails if the custom logic is bypassed.
+            public override string SerializeItem(TestEnumCustomLogic value) => "custom-" + (int)value;
+            public override TestEnumCustomLogic ParseItem(string text) => (TestEnumCustomLogic)int.Parse(text.Substring("custom-".Length));
         }
     }
 }

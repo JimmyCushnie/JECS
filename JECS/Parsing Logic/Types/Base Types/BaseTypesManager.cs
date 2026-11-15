@@ -106,13 +106,13 @@ namespace JECS.ParsingLogic
 
             try
             {
-                if (type.IsEnum)
+                if (RegisteredBaseTypeLogics.TryGetValue(type, out var baseTypeLogic))
                 {
-                    result = ParseEnum(text, type);
+                    result = baseTypeLogic.ParseObject(text);
                     return true;
                 }
 
-                result = RegisteredBaseTypeLogics[type].ParseObject(text);
+                result = ParseEnum(text, type);
                 return true;
             }
             catch
